@@ -1,16 +1,17 @@
 # Business Requirements Document (BRD)
+
 ## Document 03: Complete Business Feature Inventory
 
-| Document Attribute | Details |
-| :--- | :--- |
-| **Document ID** | BRD-DOC-03 |
-| **Document Title** | Comprehensive Business Feature Inventory |
-| **Project Name** | Chellaa E-Commerce Platform |
+| Document Attribute            | Details                                                                |
+| :---------------------------- | :--------------------------------------------------------------------- |
+| **Document ID**         | BRD-DOC-03                                                             |
+| **Document Title**      | Comprehensive Business Feature Inventory                               |
+| **Project Name**        | Chellaa E-Commerce Platform                                            |
 | **Target Architecture** | Backend-First Microservices Ecosystem (Phase 1: Requirements Baseline) |
-| **Business Model** | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C) |
-| **Version** | 1.0.0-DRAFT |
-| **Lifecycle Status** | `PENDING_APPROVAL` |
-| **Author** | Senior Business Analyst & E-Commerce Requirements Engineering Team |
+| **Business Model**      | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C)  |
+| **Version**             | 1.0.0-DRAFT                                                            |
+| **Lifecycle Status**    | `PENDING_APPROVAL`                                                   |
+| **Author**              | Senior Business Analyst & E-Commerce Requirements Engineering Team     |
 
 ---
 
@@ -19,12 +20,14 @@
 This document contains the complete business feature inventory for the Chellaa Single-Retailer E-Commerce platform. Every feature is categorized by business domain, assigned a stable identifier, and defined with its business value, actors, preconditions, capabilities, business rules, dependencies, priority, status, and linked functional requirements.
 
 ### Priority Definitions
+
 * **P0 (Critical / Foundation):** Essential capabilities without which the core commercial business cannot operate (e.g., catalog, inventory reservation, checkout, payment capture, tax invoicing).
 * **P1 (High Priority / Launch Scope):** Core commercial features required for a competitive, production-ready e-commerce experience (e.g., faceted search, coupons, returns, live tracking).
 * **P2 (Medium Priority / Post-Launch Enhancement):** Valuable operational enhancements and merchandising tools (e.g., bulk spreadsheet updates, customer reviews, product comparisons).
 * **P3 (Low Priority / Advanced Roadmap):** Optional capabilities deferred for future evaluation (e.g., bundles, pre-orders, gift wrapping).
 
 ### Status Taxonomy
+
 * `CONFIRMED`: Formally established and agreed upon for the platform scope.
 * `PROPOSED`: Highly recommended industry standard requirement awaiting stakeholder sign-off.
 * `UNDECIDED`: Commercial policy parameter under business owner deliberation.
@@ -74,6 +77,7 @@ graph LR
 ## 3. Domain 01: Business Administration & Access Management
 
 ### FEAT-ADM-001: Administrative User & Role Governance
+
 * **Domain:** Administration & RBAC
 * **Description:** Provides centralized management of internal enterprise staff accounts and role-based permissions (Catalog Admin, Inventory Operator, Fulfillment Agent, Finance Specialist, Customer Support).
 * **Business Value:** Prevents unauthorized business actions, protects customer privacy, and enforces operational separation of duties.
@@ -92,6 +96,7 @@ graph LR
 * **Related Functional Requirements:** `FR-ADM-001`, `FR-ADM-002`.
 
 ### FEAT-ADM-002: Administrative Audit Trail & Privileged Action Logging
+
 * **Domain:** Administration & RBAC
 * **Description:** Records an immutable, tamper-evident audit entry for every sensitive business intervention (price changes, inventory overrides, order cancellations, manual refunds).
 * **Business Value:** Ensures operational accountability, fraud deterrence, and statutory audit compliance.
@@ -112,6 +117,7 @@ graph LR
 ## 4. Domain 02: Customer Account Management
 
 ### FEAT-CUST-001: Customer Registration & Credential Lifecycle
+
 * **Domain:** Customer Accounts
 * **Description:** Enables retail customers to register securely using their email and/or mobile phone number with mandatory OTP verification.
 * **Business Value:** Builds a verified direct-to-consumer customer database while preventing bot registrations.
@@ -130,6 +136,7 @@ graph LR
 * **Related Functional Requirements:** `FR-CUST-001`, `FR-CUST-002`.
 
 ### FEAT-CUST-002: Customer Address Book Management
+
 * **Domain:** Customer Accounts
 * **Description:** Allows customers to save, update, label, and manage multiple delivery and billing addresses.
 * **Business Value:** Accelerates checkout speed and eliminates shipping errors caused by re-typing addresses.
@@ -147,6 +154,7 @@ graph LR
 * **Related Functional Requirements:** `FR-CUST-003`.
 
 ### FEAT-CUST-003: Customer Privacy & Data Protection Self-Service
+
 * **Domain:** Customer Accounts
 * **Description:** Provides customers with mechanisms to download their personal data, withdraw marketing consents, and request account deactivation.
 * **Business Value:** Ensures compliance with statutory data protection regulations (DPDPA 2023).
@@ -168,6 +176,7 @@ graph LR
 ## 5. Domain 03: Product Catalog & Electronics Merchandising
 
 ### FEAT-CAT-001: Multi-Variant Product Catalog Governance
+
 * **Domain:** Product Catalog
 * **Description:** Enables administrators to manage complex consumer electronics with multiple variant axes (storage, color, RAM, processor).
 * **Business Value:** Supports rich electronics merchandising (e.g., iPhone 15 Pro in 128GB/256GB with Titanium/Blue variants).
@@ -186,6 +195,7 @@ graph LR
 * **Related Functional Requirements:** `FR-CAT-001`, `FR-CAT-002`.
 
 ### FEAT-CAT-002: Product Media & Digital Asset Management
+
 * **Domain:** Product Catalog
 * **Description:** Associates high-resolution product photography, variant-specific images, dimension charts, and specification sheets.
 * **Business Value:** Enhances customer purchasing confidence and reduces product return rates due to mismatched visual expectations.
@@ -207,6 +217,7 @@ graph LR
 ## 6. Domain 04: Brand Management
 
 ### FEAT-BRD-001: Brand Identity & Governance
+
 * **Domain:** Brand Management
 * **Description:** Maintains authorized manufacturer brand profiles (Apple, Dell, HP, Samsung, Sony, Lenovo).
 * **Business Value:** Establishes credibility, enables brand-based customer filtering, and enforces brand warranty metadata.
@@ -227,6 +238,7 @@ graph LR
 ## 7. Domain 05: Category & Specification Management
 
 ### FEAT-CTG-001: Hierarchical Category Taxonomy
+
 * **Domain:** Category Management
 * **Description:** Manages multi-level category trees (e.g., Electronics > Mobiles & Tablets > Smartphones > 5G Phones).
 * **Business Value:** Provides intuitive customer navigation and allows category-level promotional and tax assignments.
@@ -244,6 +256,7 @@ graph LR
 * **Related Functional Requirements:** `FR-CTG-001`.
 
 ### FEAT-CTG-002: Dynamic Category Specification & Attribute Schemas
+
 * **Domain:** Category Management
 * **Description:** Configures category-specific technical attribute schemas (e.g., Laptops have Processor, RAM, GPU, Screen Size; Earphones have Battery Life, Bluetooth Version, Driver Size).
 * **Business Value:** Ensures standardized, comparable technical specifications across diverse electronics categories.
@@ -264,6 +277,7 @@ graph LR
 ## 8. Domain 06: Inventory & Multi-Warehouse Operations
 
 ### FEAT-INV-001: Centralized Inventory Ledger & Availability Tracking
+
 * **Domain:** Inventory & Warehousing
 * **Description:** Maintains accurate real-time stock balances across enterprise fulfillment locations (Available to Sell, Reserved, Damaged, In-Transit).
 * **Business Value:** Eliminates overselling, ensures stock integrity, and provides visibility into enterprise inventory assets.
@@ -282,6 +296,7 @@ graph LR
 * **Related Functional Requirements:** `FR-INV-001`, `FR-INV-002`.
 
 ### FEAT-INV-002: Real-Time Stock Reservation & Automated Release
+
 * **Domain:** Inventory & Warehousing
 * **Description:** Atomically reserves inventory when a customer enters checkout and releases reservations if payment is not completed within a configured timeout window.
 * **Business Value:** Prevents inventory race conditions during high-demand flash sales while ensuring abandoned checkouts return stock to available inventory.
@@ -299,6 +314,7 @@ graph LR
 * **Related Functional Requirements:** `FR-INV-003`.
 
 ### FEAT-INV-003: Low-Stock Thresholds & Replenishment Alerts
+
 * **Domain:** Inventory & Warehousing
 * **Description:** Automatically monitors stock levels against configured reorder thresholds and notifies warehouse operators when replenishment is required.
 * **Business Value:** Prevents stockouts of high-velocity consumer electronics and protects sales continuity.
@@ -319,6 +335,7 @@ graph LR
 ## 9. Domain 07: Pricing & Price Governance
 
 ### FEAT-PRC-001: Multi-Tier Retail Pricing Governance
+
 * **Domain:** Pricing Management
 * **Description:** Manages Maximum Retail Price (MRP / Compare-At Price), Selling Price (Offer Price), and cost price per variant.
 * **Business Value:** Ensures transparent customer savings display ("Save 20%") while protecting gross profit margins.
@@ -341,6 +358,7 @@ graph LR
 ## 10. Domain 08: Tax, Invoicing & Financial Documentation
 
 ### FEAT-FIN-001: Statutory Tax Calculation Engine
+
 * **Domain:** Financial Documents
 * **Description:** Automatically computes applicable jurisdictional taxes (GST: CGST, SGST, IGST) based on product tax category and origin/destination shipping addresses.
 * **Business Value:** Eliminates tax calculation errors and ensures complete statutory tax compliance.
@@ -358,6 +376,7 @@ graph LR
 * **Related Functional Requirements:** `FR-FIN-001`.
 
 ### FEAT-FIN-002: Sequential Tax Invoice & Credit Note Generation
+
 * **Domain:** Financial Documents
 * **Description:** Generates immutable, sequential, tamper-evident PDF tax invoices upon order confirmation and credit notes upon return/refund approval.
 * **Business Value:** Provides legally compliant financial documentation for customers and tax authorities.
@@ -380,6 +399,7 @@ graph LR
 ## 11. Domain 09: Product Search & Discovery
 
 ### FEAT-SRCH-001: Full-Text Search & Multi-Faceted Filtering
+
 * **Domain:** Search & Discovery
 * **Description:** Enables fast, typo-tolerant full-text search across titles, brands, categories, and technical specifications, combined with dynamic faceted filtering.
 * **Business Value:** Helps customers find target electronics within seconds, directly increasing conversion rates.
@@ -402,6 +422,7 @@ graph LR
 ## 12. Domain 10: Product Details & Browsing Experience
 
 ### FEAT-PDP-001: Product Details Page (PDP) Merchandising
+
 * **Domain:** Product Experience
 * **Description:** Delivers comprehensive product information, interactive variant selectors, high-resolution galleries, and real-time delivery estimates.
 * **Business Value:** Delivers a premium shopping experience that converts browsing intent into cart additions.
@@ -423,6 +444,7 @@ graph LR
 ## 13. Domain 11: Shopping Cart Management
 
 ### FEAT-CART-001: Persistent & Guest Shopping Cart Operations
+
 * **Domain:** Shopping Cart
 * **Description:** Manages customer shopping carts across sessions, supports guest cart creation, and seamlessly merges guest items upon login.
 * **Business Value:** Minimizes cart abandonment across device transitions and session interruptions.
@@ -446,6 +468,7 @@ graph LR
 ## 14. Domain 12: Wishlist Management
 
 ### FEAT-WSH-001: Customer Wishlist & Saved Items
+
 * **Domain:** Wishlist
 * **Description:** Enables registered customers to save items for future consideration and monitor stock availability.
 * **Business Value:** Captures purchasing intent and drives re-engagement when out-of-stock items are replenished.
@@ -466,6 +489,7 @@ graph LR
 ## 15. Domain 13: Checkout & Order Placement
 
 ### FEAT-CHK-001: Validated Multi-Step Checkout Orchestration
+
 * **Domain:** Checkout
 * **Description:** Guides the customer through delivery address selection, shipping method choice, coupon application, price revalidation, and payment initiation.
 * **Business Value:** Provides a frictionless, error-free checkout funnel that maximizes order completion rates.
@@ -489,6 +513,7 @@ graph LR
 ## 16. Domain 14: Order Management & Lifecycle
 
 ### FEAT-ORD-001: Order State Machine & Fulfillment Lifecycle
+
 * **Domain:** Order Management
 * **Description:** Orchestrates the complete order lifecycle from initial creation through warehouse fulfillment, courier handover, and final delivery.
 * **Business Value:** Guarantees transparent order tracking, eliminates fulfillment bottlenecks, and ensures order state consistency.
@@ -511,6 +536,7 @@ graph LR
 ## 17. Domain 15: Payment Gateway Orchestration & Reconciliation
 
 ### FEAT-PAY-001: Multi-Channel Payment Gateway Integration
+
 * **Domain:** Payment Management
 * **Description:** Integrates with certified payment gateways to securely process Credit Cards, Debit Cards, UPI, Net Banking, and authorized digital wallets.
 * **Business Value:** Provides maximum payment success rates with zero exposure to sensitive cardholder data.
@@ -529,6 +555,7 @@ graph LR
 * **Related Functional Requirements:** `FR-PAY-001`, `FR-PAY-002`.
 
 ### FEAT-PAY-002: Automated Payment Reconciliation
+
 * **Domain:** Payment Management
 * **Description:** Reconciles internal order payment records against daily gateway settlement files and bank deposit statements.
 * **Business Value:** Identifies settlement variances, gateway fee discrepancies, and uncaptured payments automatically.
@@ -549,6 +576,7 @@ graph LR
 ## 18. Domain 16: Promotions, Coupons & Discounts
 
 ### FEAT-PRM-001: Promotional Coupon Engine & Discount Governance
+
 * **Domain:** Promotions
 * **Description:** Supports percentage and flat-amount discount coupon codes with configurable redemption rules (minimum order value, validity dates, usage limits).
 * **Business Value:** Drives promotional sales velocity while protecting the retailer from runaway discount abuse.
@@ -571,6 +599,7 @@ graph LR
 ## 19. Domain 17: Shipping, Logistics & Delivery
 
 ### FEAT-SHP-001: Courier Partner Integration & Consignment Tracking
+
 * **Domain:** Shipping & Fulfillment
 * **Description:** Integrates with third-party logistics carriers to book consignments, generate Air Waybills (AWBs), and ingest real-time delivery tracking events.
 * **Business Value:** Automates warehouse shipping label generation and provides customers with real-time delivery milestone visibility.
@@ -593,6 +622,7 @@ graph LR
 ## 20. Domain 18: Returns, Replacements & Refunds
 
 ### FEAT-RET-001: Customer Return & Replacement Workflow
+
 * **Domain:** Returns & Refunds
 * **Description:** Governs customer-initiated return and replacement requests within defined return policy windows (e.g., 7 days from delivery for electronics).
 * **Business Value:** Protects customer trust while enforcing strict quality controls against return fraud and damaged goods abuse.
@@ -612,6 +642,7 @@ graph LR
 * **Related Functional Requirements:** `FR-RET-001`, `FR-RET-002`.
 
 ### FEAT-RET-002: Automated Refund Processing & Source Remittance
+
 * **Domain:** Returns & Refunds
 * **Description:** Initiates automated refunds back to the customer’s original payment source (Credit Card, UPI, Bank Account) upon approved return inspection or cancellation.
 * **Business Value:** Accelerates customer refund timelines and maintains complete financial auditability.
@@ -633,6 +664,7 @@ graph LR
 ## 21. Domain 19: Notification & Communication Management
 
 ### FEAT-NTF-001: Multi-Channel Transactional Notification Relay
+
 * **Domain:** Notifications
 * **Description:** Delivers automated, event-driven transactional alerts across Email, SMS, and WhatsApp for critical order and account milestones.
 * **Business Value:** Keeps customers informed in real-time, reducing customer support inquiries ("Where Is My Order?").
@@ -654,6 +686,7 @@ graph LR
 ## 22. Domain 20: Product Reviews & Ratings
 
 ### FEAT-REV-001: Verified-Purchase Customer Reviews & Moderation
+
 * **Domain:** Customer Reviews
 * **Description:** Enables customers who have purchased a product to submit numerical ratings (1-5 stars) and written reviews, subject to administrative moderation.
 * **Business Value:** Provides social proof, boosts purchasing confidence, and provides valuable product feedback.
@@ -675,6 +708,7 @@ graph LR
 ## 23. Domain 21: Customer Support & Service Requests
 
 ### FEAT-SUP-001: Order Support Ticketing & Case Management
+
 * **Domain:** Customer Support
 * **Description:** Provides integrated customer service ticketing, allowing customers to raise issues against specific orders and support staff to track resolution.
 * **Business Value:** Centralizes customer communications and prevents customer complaints from falling through the cracks.
@@ -696,6 +730,7 @@ graph LR
 ## 24. Domain 22: Reporting & Business Analytics
 
 ### FEAT-RPT-001: Commercial Sales & Operational Intelligence Reporting
+
 * **Domain:** Analytics & Reporting
 * **Description:** Provides executive and operational reporting on revenue, gross merchandise value (GMV), order fulfillment latency, return rates, and stock velocity.
 * **Business Value:** Empowers the business owner with actionable insights to optimize pricing, inventory procurement, and operational efficiency.
@@ -718,6 +753,7 @@ graph LR
 ## 25. Domain 23: Audit & Historical Data Retention
 
 ### FEAT-AUD-001: Comprehensive Enterprise Activity Audit Logging
+
 * **Domain:** Auditing & Compliance
 * **Description:** Maintains immutable audit trails of all system configuration changes, role assignments, price revisions, and stock adjustments.
 * **Business Value:** Guarantees total administrative transparency and compliance with legal accounting standards.
@@ -738,6 +774,7 @@ graph LR
 ## 26. Domain 24: Data Import, Export & Migration
 
 ### FEAT-DAT-001: Bulk Catalog & Inventory Data Exchange
+
 * **Domain:** Data Management
 * **Description:** Allows catalog managers to perform bulk creation and updates of products, categories, prices, and stock counts via standardized spreadsheet imports (CSV/Excel).
 * **Business Value:** Drastically reduces manual data entry labor when onboarding large electronics product lines.
@@ -758,6 +795,7 @@ graph LR
 ## 27. Domain 25: External Integration Management
 
 ### FEAT-INT-001: Provider Resilience & Outage Isolation
+
 * **Domain:** Integrations
 * **Description:** Manages integrations with third-party gateways (payments, couriers, notifications) with timeout limits, automated retries, and circuit breaker protection.
 * **Business Value:** Prevents third-party provider downtime from crashing core commerce browsing and checkout capabilities.
@@ -779,6 +817,7 @@ graph LR
 ## 28. Domain 26: Security & Data Privacy
 
 ### FEAT-SEC-001: Comprehensive Security Governance & Threat Defense
+
 * **Domain:** Platform Security
 * **Description:** Enforces strict authentication security, credential hashing, rate limiting, and protection against unauthorized business actions.
 * **Business Value:** Protects enterprise intellectual property, financial transactions, and customer data from cyber threats.
@@ -800,6 +839,7 @@ graph LR
 ## 29. Domain 27: Operational Health & Observability
 
 ### FEAT-OPS-001: Platform Health Visibility & Operational Alerting
+
 * **Domain:** Operations
 * **Description:** Provides real-time visibility into business transaction velocity, API response latencies, background job processing, and error rates.
 * **Business Value:** Allows operations teams to detect and remediate technical bottlenecks before they impact customer purchasing.
@@ -821,6 +861,7 @@ graph LR
 ## 30. Domain 28: Release Management & CI/CD Quality Readiness
 
 ### FEAT-REL-001: Automated Release Verification & Quality Gates
+
 * **Domain:** Release Management
 * **Description:** Establishes automated testing verification, quality gating, and release traceability before any software deployment to production environments.
 * **Business Value:** Prevents regression defects from reaching live customers and ensures deterministic release auditing.
@@ -841,6 +882,7 @@ graph LR
 ## 31. Domain 29: Business Continuity & Disaster Recovery
 
 ### FEAT-BCM-001: Business Continuity & Automated Disaster Recovery
+
 * **Domain:** Business Continuity
 * **Description:** Enforces continuous database backups, transaction log preservation, and recovery runbooks to guarantee rapid restoration in the event of infrastructure disasters.
 * **Business Value:** Guarantees zero financial transaction loss and rapid business recovery during regional data center incidents.
@@ -861,6 +903,7 @@ graph LR
 ## 32. Domain 30: Additional / Value-Add Capabilities (Roadmap Candidates)
 
 ### FEAT-ADV-001: Electronics Product Bundles & Accessory Kits
+
 * **Domain:** Advanced Merchandising
 * **Description:** Allows merchandising staff to create curated product kits (e.g., Laptop bundled with Wireless Mouse, Laptop Sleeve, and USB-C Hub at a promotional bundled price).
 * **Business Value:** Increases Average Order Value (AOV) and accelerates accessory sales.
@@ -878,6 +921,7 @@ graph LR
 * **Related Functional Requirements:** `FR-ADV-001`.
 
 ### FEAT-ADV-002: Back-in-Stock Customer Notification Alerts
+
 * **Domain:** Customer Engagement
 * **Description:** Allows customers to register their interest on out-of-stock electronics and automatically dispatches an alert (SMS/Email) when stock is replenished.
 * **Business Value:** Recovers lost sales demand and gauges customer purchasing intent for inventory procurement.
@@ -897,36 +941,36 @@ graph LR
 
 ## 33. Feature Inventory Summary & Statistics
 
-| Domain ID | Business Domain Name | Total Features | P0 (Critical) | P1 (High) | P2 (Medium) | Status Breakdown |
-| :---: | :--- | :---: | :---: | :---: | :---: | :--- |
-| **01** | Business Administration & RBAC | 2 | 2 | 0 | 0 | 2 CONFIRMED |
-| **02** | Customer Account Management | 3 | 2 | 1 | 0 | 2 CONFIRMED, 1 PROPOSED |
-| **03** | Product Catalog & Variants | 2 | 2 | 0 | 0 | 2 CONFIRMED |
-| **04** | Brand Management | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **05** | Category & Specification Mgmt | 2 | 1 | 1 | 0 | 2 CONFIRMED |
-| **06** | Inventory & Warehousing | 3 | 2 | 1 | 0 | 2 CONFIRMED, 1 PROPOSED |
-| **07** | Pricing & Price Governance | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **08** | Tax, Invoicing & Financial Docs | 2 | 2 | 0 | 0 | 2 CONFIRMED |
-| **09** | Product Search & Discovery | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **10** | Product Details (PDP) Experience | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **11** | Shopping Cart Operations | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **12** | Wishlist Management | 1 | 0 | 1 | 0 | 1 CONFIRMED |
-| **13** | Checkout & Order Placement | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **14** | Order Management & Lifecycle | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **15** | Payment Gateway & Reconciliation| 2 | 1 | 1 | 0 | 2 CONFIRMED |
-| **16** | Promotions, Coupons & Discounts | 1 | 0 | 1 | 0 | 1 CONFIRMED |
-| **17** | Shipping, Logistics & Delivery | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **18** | Returns, Replacements & Refunds | 2 | 1 | 1 | 0 | 2 CONFIRMED |
-| **19** | Notification Management | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **20** | Product Reviews & Ratings | 1 | 0 | 0 | 1 | 1 PROPOSED |
-| **21** | Customer Support & Ticketing | 1 | 0 | 1 | 0 | 1 CONFIRMED |
-| **22** | Reporting & Business Analytics | 1 | 0 | 1 | 0 | 1 CONFIRMED |
-| **23** | Audit & Historical Retention | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **24** | Data Import / Export (Bulk) | 1 | 0 | 1 | 0 | 1 CONFIRMED |
-| **25** | External Integration Resilience | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **26** | Security & Data Privacy | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **27** | Operational Health & Monitoring | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **28** | Release Management Readiness | 1 | 0 | 1 | 0 | 1 CONFIRMED |
-| **29** | Business Continuity & Backups | 1 | 1 | 0 | 0 | 1 CONFIRMED |
-| **30** | Value-Add Capabilities (Bundles)| 2 | 0 | 0 | 2 | 2 PROPOSED |
-| **TOTAL**| **30 Domains Covered** | **40** | **25** | **11** | **4** | **35 CONFIRMED, 5 PROPOSED** |
+|    Domain ID    | Business Domain Name             | Total Features | P0 (Critical) |  P1 (High)  | P2 (Medium) | Status Breakdown                   |
+| :-------------: | :------------------------------- | :------------: | :-----------: | :----------: | :---------: | :--------------------------------- |
+|  **01**  | Business Administration & RBAC   |       2       |       2       |      0      |      0      | 2 CONFIRMED                        |
+|  **02**  | Customer Account Management      |       3       |       2       |      1      |      0      | 2 CONFIRMED, 1 PROPOSED            |
+|  **03**  | Product Catalog & Variants       |       2       |       2       |      0      |      0      | 2 CONFIRMED                        |
+|  **04**  | Brand Management                 |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **05**  | Category & Specification Mgmt    |       2       |       1       |      1      |      0      | 2 CONFIRMED                        |
+|  **06**  | Inventory & Warehousing          |       3       |       2       |      1      |      0      | 2 CONFIRMED, 1 PROPOSED            |
+|  **07**  | Pricing & Price Governance       |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **08**  | Tax, Invoicing & Financial Docs  |       2       |       2       |      0      |      0      | 2 CONFIRMED                        |
+|  **09**  | Product Search & Discovery       |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **10**  | Product Details (PDP) Experience |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **11**  | Shopping Cart Operations         |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **12**  | Wishlist Management              |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **13**  | Checkout & Order Placement       |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **14**  | Order Management & Lifecycle     |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **15**  | Payment Gateway & Reconciliation |       2       |       1       |      1      |      0      | 2 CONFIRMED                        |
+|  **16**  | Promotions, Coupons & Discounts  |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **17**  | Shipping, Logistics & Delivery   |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **18**  | Returns, Replacements & Refunds  |       2       |       1       |      1      |      0      | 2 CONFIRMED                        |
+|  **19**  | Notification Management          |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **20**  | Product Reviews & Ratings        |       1       |       0       |      0      |      1      | 1 PROPOSED                         |
+|  **21**  | Customer Support & Ticketing     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **22**  | Reporting & Business Analytics   |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **23**  | Audit & Historical Retention     |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **24**  | Data Import / Export (Bulk)      |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **25**  | External Integration Resilience  |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **26**  | Security & Data Privacy          |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **27**  | Operational Health & Monitoring  |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **28**  | Release Management Readiness     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **29**  | Business Continuity & Backups    |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **30**  | Value-Add Capabilities (Bundles) |       2       |       0       |      0      |      2      | 2 PROPOSED                         |
+| **TOTAL** | **30 Domains Covered**     |  **40**  | **25** | **11** | **4** | **35 CONFIRMED, 5 PROPOSED** |

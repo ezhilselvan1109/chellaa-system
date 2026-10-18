@@ -1,22 +1,24 @@
 # Business Requirements Document (BRD)
+
 ## Document 02: Stakeholders and Business Actors
 
-| Document Attribute | Details |
-| :--- | :--- |
-| **Document ID** | BRD-DOC-02 |
-| **Document Title** | Stakeholder Ecosystem and Business Actor Profiles |
-| **Project Name** | Chellaa E-Commerce Platform |
+| Document Attribute            | Details                                                                |
+| :---------------------------- | :--------------------------------------------------------------------- |
+| **Document ID**         | BRD-DOC-02                                                             |
+| **Document Title**      | Stakeholder Ecosystem and Business Actor Profiles                      |
+| **Project Name**        | Chellaa E-Commerce Platform                                            |
 | **Target Architecture** | Backend-First Microservices Ecosystem (Phase 1: Requirements Baseline) |
-| **Business Model** | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C) |
-| **Version** | 1.0.0-DRAFT |
-| **Lifecycle Status** | `PENDING_APPROVAL` |
-| **Author** | Senior Business Analyst & E-Commerce Requirements Engineering Team |
+| **Business Model**      | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C)  |
+| **Version**             | 1.0.0-DRAFT                                                            |
+| **Lifecycle Status**    | `PENDING_APPROVAL`                                                   |
+| **Author**              | Senior Business Analyst & E-Commerce Requirements Engineering Team     |
 
 ---
 
 ## 1. Stakeholder Classification Model
 
 The Chellaa E-Commerce Platform interacts with a diverse group of stakeholders, categorized into three distinct operational classifications:
+
 1. **Internal Business Stakeholders & Operators (Human):** Employees and contractors who administer the platform, manage physical inventory, handle customer inquiries, and oversee financial performance.
 2. **Customer Personas (Human):** End-users who browse, evaluate, purchase, and receive products through digital channels.
 3. **External Service Providers & Systems (External Systems & Organizations):** Third-party commercial partners that execute mission-critical external utilities such as card payments, physical parcel transit, and telecommunications messaging.
@@ -57,6 +59,7 @@ graph TD
 ## 2. Detailed Business Actor Profiles
 
 ### 2.1 ACT-001: Enterprise Business Owner
+
 * **Actor Type:** Human (Executive Leadership)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Ultimate legal, operational, and commercial owner of the enterprise. Sets commercial policies, pricing targets, return policy windows, and reviews high-level profit and loss statements.
@@ -73,6 +76,7 @@ graph TD
 ---
 
 ### 2.2 ACT-002: Platform System Administrator
+
 * **Actor Type:** Human (Technical Operations)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Manages business staff accounts, assigns administrative roles, monitors system operational parameters, and ensures business continuity.
@@ -89,6 +93,7 @@ graph TD
 ---
 
 ### 2.3 ACT-003: Catalog Manager
+
 * **Actor Type:** Human (Merchandising Staff)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Maintains the integrity, hierarchy, and presentation of the electronics product catalog.
@@ -105,6 +110,7 @@ graph TD
 ---
 
 ### 2.4 ACT-004: Inventory / Warehouse Operator
+
 * **Actor Type:** Human (Logistics & Physical Operations)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Physical handling of inventory goods inside enterprise warehouses. Inwards stock from distributors, executes physical cycle counts, and inspects returned items.
@@ -121,6 +127,7 @@ graph TD
 ---
 
 ### 2.5 ACT-005: Order Fulfillment Specialist
+
 * **Actor Type:** Human (Fulfillment & Dispatch)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Oversees the picking, packing, label attachment, and carrier handover of confirmed customer orders.
@@ -137,6 +144,7 @@ graph TD
 ---
 
 ### 2.6 ACT-006: Customer Support Representative
+
 * **Actor Type:** Human (Customer Care)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Resolves customer inquiries, tracks delayed shipments, assists with order modifications prior to dispatch, and facilitates returns.
@@ -154,6 +162,7 @@ graph TD
 ---
 
 ### 2.7 ACT-007: Finance & Accounting Officer
+
 * **Actor Type:** Human (Accounting)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Audits financial transactions, reconciles payment gateway deposits, monitors refund disbursements, and validates tax liability reports.
@@ -170,6 +179,7 @@ graph TD
 ---
 
 ### 2.8 ACT-008: Marketing & Merchandising Manager
+
 * **Actor Type:** Human (Commercial Growth)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Plans and configures promotional campaigns, discount coupons, clearance sales, and homepage merchandising banners.
@@ -186,6 +196,7 @@ graph TD
 ---
 
 ### 2.9 ACT-009: Registered Retail Customer
+
 * **Actor Type:** Human (End-User)
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Browses the store, selects consumer electronics, saves personal delivery addresses, places orders, submits digital payments, and requests customer service.
@@ -205,6 +216,7 @@ graph TD
 ---
 
 ### 2.10 ACT-010: Guest Shopper
+
 * **Actor Type:** Human (Unregistered End-User)
 * **Status:** `PROPOSED` (Subject to Open Decision [OQ-011](./08-assumptions-dependencies-open-questions.md#oq-011))
 * **Business Responsibility:** Browses the store catalog and creates temporary shopping carts without upfront account registration.
@@ -220,6 +232,7 @@ graph TD
 ---
 
 ### 2.11 ACT-011: External Payment Gateway (Provider System)
+
 * **Actor Type:** External System / Financial Utility
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Provides PCI-DSS compliant payment collection services, card tokenization, UPI intent generation, net banking redirection, and automated webhook notifications.
@@ -235,6 +248,7 @@ graph TD
 ---
 
 ### 2.12 ACT-012: External Courier Logistics Provider (Provider System)
+
 * **Actor Type:** External System / Freight Partner
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Provides physical transportation of parcels from the enterprise warehouse to the customer's delivery doorstep.
@@ -251,6 +265,7 @@ graph TD
 ---
 
 ### 2.13 ACT-013: External Messaging Communications Gateway (Provider System)
+
 * **Actor Type:** External System / Telecommunications Relay
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Relays transactional notifications across SMS, email (SMTP/API), and WhatsApp Business API.
@@ -265,6 +280,7 @@ graph TD
 ---
 
 ### 2.14 ACT-014: Observability & SRE Operations Personnel
+
 * **Actor Type:** Human / Automated Operations Agent
 * **Status:** `CONFIRMED`
 * **Business Responsibility:** Monitors system health, distributed traces, background job execution, API latencies, and transaction error rates.
@@ -281,19 +297,19 @@ graph TD
 
 ## 3. Actor Responsibility & Security Boundaries Matrix
 
-| Actor ID | Role Category | Authentication Method | Principle of Least Privilege Boundary |
-| :--- | :--- | :--- | :--- |
-| **ACT-001** | Executive | MFA + Strong Password | Full read access across all domains; approval-only access for high-value financial actions. |
-| **ACT-002** | Administrator | MFA + Strong Password | Full user and configuration access; zero access to customer passwords or raw payment tokens. |
-| **ACT-003** | Catalog Staff | Single Sign-On / Password | Read/Write access to catalog, categories, brands, specifications; zero access to orders or financial ledgers. |
-| **ACT-004** | Warehouse Staff | Role Password / PIN | Read/Write access to physical stock counts, receiving, pick-lists; zero access to customer financial data. |
-| **ACT-005** | Fulfillment Staff | Role Password / PIN | Read access to confirmed orders; write access to packing and dispatch status; zero access to catalog pricing. |
-| **ACT-006** | Support Staff | MFA + Role Password | Read access to customer orders and tracking; restricted write access to support notes and return requests. |
-| **ACT-007** | Finance Staff | MFA + Strong Password | Read/Write access to payments, invoices, refunds, tax summaries; zero access to product publishing. |
-| **ACT-008** | Marketing Staff | Role Password | Read/Write access to coupons, promotions, banners; zero access to inventory counts or system configs. |
-| **ACT-009** | Customer | Mobile OTP / Password | Read/Write access strictly bounded to their own customer profile, cart, orders, and addresses. |
-| **ACT-010** | Guest Shopper | Anonymous Session Token | Read access to catalog; write access to temporary session cart; zero access to historical orders. |
-| **ACT-011** | External System | Mutual TLS / API Key / HMAC Signature | Restricted to payment initiation, verification, and webhook endpoints with strict replay validation. |
-| **ACT-012** | External System | API Key / Webhook HMAC | Restricted to shipping consignment booking and logistics webhook endpoints. |
-| **ACT-013** | External System | Secure API Gateway Relay | Restricted to outbound notification dispatch and delivery receipt status webhooks. |
-| **ACT-014** | SRE / Ops | VPN / Mutual Auth | Read access to monitoring metrics and telemetry data; zero access to customer personally identifiable information (PII). |
+| Actor ID          | Role Category     | Authentication Method                 | Principle of Least Privilege Boundary                                                                                    |
+| :---------------- | :---------------- | :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------- |
+| **ACT-001** | Executive         | MFA + Strong Password                 | Full read access across all domains; approval-only access for high-value financial actions.                              |
+| **ACT-002** | Administrator     | MFA + Strong Password                 | Full user and configuration access; zero access to customer passwords or raw payment tokens.                             |
+| **ACT-003** | Catalog Staff     | Single Sign-On / Password             | Read/Write access to catalog, categories, brands, specifications; zero access to orders or financial ledgers.            |
+| **ACT-004** | Warehouse Staff   | Role Password / PIN                   | Read/Write access to physical stock counts, receiving, pick-lists; zero access to customer financial data.               |
+| **ACT-005** | Fulfillment Staff | Role Password / PIN                   | Read access to confirmed orders; write access to packing and dispatch status; zero access to catalog pricing.            |
+| **ACT-006** | Support Staff     | MFA + Role Password                   | Read access to customer orders and tracking; restricted write access to support notes and return requests.               |
+| **ACT-007** | Finance Staff     | MFA + Strong Password                 | Read/Write access to payments, invoices, refunds, tax summaries; zero access to product publishing.                      |
+| **ACT-008** | Marketing Staff   | Role Password                         | Read/Write access to coupons, promotions, banners; zero access to inventory counts or system configs.                    |
+| **ACT-009** | Customer          | Mobile OTP / Password                 | Read/Write access strictly bounded to their own customer profile, cart, orders, and addresses.                           |
+| **ACT-010** | Guest Shopper     | Anonymous Session Token               | Read access to catalog; write access to temporary session cart; zero access to historical orders.                        |
+| **ACT-011** | External System   | Mutual TLS / API Key / HMAC Signature | Restricted to payment initiation, verification, and webhook endpoints with strict replay validation.                     |
+| **ACT-012** | External System   | API Key / Webhook HMAC                | Restricted to shipping consignment booking and logistics webhook endpoints.                                              |
+| **ACT-013** | External System   | Secure API Gateway Relay              | Restricted to outbound notification dispatch and delivery receipt status webhooks.                                       |
+| **ACT-014** | SRE / Ops         | VPN / Mutual Auth                     | Read access to monitoring metrics and telemetry data; zero access to customer personally identifiable information (PII). |
