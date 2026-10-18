@@ -133,7 +133,7 @@ graph LR
 * **Dependencies:** `FEAT-NTF-001` (OTP dispatch).
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-CUST-001`, `FR-CUST-002`.
+* **Related Functional Requirements:** `FR-CUST-001`, `FR-CUST-003`.
 
 ### FEAT-CUST-002: Customer Address Book Management
 
@@ -151,7 +151,7 @@ graph LR
 * **Dependencies:** None.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-CUST-003`.
+* **Related Functional Requirements:** `FR-CUST-002`.
 
 ### FEAT-CUST-003: Customer Privacy & Data Protection Self-Service
 
@@ -192,7 +192,7 @@ graph LR
 * **Dependencies:** `FEAT-BRD-001`, `FEAT-CTG-001`.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-CAT-001`, `FR-CAT-002`.
+* **Related Functional Requirements:** `FR-CAT-001`.
 
 ### FEAT-CAT-002: Product Media & Digital Asset Management
 
@@ -270,7 +270,7 @@ graph LR
 * **Dependencies:** `FEAT-CTG-001`.
 * **Priority:** `P1`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-CTG-002`.
+* **Related Functional Requirements:** `FR-CAT-002`, `FR-CTG-002`.
 
 ---
 
@@ -293,7 +293,7 @@ graph LR
 * **Dependencies:** `FEAT-CAT-001`.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-INV-001`, `FR-INV-002`.
+* **Related Functional Requirements:** `FR-INV-001`.
 
 ### FEAT-INV-002: Real-Time Stock Reservation & Automated Release
 
@@ -311,7 +311,7 @@ graph LR
 * **Dependencies:** `FEAT-CHK-001`.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-INV-003`.
+* **Related Functional Requirements:** `FR-INV-002`, `FR-INV-003`.
 
 ### FEAT-INV-003: Low-Stock Thresholds & Replenishment Alerts
 
@@ -639,7 +639,7 @@ graph LR
 * **Dependencies:** `FEAT-ORD-001`, `FEAT-INV-001`.
 * **Priority:** `P1`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-RET-001`, `FR-RET-002`.
+* **Related Functional Requirements:** `FR-RET-001`, `FR-RET-003`.
 
 ### FEAT-RET-002: Automated Refund Processing & Source Remittance
 
@@ -657,7 +657,7 @@ graph LR
 * **Dependencies:** `FEAT-PAY-001`, `FEAT-FIN-002`.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-RET-003`.
+* **Related Functional Requirements:** `FR-RET-002`.
 
 ---
 
@@ -767,7 +767,7 @@ graph LR
 * **Dependencies:** None.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
-* **Related Functional Requirements:** `FR-AUD-001`.
+* **Related Functional Requirements:** `FR-AUD-001`, `FR-AUD-002`.
 
 ---
 
@@ -973,4 +973,4 @@ graph LR
 |  **28**  | Release Management Readiness     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **29**  | Business Continuity & Backups    |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **30**  | Value-Add Capabilities (Bundles) |       2       |       0       |      0      |      2      | 2 PROPOSED                         |
-| **TOTAL** | **30 Domains Covered**     |  **40**  | **25** | **11** | **4** | **35 CONFIRMED, 5 PROPOSED** |
+| **TOTAL** | **30 Domains Covered**     |  **41**  | **27** | **11** | **3** | **36 CONFIRMED, 5 PROPOSED** |

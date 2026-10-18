@@ -59,7 +59,7 @@ The Requirements Traceability Matrix (RTM) validates bidirectional alignment acr
 | **OBJ-007** | `FEAT-REV-001` | `FR-REV-001` | `BR-REV-001` | `WF-004` | `NFR-ACC-001` | Verified-buyer ratings and reviews with mandatory admin moderation queue. | `P2` | `PROPOSED` | `OQ-012` |
 | **OBJ-007** | `FEAT-SUP-001` | `FR-SUP-001` | `BR-SUP-001` | `WF-013` | `NFR-AVL-002` | Support ticket linked to Order ID and AWB with agent resolution history. | `P1` | `CONFIRMED` | None |
 | **OBJ-009** | `FEAT-RPT-001` | `FR-RPT-001` | `BR-RPT-001` | `WF-014` | `NFR-PERF-003` | Executive GMV, revenue, tax, and inventory velocity reports exportable to CSV. | `P1` | `CONFIRMED` | `OQ-018` |
-| **OBJ-008** | `FEAT-AUD-001` | `FR-AUD-001` | `BR-AUD-001` | `WF-016` | `NFR-SEC-002` | Immutable WORM audit trail logging all privileged administrative actions. | `P0` | `CONFIRMED` | None |
+| **OBJ-008** | `FEAT-AUD-001` | `FR-AUD-001`<br>`FR-AUD-002` | `BR-AUD-001` | `WF-016` | `NFR-SEC-002` | Immutable WORM audit trail logging all privileged administrative actions. | `P0` | `CONFIRMED` | None |
 | **OBJ-002** | `FEAT-DAT-001` | `FR-DAT-001` | `BR-CAT-001`<br>`BR-PRC-001` | `WF-002` | `NFR-PERF-003` | Bulk spreadsheet catalog & inventory import with schema validation. | `P1` | `CONFIRMED` | `OQ-019` |
 | **OBJ-010** | `FEAT-INT-001` | `FR-INT-001` | `BR-INT-001` | `WF-015` | `NFR-AVL-002` | Circuit breaker fault isolation and exponential backoff on third-party outages. | `P0` | `CONFIRMED` | None |
 | **OBJ-008** | `FEAT-SEC-001` | `FR-SEC-001`<br>`FR-SEC-002` | `BR-SEC-001`<br>`BR-SEC-002` | `WF-007` | `NFR-SEC-001`<br>`NFR-SEC-002` | Zero cardholder PAN storage; tokenized checkout; bcrypt credential hashing. | `P0` | `CONFIRMED` | `DEP-001` |

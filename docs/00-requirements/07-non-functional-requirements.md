@@ -274,7 +274,7 @@ Quality attributes are defined independently of specific vendor implementations,
 * **Priority:** `P0`
 * **Dependencies:** None.
 * **Acceptance / Verification Method:** Verify order history and invoices display currency as ₹ and timestamps in IST.
-* **Approval Status:** `CONFIRMED`
+* **Approval Status:** `PROPOSED`
 
 ---
 
@@ -299,4 +299,4 @@ Quality attributes are defined independently of specific vendor implementations,
 | **NFR-REL-001** | CI/CD Quality | Automated Quality Gates & Deployments | 100% test pass; Zero-downtime rolling | `CONFIRMED` |
 | **NFR-BCM-001** | Disaster Recovery | Recovery Point & Recovery Time Obj. | $\text{RPO} \le 5\text{ mins}$; $\text{RTO} \le 2\text{ hours}$ | `PROPOSED` |
 | **NFR-ACC-001** | Usability | Digital Accessibility Standard | WCAG 2.1 Level AA Compliance | `CONFIRMED` |
-| **NFR-LOC-001** | Localization | Domestic Currency & Timezone | INR (₹) formatting; IST (UTC+05:30) | `CONFIRMED` |
+| **NFR-LOC-001** | Localization | Domestic Currency & Timezone | INR (₹) formatting; IST (UTC+05:30) | `PROPOSED` |

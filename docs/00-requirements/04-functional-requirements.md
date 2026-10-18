@@ -130,7 +130,7 @@ Every functional requirement specifies:
   * **Given** an issued OTP, **When** the customer submits the correct code within 5 minutes, **Then** the account status transitions to `ACTIVE`.
   * **Given** an entered OTP, **When** the code is submitted after 5 minutes, **Then** the system rejects activation with an "OTP Expired" error.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-010](./08-assumptions-dependencies-open-questions.md#oq-010).
 * **Related Workflow IDs:** `WF-001`.
 
@@ -592,7 +592,7 @@ Every functional requirement specifies:
   * **Given** an intra-state order (Tamil Nadu to Tamil Nadu) with an 18% GST electronics item priced at ₹11,800 gross, **When** tax calculation runs, **Then** Base Value is ₹10,000, CGST is ₹900 (9%), SGST is ₹900 (9%), and IGST is ₹0.
   * **Given** an inter-state order (Tamil Nadu to Karnataka) with the same item, **When** tax calculation runs, **Then** Base Value is ₹10,000, IGST is ₹1,800 (18%), and CGST/SGST are ₹0.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-002](./08-assumptions-dependencies-open-questions.md#oq-002), [OQ-009](./08-assumptions-dependencies-open-questions.md#oq-009).
 * **Related Workflow IDs:** `WF-006`, `WF-007`.
 
@@ -783,7 +783,7 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** a guest cart with SKU A (qty: 1), and a user cart with SKU B (qty: 1), **When** user logs in, **Then** the resulting cart contains both SKU A (qty: 1) and SKU B (qty: 1).
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-011](./08-assumptions-dependencies-open-questions.md#oq-011).
 * **Related Workflow IDs:** `WF-005`.
 
@@ -875,7 +875,7 @@ Every functional requirement specifies:
   * **Given** a checkout submission, **When** the identical request payload and Idempotency Key is received twice within 60 seconds, **Then** only one order is created and only one inventory reservation is made.
   * **Given** a client payload claiming a total of ₹5,000, **When** server calculation resolves total to ₹6,200, **Then** the client total is ignored and ₹6,200 is used for payment creation.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-006](./08-assumptions-dependencies-open-questions.md#oq-006).
 * **Related Workflow IDs:** `WF-006`.
 
@@ -943,7 +943,7 @@ Every functional requirement specifies:
   * **Given** an invalid HMAC webhook signature, **When** processed by the webhook endpoint, **Then** the system rejects with HTTP 401 and zero order state mutations occur.
   * **Given** a payment captured after the 15-minute hold where the last unit was purchased by another buyer, **When** webhook arrives, **Then** an automated 100% refund is initiated and status transitions to `PAYMENT_RECEIVED_OUT_OF_STOCK`.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-003](./08-assumptions-dependencies-open-questions.md#oq-003), [OQ-004](./08-assumptions-dependencies-open-questions.md#oq-004).
 * **Related Workflow IDs:** `WF-007`.
 
@@ -1143,7 +1143,7 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** a packed order, **When** consignment booking executes, **Then** an AWB number is generated and linked to the order within 3 seconds.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-005](./08-assumptions-dependencies-open-questions.md#oq-005).
 * **Related Workflow IDs:** `WF-008`.
 
@@ -1374,7 +1374,7 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** a WhatsApp dispatch that fails or times out after 60 seconds, **When** failure is detected, **Then** the system automatically dispatches the identical notification via SMS within 5 seconds.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-015](./08-assumptions-dependencies-open-questions.md#oq-015).
 * **Related Workflow IDs:** `WF-012`.
 
@@ -1480,7 +1480,7 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** an export request for Monthly Sales, **When** generated, **Then** Gross Sales minus Discounts minus Refunds equals Net Revenue with 100% mathematical precision.
 * **Priority:** `P1`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-018](./08-assumptions-dependencies-open-questions.md#oq-018).
 * **Related Workflow IDs:** `WF-014`.
 
@@ -1570,7 +1570,7 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** an uploaded spreadsheet where row 10 has Selling Price > MRP, **When** bulk import validation runs, **Then** row 10 is flagged with an explicit pricing rule error.
 * **Priority:** `P1`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED`
 * **Open Questions:** See [OQ-019](./08-assumptions-dependencies-open-questions.md#oq-019).
 * **Related Workflow IDs:** `WF-002`.
 
