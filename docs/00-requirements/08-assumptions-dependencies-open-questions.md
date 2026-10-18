@@ -27,16 +27,16 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 
 | Assumption ID | Baseline Assumption | Commercial Reason | Impact if Assumption is Incorrect | Validation Method | Decision Owner | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **ASM-001** | Primary operational country is India. | Domestic retail electronics market context and legal framework. | Requires re-architecting cross-border customs, multi-tax calculations, and international shipping. | Formal confirmation by Enterprise Business Owner. | Business Owner | `PROPOSED` |
-| **ASM-002** | Transaction currency is Indian Rupee (INR - ₹) exclusively for Phase 1. | Eliminates currency conversion risk and multi-currency accounting complexity at launch. | Requires multi-currency pricing, exchange rate feeds, and foreign exchange bank reconciliation. | Commercial policy sign-off. | Business Owner / Finance | `PROPOSED` |
-| **ASM-003** | Retail display prices are tax-inclusive (MRP / Gross Selling Price). | Compliance with Indian Consumer Protection (E-Commerce) Rules and consumer price transparency. | Requires re-engineering cart calculations and checkout UI if taxes are added on top at checkout. | Legal / Tax Advisor review. | Finance Lead | `PROPOSED` |
-| **ASM-004** | The enterprise operates from a single primary central fulfillment warehouse at launch. | Simplifies initial inventory allocation and warehouse logistics for initial launch. | Multi-warehouse order routing, split shipments, and regional stock balancing must be engineered earlier. | Warehouse operations audit. | Operations Lead | `PROPOSED` |
-| **ASM-005** | Pre-orders and backorders are out of scope for the baseline release. | Prevents operational liability for out-of-stock electronics with unpredictable supply chain dates. | Requires engineering backorder queues, delayed capture, and customer cancellation waivers. | Commercial merchandising policy review. | Business Owner | `CONFIRMED` |
-| **ASM-006** | Digital customer identity is primarily tied to mobile phone numbers. | Reflects Indian consumer shopping patterns where mobile OTP is the primary authentication rail. | If email-first is mandated, registration funnels and communications channels must be redesigned. | Customer UX persona review. | Product Lead | `PROPOSED` |
-| **ASM-007** | A standard 7-calendar-day return window applies to consumer electronics. | Industry-standard duration balancing customer satisfaction with prevention of device wear and fraud. | Financial return rate projections and reverse logistics contracts will require renegotiation. | Business Owner policy sign-off. | Business Owner | `CONFIRMED` |
-| **ASM-008** | External payment gateway will handle all cardholder credential entry (Hosted / Iframe). | Completely isolates the Chellaa platform from PCI-DSS Level 1 audit liability and card security scope. | Enterprise must undergo full PCI-DSS Level 1 certification, dramatically increasing security costs. | Security & Gateway contract review. | Security Lead | `CONFIRMED` |
-| **ASM-009** | Third-party courier partners will provide REST APIs or Webhooks for automated AWB and tracking. | Eliminates manual waybill typing and manual customer order tracking phone inquiries. | Warehouse operators will be forced to manually enter tracking numbers into spreadsheet batches. | Logistics provider RFP evaluation. | Logistics Lead | `CONFIRMED` |
-| **ASM-010** | Cash on Delivery (COD) will be restricted to orders under ₹10,000 and verified PIN codes. | High-value electronics (smartphones, laptops) carry extreme RTO theft and cash handling risk under COD. | Uncapped COD risks massive return-to-origin freight costs and cash collection shrinkage. | Finance & Risk assessment. | Finance Lead | `PROPOSED` |
+| <a id="asm-001"></a>**ASM-001** | Primary operational country is India. | Domestic retail electronics market context and legal framework. | Requires re-architecting cross-border customs, multi-tax calculations, and international shipping. | Formal confirmation by Enterprise Business Owner. | Business Owner | `PROPOSED` |
+| <a id="asm-002"></a>**ASM-002** | Transaction currency is Indian Rupee (INR - ₹) exclusively for Phase 1. | Eliminates currency conversion risk and multi-currency accounting complexity at launch. | Requires multi-currency pricing, exchange rate feeds, and foreign exchange bank reconciliation. | Commercial policy sign-off. | Business Owner / Finance | `PROPOSED` |
+| <a id="asm-003"></a>**ASM-003** | Retail display prices are tax-inclusive (MRP / Gross Selling Price). | Compliance with Indian Consumer Protection (E-Commerce) Rules and consumer price transparency. | Requires re-engineering cart calculations and checkout UI if taxes are added on top at checkout. | Legal / Tax Advisor review. | Finance Lead | `PROPOSED` |
+| <a id="asm-004"></a>**ASM-004** | The enterprise operates from a single primary central fulfillment warehouse at launch. | Simplifies initial inventory allocation and warehouse logistics for initial launch. | Multi-warehouse order routing, split shipments, and regional stock balancing must be engineered earlier. | Warehouse operations audit. | Operations Lead | `PROPOSED` |
+| <a id="asm-005"></a>**ASM-005** | Pre-orders and backorders are out of scope for the baseline release. | Prevents operational liability for out-of-stock electronics with unpredictable supply chain dates. | Requires engineering backorder queues, delayed capture, and customer cancellation waivers. | Commercial merchandising policy review. | Business Owner | `CONFIRMED` |
+| <a id="asm-006"></a>**ASM-006** | Digital customer identity is primarily tied to mobile phone numbers. | Reflects Indian consumer shopping patterns where mobile OTP is the primary authentication rail. | If email-first is mandated, registration funnels and communications channels must be redesigned. | Customer UX persona review. | Product Lead | `PROPOSED` |
+| <a id="asm-007"></a>**ASM-007** | A standard 7-calendar-day return window applies to consumer electronics. | Industry-standard duration balancing customer satisfaction with prevention of device wear and fraud. | Financial return rate projections and reverse logistics contracts will require renegotiation. | Business Owner policy sign-off (subject to [OQ-008](#oq-008)). | Business Owner | `PROPOSED` |
+| <a id="asm-008"></a>**ASM-008** | External payment gateway will handle all cardholder credential entry (Hosted / Iframe). | Completely isolates the Chellaa platform from PCI-DSS Level 1 audit liability and card security scope. | Enterprise must undergo full PCI-DSS Level 1 certification, dramatically increasing security costs. | Security & Gateway contract review. | Security Lead | `CONFIRMED` |
+| <a id="asm-009"></a>**ASM-009** | Third-party courier partners will provide REST APIs or Webhooks for automated AWB and tracking. | Eliminates manual waybill typing and manual customer order tracking phone inquiries. | Warehouse operators will be forced to manually enter tracking numbers into spreadsheet batches. | Logistics provider RFP evaluation. | Logistics Lead | `CONFIRMED` |
+| <a id="asm-010"></a>**ASM-010** | Cash on Delivery (COD) will be restricted to orders under ₹10,000 and verified PIN codes. | High-value electronics (smartphones, laptops) carry extreme RTO theft and cash handling risk under COD. | Uncapped COD risks massive return-to-origin freight costs and cash collection shrinkage. | Finance & Risk assessment. | Finance Lead | `PROPOSED` |
 
 ---
 
@@ -44,12 +44,12 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 
 | Dependency ID | Dependency Name | Type | Description | Affected Requirements | Potential Commercial Risk | Mitigation / Resolution Strategy | Owner | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **DEP-001** | Payment Gateway Merchant Agreement | Commercial Integration | Formal merchant account contract with certified payment gateway (e.g., Razorpay, Cashfree, PayU). | `FEAT-PAY-001`, `FR-PAY-001` | Inability to accept online payments or execute automated refunds at launch. | Initiate provider RFP immediately; evaluate sandbox APIs in parallel. | Finance Lead | `OPEN` |
-| **DEP-002** | Courier Logistics Partner Master Services Agreement | Operational Integration | Commercial agreement with national courier aggregator or carriers (e.g., Shiprocket, Delhivery, Blue Dart). | `FEAT-SHP-001`, `FR-SHP-001` | Parcels cannot be automatically booked or tracked via API; manual shipping delays. | Shortlist top 2 logistics partners; finalize SLA on API uptime and COD remittance. | Operations Lead | `OPEN` |
-| **DEP-003** | Telecom SMS DLT Registration & WhatsApp Business API | Regulatory Integration | Distributed Ledger Technology (DLT) template approval for transactional SMS and Meta WhatsApp Business API account. | `FEAT-NTF-001`, `FR-NTF-001` | Transactional OTPs and shipping alerts blocked by telecom operators as spam. | Register enterprise entity and SMS templates on commercial telecom DLT portal immediately. | Operations Lead | `OPEN` |
-| **DEP-004** | Enterprise GSTIN & Invoicing Numbering Scheme | Legal & Tax | Registered corporate Goods and Services Tax Identification Number (GSTIN) and official tax invoice format. | `FEAT-FIN-001`, `FR-FIN-001` | Generated tax invoices non-compliant with statutory tax audits; regulatory penalties. | Obtain legal corporate tax opinion on HSN rate codes and sequential invoice numbering syntax. | Finance Lead | `OPEN` |
-| **DEP-005** | Master Electronics Catalog & Brand Specifications | Business Merchandising | High-resolution photography, accurate technical specification sheets, and manufacturer warranty terms. | `FEAT-CAT-001`, `FR-CAT-001` | Inaccurate product descriptions leading to customer disputes and elevated return rates. | Establish structured ingestion spreadsheet templates for supplier distributors. | Merchandising Lead | `OPEN` |
-| **DEP-006** | Physical Warehouse Infrastructure & Barcode Hardware | Physical Operations | Physical fulfillment center equipped with labeled bin locations, packaging benches, and handheld barcode scanners. | `FEAT-INV-001`, `FR-INV-001` | Software inventory tracking disconnected from physical reality; picking errors. | Define standardized SKU barcode symbologies (Code 128 / EAN-13) before inwarding stock. | Warehouse Lead | `OPEN` |
+| <a id="dep-001"></a>**DEP-001** | Payment Gateway Merchant Agreement | Commercial Integration | Formal merchant account contract with certified payment gateway (e.g., Razorpay, Cashfree, PayU). | `FEAT-PAY-001`, `FR-PAY-001` | Inability to accept online payments or execute automated refunds at launch. | Initiate provider RFP immediately; evaluate sandbox APIs in parallel. | Finance Lead | `OPEN` |
+| <a id="dep-002"></a>**DEP-002** | Courier Logistics Partner Master Services Agreement | Operational Integration | Commercial agreement with national courier aggregator or carriers (e.g., Shiprocket, Delhivery, Blue Dart). | `FEAT-SHP-001`, `FR-SHP-001` | Parcels cannot be automatically booked or tracked via API; manual shipping delays. | Shortlist top 2 logistics partners; finalize SLA on API uptime and COD remittance. | Operations Lead | `OPEN` |
+| <a id="dep-003"></a>**DEP-003** | Telecom SMS DLT Registration & WhatsApp Business API | Regulatory Integration | Distributed Ledger Technology (DLT) template approval for transactional SMS and Meta WhatsApp Business API account. | `FEAT-NTF-001`, `FR-NTF-001` | Transactional OTPs and shipping alerts blocked by telecom operators as spam. | Register enterprise entity and SMS templates on commercial telecom DLT portal immediately. | Operations Lead | `OPEN` |
+| <a id="dep-004"></a>**DEP-004** | Enterprise GSTIN & Invoicing Numbering Scheme | Legal & Tax | Registered corporate Goods and Services Tax Identification Number (GSTIN) and official tax invoice format. | `FEAT-FIN-001`, `FR-FIN-001` | Generated tax invoices non-compliant with statutory tax audits; regulatory penalties. | Obtain legal corporate tax opinion on HSN rate codes and sequential invoice numbering syntax. | Finance Lead | `OPEN` |
+| <a id="dep-005"></a>**DEP-005** | Master Electronics Catalog & Brand Specifications | Business Merchandising | High-resolution photography, accurate technical specification sheets, and manufacturer warranty terms. | `FEAT-CAT-001`, `FR-CAT-001` | Inaccurate product descriptions leading to customer disputes and elevated return rates. | Establish structured ingestion spreadsheet templates for supplier distributors. | Merchandising Lead | `OPEN` |
+| <a id="dep-006"></a>**DEP-006** | Physical Warehouse Infrastructure & Barcode Hardware | Physical Operations | Physical fulfillment center equipped with labeled bin locations, packaging benches, and handheld barcode scanners. | `FEAT-INV-001`, `FR-INV-001` | Software inventory tracking disconnected from physical reality; picking errors. | Define standardized SKU barcode symbologies (Code 128 / EAN-13) before inwarding stock. | Warehouse Lead | `OPEN` |
 
 ---
 
@@ -59,6 +59,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-001"></a>
 ### OQ-001: Operating Country & Domestic vs Cross-Border Scope
 * **Question:** Which country or countries will the e-commerce business operate in at launch?
 * **Why the Decision Matters:** Defines legal jurisdiction, statutory tax calculation engines (GST vs VAT vs US Sales Tax), currency, courier partner integrations, and consumer protection regulations.
@@ -76,6 +77,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-002"></a>
 ### OQ-002: Currencies and Language Support
 * **Question:** Which transaction currencies and languages must be supported on customer and admin interfaces?
 * **Why the Decision Matters:** Multi-currency impacts database schemas, payment gateway selection, and price change volatility. Multi-language impacts content management, product descriptions, and localized notification templates.
@@ -93,6 +95,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-003"></a>
 ### OQ-003: Required Customer Payment Methods
 * **Question:** Which customer payment methods are mandatory for the production launch?
 * **Why the Decision Matters:** Dictates payment gateway configuration, checkout UI options, failure handling, and reconciliation procedures.
@@ -110,6 +113,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-004"></a>
 ### OQ-004: Payment Gateway Partner Shortlist
 * **Question:** Which external payment gateway providers will be evaluated for primary and secondary integration?
 * **Why the Decision Matters:** Determines available SDKs, transaction fee take-rates, webhook reliability, and automated refund API capabilities.
@@ -126,6 +130,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-005"></a>
 ### OQ-005: Courier and Shipping Logistics Partners
 * **Question:** Which courier or shipping logistics providers will be integrated for order dispatch and live tracking?
 * **Why the Decision Matters:** Influences delivery PIN-code coverage, shipping label generation, tracking webhooks, and reverse pickup reliability.
@@ -143,6 +148,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-006"></a>
 ### OQ-006: Cash on Delivery (COD) Policy
 * **Question:** Will Cash on Delivery (COD) be offered to customers at launch, and if so, under what commercial safeguards?
 * **Why the Decision Matters:** COD in consumer electronics experiences high Return-to-Origin (RTO) rates ($> 20\%$), carrier cash handling fees, courier remittance delays, and delivery boy theft risks.
@@ -160,6 +166,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-007"></a>
 ### OQ-007: Warehouse Topology at Launch
 * **Question:** Will the enterprise operate from a single central warehouse or multiple regional warehouses at launch?
 * **Why the Decision Matters:** Multiple warehouses require stock allocation algorithms, regional inventory partitioning, split shipments, and complex tax invoicing across multiple state GSTINs.
@@ -176,6 +183,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-008"></a>
 ### OQ-008: Customer Returns and Inspection Policy
 * **Question:** What is the precise return and replacement policy for consumer electronics (policy window, restocking fee, return reasons)?
 * **Why the Decision Matters:** Electronics suffer high depreciation upon box seal opening. Generous return policies attract return fraud; strict policies deter genuine buyers.
@@ -193,6 +201,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-009"></a>
 ### OQ-009: Tax Structure and Retail Pricing Conventions
 * **Question:** What tax regime governs the enterprise, and are storefront prices tax-inclusive or tax-exclusive?
 * **Why the Decision Matters:** Determines tax calculation formula, invoice layout, and price presentation in catalogs and carts.
@@ -209,6 +218,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-010"></a>
 ### OQ-010: Customer Account Verification Channels
 * **Question:** Is customer registration validated via SMS OTP, Email verification link, or both?
 * **Why the Decision Matters:** Directly impacts onboarding friction, drop-off rates, and telecom SMS gateway operational costs.
@@ -226,6 +236,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-011"></a>
 ### OQ-011: Guest Checkout Support
 * **Question:** Should the platform allow guest shoppers to complete purchases without creating an account?
 * **Why the Decision Matters:** Guest checkout reduces checkout abandonment, but complicates order tracking, repeat purchases, return management, and customer lifetime value (LTV) analytics.
@@ -243,6 +254,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-012"></a>
 ### OQ-012: Customer Reviews and Ratings Scope
 * **Question:** Are customer ratings and text reviews required in Phase 1, and what moderation rules apply?
 * **Why the Decision Matters:** Reviews require verified purchase checks, profanity filters, image upload moderation, and review aggregation calculation jobs.
@@ -260,6 +272,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-013"></a>
 ### OQ-013: Loyalty Points, Store Credit & Referral Programs
 * **Question:** Are loyalty rewards, wallet store credits, or customer referral schemes in scope for initial launch?
 * **Why the Decision Matters:** Introduces complex financial ledger tracking, point expiration rules, tax accounting adjustments, and referral fraud screening.
@@ -277,6 +290,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-014"></a>
 ### OQ-014: Pre-orders and Backorders Policy
 * **Question:** Can a customer place an order for out-of-stock or unreleased products (pre-orders)?
 * **Why the Decision Matters:** Pre-orders require delayed payment capture, inventory allocation queues, supplier SLA tracking, and cancellation guarantees.
@@ -293,6 +307,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-015"></a>
 ### OQ-015: Mandatory Notification Channels
 * **Question:** Which communication channels are mandatory for transactional alerts versus promotional campaigns?
 * **Why the Decision Matters:** Dictates integration providers, template approvals, compliance consent tracking, and ongoing messaging budget.
@@ -310,6 +325,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-016"></a>
 ### OQ-016: Expected Peak Traffic and Order Volumes
 * **Question:** What are the projected baseline and peak promotional transaction volumes (orders per minute, daily active users)?
 * **Why the Decision Matters:** Directly drives database sizing, caching tier design, Kafka partition counts, and Kubernetes cluster resource allocation.
@@ -327,6 +343,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-017"></a>
 ### OQ-017: Production Availability and Recovery Targets (RTO / RPO)
 * **Question:** What are the contractual or business owner targets for platform uptime, Recovery Point Objective (RPO), and Recovery Time Objective (RTO)?
 * **Why the Decision Matters:** Higher availability (e.g., 99.99% vs 99.9%) and near-zero RTO require active-active multi-region cloud deployment, doubling infrastructure budgets.
@@ -343,6 +360,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-018"></a>
 ### OQ-018: Essential Executive Business Reports
 * **Question:** Which financial, inventory, and customer reports must be accessible to the Business Owner at launch?
 * **Why the Decision Matters:** Influences reporting read-model design, data warehouse ETL pipelines, and export formats.
@@ -359,6 +377,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-019"></a>
 ### OQ-019: Legacy Historical Data Migration Scope
 * **Question:** Does historical customer, product, or order data exist in legacy spreadsheets or prior systems that must be migrated into the new platform?
 * **Why the Decision Matters:** Legacy data migration requires writing ETL mapping scripts, cleansing duplicate records, and reconciling historical financial balances.
@@ -375,6 +394,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-020"></a>
 ### OQ-020: Data Retention and Privacy Governance (DPDPA)
 * **Question:** What data retention policies and user privacy rights must be implemented to comply with national privacy laws?
 * **Why the Decision Matters:** Balancing customer "Right to be Forgotten" with statutory requirements to retain financial tax records for 8 years.
@@ -391,6 +411,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-021"></a>
 ### OQ-021: Software Release and Deployment Approval Governance
 * **Question:** What governance process is required before deploying software releases or configuration updates to production?
 * **Why the Decision Matters:** Determines deployment gating, manual approval sign-offs, and staging verification protocols.
@@ -407,6 +428,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 ---
 
+<a id="oq-022"></a>
 ### OQ-022: Operational Monitoring and Incident Escalation Protocols
 * **Question:** What operational monitoring thresholds and incident escalation procedures should be established for business-critical failures?
 * **Why the Decision Matters:** Governs SRE on-call rotations, automated alert routing, and incident response runbooks.

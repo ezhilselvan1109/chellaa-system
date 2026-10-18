@@ -8,7 +8,7 @@
 | **Project Name** | Chellaa E-Commerce Platform |
 | **Target Architecture** | Backend-First Microservices Ecosystem (Phase 1: Requirements Baseline) |
 | **Business Model** | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C) |
-| **Version** | 1.0.0-DRAFT |
+| **Version** | 1.1.0-REMEDIATED |
 | **Lifecycle Status** | `PENDING_APPROVAL` |
 | **Author** | Senior Business Analyst & E-Commerce Requirements Engineering Team |
 
@@ -18,11 +18,19 @@
 
 All functional requirements in this document strictly adhere to the formalized business engineering template. Each requirement describes *what* the platform must accomplish from a business perspective, avoiding premature technical solution prescriptions (such as database locking mechanisms, REST endpoints, or message broker topics).
 
+Every functional requirement specifies:
+* **Requirement Identifiers & Metadata:** Stable IDs (`FR-xxx-xxx`), linked Feature IDs (`FEAT-xxx`), Business Objectives (`OBJ-xxx`), and Priority (`P0` to `P3`).
+* **Actors & Lifecycle Triggers:** Primary actors, operational preconditions, and triggering events.
+* **Scenarios:** Main success scenarios, alternative flows, and comprehensive exception/failure paths.
+* **Governing Rules & Information:** Business rules enforced, required inputs, and expected business outcomes.
+* **Acceptance Criteria:** Formal Given/When/Then criteria establishing definitive verification boundaries.
+* **Uncertainty & Approval Tracking:** Explicit links to open questions (`OQ-xxx`) and operational workflows (`WF-xxx`).
+
 ---
 
 ## 2. Business Administration & Access Control
 
-### FR-ADM-001: Administrative User Account & Role Assignment
+### <a id="fr-adm-001"></a>FR-ADM-001: Administrative User Account & Role Assignment
 * **Requirement ID:** `FR-ADM-001`
 * **Requirement Title:** Manage Internal Operator Accounts and Role Permissions
 * **Feature ID:** `FEAT-ADM-001`
@@ -56,11 +64,42 @@ All functional requirements in this document strictly adhere to the formalized b
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-016`.
 
+### <a id="fr-adm-002"></a>FR-ADM-002: Administrative Session Invalidation & Credential Rotation
+* **Requirement ID:** `FR-ADM-002`
+* **Requirement Title:** Immediate Administrative Session Invalidation & Mandatory Credential Expiry
+* **Feature ID:** `FEAT-ADM-001`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must immediately revoke all active administrative sessions upon account role modification, status suspension, or password rotation, and enforce a 90-day mandatory password expiry for internal staff accounts.
+* **Description:** Prevents stale session hijacking and unauthorized privilege persistence following operator departure or role change.
+* **Primary Actor:** `ACT-002` (System Administrator), System (Automated)
+* **Preconditions:** Administrative operator has active session or expired credentials.
+* **Trigger:** Administrator modifies staff permissions, deactivates account, or credential reaches 90-day age limit.
+* **Main Success Scenario:**
+  1. Administrator updates role permissions or deactivates an operator account.
+  2. System terminates all active refresh tokens and session identifiers for that user across all devices.
+  3. Subsequent API calls using existing session tokens receive an immediate HTTP 401 Unauthorized response.
+  4. System records the session termination event in the immutable audit log.
+* **Alternative Scenarios:**
+  * 90-Day Credential Expiry: System flags account as `PASSWORD_EXPIRED` during login and forces customer/operator through password rotation workflow before granting access.
+* **Exception and Failure Scenarios:**
+  * Revocation dispatch failure: If distributed token invalidation fails, platform logs a critical security alert and blocks user at the API gateway boundary.
+* **Business Rules:** `BR-ADM-002`, `BR-SEC-002`.
+* **Inputs and Business Information Required:** Operator ID, triggering action (role change, suspension, timeout), timestamp.
+* **Expected Business Outcomes:** Immediate containment of compromised or revoked administrative credentials.
+* **Dependencies:** `FEAT-ADM-001`, `FEAT-AUD-001`.
+* **Acceptance Criteria:**
+  * **Given** an operator with an active administrative session, **When** their account status is changed to `DEACTIVATED`, **Then** within 1 second all subsequent API requests from that session are rejected.
+  * **Given** a staff account whose password was last rotated 91 days ago, **When** the operator attempts to authenticate, **Then** the system denies login and redirects to the mandatory password reset flow.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-016`.
+
 ---
 
 ## 3. Customer Account & Profile Management
 
-### FR-CUST-001: Customer Registration & Phone Verification
+### <a id="fr-cust-001"></a>FR-CUST-001: Customer Registration & Phone Verification
 * **Requirement ID:** `FR-CUST-001`
 * **Requirement Title:** Customer Registration with Multi-Factor Verification
 * **Feature ID:** `FEAT-CUST-001`
@@ -92,10 +131,10 @@ All functional requirements in this document strictly adhere to the formalized b
   * **Given** an entered OTP, **When** the code is submitted after 5 minutes, **Then** the system rejects activation with an "OTP Expired" error.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
-* **Open Questions:** See [OQ-010](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-010).
+* **Open Questions:** See [OQ-010](./08-assumptions-dependencies-open-questions.md#oq-010).
 * **Related Workflow IDs:** `WF-001`.
 
-### FR-CUST-002: Customer Address Book Management
+### <a id="fr-cust-002"></a>FR-CUST-002: Customer Address Book Management
 * **Requirement ID:** `FR-CUST-002`
 * **Requirement Title:** Multiple Delivery Address Book with Serviceability Validation
 * **Feature ID:** `FEAT-CUST-002`
@@ -126,67 +165,243 @@ All functional requirements in this document strictly adhere to the formalized b
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-001`, `WF-006`.
 
+### <a id="fr-cust-003"></a>FR-CUST-003: Customer Profile & Communication Preference Management
+* **Requirement ID:** `FR-CUST-003`
+* **Requirement Title:** Customer Profile Information and Communication Channels Governance
+* **Feature ID:** `FEAT-CUST-001`
+* **Business Objective:** `OBJ-001`, `OBJ-006`
+* **Requirement Statement:** The system must allow registered customers to update their personal profile information (name, secondary email, alternate phone) and explicitly configure their communication channel preferences (SMS, Email, WhatsApp) for marketing and operational notifications.
+* **Description:** Enables self-service profile maintenance and ensures compliance with consumer consent regulations regarding notification channels.
+* **Primary Actor:** `ACT-009` (Customer)
+* **Preconditions:** Customer is authenticated.
+* **Trigger:** Customer navigates to profile settings and submits changes.
+* **Main Success Scenario:**
+  1. Customer edits profile fields or toggles notification channel preferences.
+  2. System validates contact information formats and ensures updated email/phone is not in use by another active account.
+  3. System records the consent timestamp and persists the updated profile.
+  4. System returns success confirmation to the customer.
+* **Alternative Scenarios:**
+  * Customer updates primary mobile phone: System triggers OTP verification to the new number before applying the change.
+* **Exception and Failure Scenarios:**
+  * Duplicate email/phone: System denies update and notifies customer that the contact is already registered.
+* **Business Rules:** `BR-CUST-001`, `BR-NTF-001`.
+* **Inputs and Business Information Required:** Full name, email address, mobile number, notification preference flags (SMS, WhatsApp, Email).
+* **Expected Business Outcomes:** Accurate customer master data and audited consent records.
+* **Dependencies:** `FEAT-NTF-001`.
+* **Acceptance Criteria:**
+  * **Given** an authenticated customer, **When** they disable WhatsApp promotional alerts in their profile, **Then** the notification engine suppresses promotional dispatches to that channel while maintaining transactional order alerts.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-001`.
+
+### <a id="fr-cust-004"></a>FR-CUST-004: Customer Privacy, Data Export & Account Anonymization
+* **Requirement ID:** `FR-CUST-004`
+* **Requirement Title:** Customer Self-Service Data Export and Right-to-be-Forgotten Anonymization
+* **Feature ID:** `FEAT-CUST-003`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must allow registered customers to download a complete machine-readable archive of their personal data and request account anonymization, while retaining necessary tax invoice records for statutory audit compliance.
+* **Description:** Provides self-service privacy tools supporting compliance with data protection laws (DPDPA 2023) and customer data sovereignty.
+* **Primary Actor:** `ACT-009` (Customer)
+* **Preconditions:** Customer is authenticated and has no active orders in transit or pending returns.
+* **Trigger:** Customer submits a data export or account erasure request from the privacy portal.
+* **Main Success Scenario:**
+  1. Customer requests data export: System compiles profile, addresses, orders, and reviews into a secure JSON/ZIP archive and delivers a time-limited download link.
+  2. Customer requests account erasure: System verifies zero active transactions, prompts for re-authentication, and marks account status as `ANONYMIZED`.
+  3. System scrubs PII (name, phone, email, saved addresses) while preserving historical financial ledger entries with an anonymized customer reference.
+* **Alternative Scenarios:**
+  * Customer has active orders: System rejects erasure request and informs customer that open orders must reach terminal status (`DELIVERED` or `CANCELLED`) before erasure.
+* **Exception and Failure Scenarios:**
+  * Re-authentication failure: System blocks privacy actions if identity cannot be cryptographically re-verified.
+* **Business Rules:** `BR-DAT-001`, `BR-SEC-002`.
+* **Inputs and Business Information Required:** Customer ID, password re-entry / OTP verification, confirmation reason code.
+* **Expected Business Outcomes:** Full statutory compliance with personal data privacy mandates without violating financial record retention laws.
+* **Dependencies:** `FEAT-FIN-002`, `FEAT-SEC-001`.
+* **Acceptance Criteria:**
+  * **Given** a customer with no active orders, **When** they confirm account anonymization, **Then** all PII fields in the customer record are scrambled within 24 hours, while statutory tax invoices retain the legally required audit snapshot.
+* **Priority:** `P1`
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** See [OQ-020](./08-assumptions-dependencies-open-questions.md#oq-020).
+* **Related Workflow IDs:** `WF-001`.
+
 ---
 
-## 4. Product Catalog & Electronics Merchandising
+## 4. Product Catalog, Categories & Electronics Merchandising
 
-### FR-CAT-001: Multi-Variant Electronics Product Creation & Governance
+### <a id="fr-cat-001"></a>FR-CAT-001: Multi-Variant Electronics Product Creation & Governance
 * **Requirement ID:** `FR-CAT-001`
-* **Requirement Title:** Manage Multi-Variant Electronics Products
+* **Requirement Title:** Manage Multi-Variant Electronics Catalog Listings and SKU Attributes
 * **Feature ID:** `FEAT-CAT-001`
 * **Business Objective:** `OBJ-002`
-* **Requirement Statement:** The system must allow catalog managers to define parent consumer electronics products and configure sellable variants across multi-dimensional axes (storage, color, RAM, processor), with each variant maintaining a distinct SKU, barcode, price, and status.
-* **Description:** Core merchandising engine for consumer electronics. Allows creation of base products (e.g., "Galaxy S24 Ultra") and distinct child variants (e.g., "512GB Titanium Gray").
+* **Requirement Statement:** The system must allow Catalog Managers to create, update, and manage electronics products with multi-dimensional variants (e.g., storage capacity, RAM, colorway), assigning each variant a globally unique Stock Keeping Unit (SKU) and manufacturer barcode.
+* **Description:** Models complex electronics products with distinct physical variants, ensuring accurate pricing, inventory, and specification binding.
 * **Primary Actor:** `ACT-003` (Catalog Manager)
-* **Preconditions:** Relevant Brand and Category exist and are active.
+* **Preconditions:** Brand, category, and tax codes are pre-configured.
+* **Trigger:** Catalog Manager creates or updates a product listing in the admin portal.
 * **Main Success Scenario:**
-  1. Catalog manager enters product title, brand, primary category, model number, description, and warranty terms.
-  2. Manager defines variant dimensions (e.g., Color = [Phantom Black, Cream]; Storage = [256GB, 512GB]).
-  3. System generates variant matrix and prompts manager to assign unique SKU, barcode (EAN/UPC), Selling Price, and MRP for each variant.
-  4. Manager saves product in `DRAFT` status, reviews preview, and submits for publication.
-  5. System transitions product and variants to `PUBLISHED` status, publishing them to search and discovery indices.
+  1. Catalog Manager creates parent product (title, brand, category, description).
+  2. Manager defines variant dimensions (e.g., Color: Titanium Gray, Storage: 256GB).
+  3. System generates distinct variant records requiring unique SKU, Barcode (EAN/UPC), MRP, Selling Price, and dimensions.
+  4. System validates that Selling Price does not exceed MRP.
+  5. Manager publishes product; system indexes listing for search and browsing.
 * **Alternative Scenarios:**
-  * Single product without variants (e.g., USB Cable): System creates a simple product with one default sellable SKU.
+  * Deactivating a variant: System marks variant inactive, preventing new checkout reservations while preserving historical order linkages.
 * **Exception and Failure Scenarios:**
-  * Duplicate SKU or Barcode: System rejects submission and flags the exact duplicate SKU conflicting with existing inventory.
-  * Selling Price exceeds MRP: System rejects submission with a pricing validation error.
+  * Duplicate SKU or Barcode: System rejects submission with a conflict error.
+  * Selling Price > MRP: System strictly blocks saving with a statutory pricing error.
 * **Business Rules:** `BR-CAT-001`, `BR-CAT-002`, `BR-PRC-001`.
-* **Inputs and Business Information Required:** Product name, brand ID, category ID, description, variant attribute key-values, SKU codes, barcodes, MRP, Selling Price, dimensions, weight, warranty details.
-* **Expected Business Outcomes:** 100% SKU uniqueness, rich product discovery, structured technical data.
-* **Dependencies:** `FEAT-BRD-001`, `FEAT-CTG-001`, `FEAT-PRC-001`.
+* **Inputs and Business Information Required:** Title, brand ID, category ID, variant attributes (color, storage), unique SKU, EAN barcode, MRP, Selling Price, weight, package dimensions.
+* **Expected Business Outcomes:** 100% SKU uniqueness and structured electronics variant presentation.
+* **Dependencies:** `FEAT-BRD-001`, `FEAT-CTG-001`, `FEAT-FIN-001`.
 * **Acceptance Criteria:**
-  * **Given** valid parent product metadata, **When** a catalog manager configures 2 color options and 2 storage options, **Then** exactly 4 distinct child variant records are generated, each requiring a unique SKU.
-  * **Given** an attempt to create a variant with an existing SKU, **When** saved, **Then** the system rejects the operation with a "Duplicate SKU" error.
-  * **Given** a product in `DRAFT` status, **When** queried via public storefront APIs, **Then** the product is completely omitted from customer search and category browsing.
+  * **Given** a parent electronics product, **When** the Catalog Manager adds a variant with a pre-existing SKU, **Then** the system rejects creation with an "SKU Already Exists" error.
+  * **Given** a product variant, **When** the Selling Price is entered as ₹75,000 and MRP is entered as ₹70,000, **Then** the system blocks submission with a validation error.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-002`.
 
-### FR-CAT-002: Category Technical Specification Schema Association
+### <a id="fr-cat-002"></a>FR-CAT-002: Category Technical Specification Schema Association
 * **Requirement ID:** `FR-CAT-002`
-* **Requirement Title:** Enforce Category-Specific Technical Attribute Schemas
+* **Requirement Title:** Mandatory Category Specification Schema Validation on Product Publish
 * **Feature ID:** `FEAT-CTG-002`
 * **Business Objective:** `OBJ-002`
-* **Requirement Statement:** The system must enforce category-defined technical specification schemas, ensuring that products assigned to a category capture mandatory technical attributes before publication.
-* **Description:** Guarantees data consistency across electronics categories (e.g., all smartphones must have Battery Capacity, Screen Resolution, Processor; all Laptops must have Graphics Card, RAM Type).
+* **Requirement Statement:** The system must enforce category-specific technical specification schemas (e.g., Screen Size, Battery Capacity, Processor, 5G Support), mandating that all required category attributes are populated before an electronics product can be published to the live storefront.
+* **Description:** Guarantees technical specification completeness for consumer electronics, enabling accurate product comparison and filtering.
 * **Primary Actor:** `ACT-003` (Catalog Manager)
-* **Preconditions:** Category specification schema is configured.
+* **Preconditions:** Category specification schema is active.
+* **Trigger:** Catalog Manager attempts to transition product status from `DRAFT` to `ACTIVE`.
 * **Main Success Scenario:**
-  1. Manager selects category "Laptops" for a new product.
-  2. System dynamically renders specification input form containing defined attributes (CPU, RAM, Storage Type, Display Size, OS).
-  3. Manager populates values for all attributes marked as "Mandatory".
-  4. System validates data types (e.g., Display Size is numeric, OS is select option) and saves specifications.
+  1. Catalog Manager populates specification attribute fields defined by the category schema.
+  2. System validates input data types, unit measurements (e.g., mAh, Inches, GB), and mandatory field presence.
+  3. System approves schema validation and activates the product on the storefront.
 * **Alternative Scenarios:**
-  * Optional attributes left blank: System permits publication but flags specification completeness score as partial.
+  * Product saved as Draft: System allows saving incomplete specifications in draft state.
 * **Exception and Failure Scenarios:**
-  * Missing mandatory attribute: System blocks product publication and highlights missing required specifications.
+  * Missing mandatory attribute: System blocks publishing and highlights missing specifications.
+* **Business Rules:** `BR-CAT-002`, `BR-CTG-002`.
+* **Inputs and Business Information Required:** Attribute key-value pairs conforming to category schema definition.
+* **Expected Business Outcomes:** Rich, standardized technical specifications across all electronics catalog listings.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-CTG-002`.
+* **Acceptance Criteria:**
+  * **Given** a smartphone listing in `DRAFT`, **When** the manager attempts to publish without populating "Battery Capacity" (defined as mandatory in Smartphones schema), **Then** publishing is denied.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-002`.
+
+### <a id="fr-cat-003"></a>FR-CAT-003: Product Digital Asset & Media Management
+* **Requirement ID:** `FR-CAT-003`
+* **Requirement Title:** High-Resolution Product Media Upload, Ordering & Primary Image Designation
+* **Feature ID:** `FEAT-CAT-002`
+* **Business Objective:** `OBJ-002`
+* **Requirement Statement:** The system must allow Catalog Managers to upload, reorder, delete, and designate primary thumbnail images and variant-specific gallery assets for all catalog items, validating image format, aspect ratio, and maximum file size.
+* **Description:** Powers visual merchandising across product listing and detail pages with optimized, high-fidelity media assets.
+* **Primary Actor:** `ACT-003` (Catalog Manager)
+* **Preconditions:** Product or variant record exists.
+* **Trigger:** Catalog Manager uploads image assets to a product listing.
+* **Main Success Scenario:**
+  1. Catalog Manager uploads images (JPEG, PNG, WebP) up to 5MB each.
+  2. System validates format and dimensions, generates responsive image sizes, and stores CDN references.
+  3. Manager designates one asset as "Primary Thumbnail" and arranges sequence order.
+  4. System persists media linkages and updates storefront asset delivery cache.
+* **Alternative Scenarios:**
+  * Manager assigns image to a specific color variant: Storefront dynamically displays that asset when the customer selects that variant.
+* **Exception and Failure Scenarios:**
+  * Corrupted file or invalid format (e.g., executable or PDF): System rejects upload immediately.
+* **Business Rules:** `BR-CAT-001`, `BR-CAT-002`.
+* **Inputs and Business Information Required:** Image files, display sequence index, variant assignment ID, primary thumbnail flag.
+* **Expected Business Outcomes:** Fast-loading, high-resolution product imagery enhancing customer conversion.
+* **Dependencies:** `FEAT-CAT-001`.
+* **Acceptance Criteria:**
+  * **Given** a product with 5 images, **When** the manager reorders image 3 to position 1, **Then** image 3 becomes the primary catalog thumbnail on search and PDP views.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-002`.
+
+### <a id="fr-brd-001"></a>FR-BRD-001: Brand Identity & Manufacturer Governance
+* **Requirement ID:** `FR-BRD-001`
+* **Requirement Title:** Electronics Brand Lifecycle Management and Deletion Protection
+* **Feature ID:** `FEAT-BRD-001`
+* **Business Objective:** `OBJ-002`
+* **Requirement Statement:** The system must allow Catalog Managers to maintain verified brand identities (e.g., Apple, Samsung, Sony) with official logos and warranty terms, strictly prohibiting deletion of any brand linked to active catalog products.
+* **Description:** Maintains authoritative brand registry and protects relational catalog integrity.
+* **Primary Actor:** `ACT-003` (Catalog Manager)
+* **Preconditions:** Operator is authenticated with catalog management permissions.
+* **Trigger:** Catalog Manager creates, edits, or attempts deletion of a brand.
+* **Main Success Scenario:**
+  1. Catalog Manager submits brand details (name, official logo URL, support contact, standard warranty summary).
+  2. System validates uniqueness of brand name.
+  3. System creates brand record and makes it selectable during product creation.
+* **Alternative Scenarios:**
+  * Deactivating brand: Manager sets brand status to `INACTIVE`, hiding all associated products from storefront search while preserving historical records.
+* **Exception and Failure Scenarios:**
+  * Attempting to delete a brand linked to existing SKUs: System rejects operation with a referential integrity violation error.
+* **Business Rules:** `BR-BRD-001`.
+* **Inputs and Business Information Required:** Brand name, brand slug, logo asset, manufacturer support URL, default warranty terms.
+* **Expected Business Outcomes:** Clean, verified brand taxonomy preventing orphaned catalog records.
+* **Dependencies:** `FEAT-CAT-001`.
+* **Acceptance Criteria:**
+  * **Given** a brand associated with 12 active products, **When** a manager attempts hard deletion, **Then** the system rejects the deletion with an explicit dependency warning.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-002`.
+
+### <a id="fr-ctg-001"></a>FR-CTG-001: Hierarchical Category Taxonomy Management
+* **Requirement ID:** `FR-CTG-001`
+* **Requirement Title:** Multi-Level Category Tree Governance with Circular Reference Prevention
+* **Feature ID:** `FEAT-CTG-001`
+* **Business Objective:** `OBJ-002`
+* **Requirement Statement:** The system must support an arbitrary-depth hierarchical category taxonomy (e.g., Electronics > Audio > Wireless Earbuds) allowing managers to organize products, enforcing strict prevention of circular parent-child category loops.
+* **Description:** Establishes the browsing taxonomy for storefront navigation and catalog categorization.
+* **Primary Actor:** `ACT-003` (Catalog Manager)
+* **Preconditions:** Operator has catalog management permissions.
+* **Trigger:** Catalog Manager creates or restructures category nodes.
+* **Main Success Scenario:**
+  1. Catalog Manager creates category node with title, slug, and optional parent category ID.
+  2. System validates that the proposed parent relationship does not introduce a cyclic reference.
+  3. System updates category tree index and publishes navigation breadcrumbs.
+* **Alternative Scenarios:**
+  * Moving a category branch: System moves category and all child nodes under a new parent node atomically.
+* **Exception and Failure Scenarios:**
+  * Circular dependency: If Category A is parent to Category B, attempting to assign Category B as parent to Category A is strictly rejected.
+* **Business Rules:** `BR-CTG-001`.
+* **Inputs and Business Information Required:** Category name, slug, parent category ID, display order, banner image.
+* **Expected Business Outcomes:** Intuitive catalog navigation hierarchy with zero infinite loops.
+* **Dependencies:** None.
+* **Acceptance Criteria:**
+  * **Given** existing Category A -> Category B, **When** an operator attempts to set Category A's parent as Category B, **Then** the system blocks the update with a cyclic hierarchy error.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-002`.
+
+### <a id="fr-ctg-002"></a>FR-CTG-002: Dynamic Category Specification & Attribute Schemas
+* **Requirement ID:** `FR-CTG-002`
+* **Requirement Title:** Define Dynamic Technical Attribute Schemas per Category Node
+* **Feature ID:** `FEAT-CTG-002`
+* **Business Objective:** `OBJ-002`
+* **Requirement Statement:** The system must allow Catalog Managers to define dynamic attribute schemas per category (attribute name, data type, unit of measure, mandatory flag, filterable flag), which automatically bind to all products mapped to that category.
+* **Description:** Enables tailored specification templates for diverse electronics categories (e.g., Laptops require RAM/CPU; Televisions require Display Panel/Refresh Rate).
+* **Primary Actor:** `ACT-003` (Catalog Manager)
+* **Preconditions:** Category node exists.
+* **Trigger:** Catalog Manager configures attribute definitions for a category.
+* **Main Success Scenario:**
+  1. Catalog Manager defines attributes for category (e.g., "Screen Refresh Rate", Type: Number, Unit: Hz, Filterable: True).
+  2. System saves schema definition and associates it with the category ID.
+  3. Products mapped to this category inherit these attributes in their specification editor.
+* **Alternative Scenarios:**
+  * Subcategory inheritance: Child categories automatically inherit specification schemas defined on parent categories unless overridden.
+* **Exception and Failure Scenarios:**
+  * Deleting an attribute actively used by live products: System requires migration or confirmation before schema field removal.
 * **Business Rules:** `BR-CTG-002`.
-* **Inputs and Business Information Required:** Category ID, attribute ID, attribute value, unit of measurement (GB, GHz, Inches).
-* **Expected Business Outcomes:** Standardized, high-quality technical specifications facilitating faceted search and customer comparison.
+* **Inputs and Business Information Required:** Attribute name, code, data type (String, Number, Boolean, Enum), allowed values, unit of measure, mandatory flag.
+* **Expected Business Outcomes:** Highly structured, filterable electronics specifications.
 * **Dependencies:** `FEAT-CTG-001`.
 * **Acceptance Criteria:**
-  * **Given** a category with mandatory attribute "Battery Capacity (mAh)", **When** an administrator attempts to publish a product without providing this value, **Then** the publication is blocked with a validation error.
+  * **Given** a schema attribute marked as `Filterable = True`, **When** products with this attribute are published, **Then** the search service exposes this attribute as a faceted filter on catalog listing pages.
 * **Priority:** `P1`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
@@ -196,165 +411,342 @@ All functional requirements in this document strictly adhere to the formalized b
 
 ## 5. Inventory & Multi-Warehouse Operations
 
-### FR-INV-001: Prevent Ordering Unavailable Inventory (Oversell Prevention)
+### <a id="fr-inv-001"></a>FR-INV-001: Prevent Ordering Unavailable Inventory (Oversell Prevention)
 * **Requirement ID:** `FR-INV-001`
-* **Requirement Title:** Strict Inventory Availability Validation and Oversell Prevention
+* **Requirement Title:** Enforce Zero Overselling via Available-to-Sell Inventory Ledger
 * **Feature ID:** `FEAT-INV-001`
 * **Business Objective:** `OBJ-003`
-* **Requirement Statement:** The system must prevent an order from being placed or confirmed when the requested quantity cannot be fulfilled from current Available-to-Sell (ATS) inventory.
-* **Description:** Foundational inventory protection rule. Eliminates overselling by computing real-time available stock and blocking checkout if stock is insufficient.
+* **Requirement Statement:** The system must strictly prevent checkout and order placement for any item where the requested quantity exceeds the current Available-to-Sell (ATS) stock level (`ATS = On_Hand - Reserved - Safety_Stock`).
+* **Description:** Protects the enterprise against overselling consumer electronics during flash sales and peak concurrent shopping bursts.
 * **Primary Actor:** System (Automated), `ACT-009` (Customer)
-* **Preconditions:** Product variant exists with inventory balance records.
-* **Trigger:** Customer attempts to add item to cart, initiate checkout, or complete order placement.
+* **Preconditions:** Product variant exists with inventory ledger record.
+* **Trigger:** Customer initiates checkout or adds item to cart.
 * **Main Success Scenario:**
-  1. Customer requests quantity $Q$ of variant SKU.
-  2. System calculates current Available-to-Sell stock: $\text{ATS} = \text{On-Hand} - \text{Reserved} - \text{Safety Stock}$.
-  3. System verifies $Q \le \text{ATS}$.
-  4. System permits operation and reserves requested quantity during checkout initiation.
+  1. System checks ATS for requested SKU.
+  2. ATS is greater than or equal to requested quantity.
+  3. System permits proceeding to checkout.
 * **Alternative Scenarios:**
-  * Partial stock available: If customer requests 3 units but ATS is 2, system notifies customer that only 2 units are available and adjusts requested quantity with customer consent.
+  * Partial availability: ATS is 2, customer requests 5; system restricts addition to max available (2) and alerts customer.
 * **Exception and Failure Scenarios:**
-  * Zero stock ($\text{ATS} = 0$): System blocks checkout initiation, disables "Add to Cart", and marks item as "Out of Stock".
-  * Concurrent checkout contention: Two customers attempt to buy the last unit simultaneously; system processes the first request to lock reservation, and immediately fails the second with an "Out of Stock" notification.
-* **Business Rules:** `BR-INV-001`, `BR-INV-002`, `BR-INV-003`.
-* **Inputs and Business Information Required:** Variant SKU, requested quantity, fulfillment location ID.
-* **Expected Business Outcomes:** Exactly zero oversold orders; zero unfulfillable cancellations due to inventory phantom stock.
-* **Dependencies:** `FEAT-INV-002`, `FEAT-CHK-001`.
+  * ATS is 0: System marks item "Out of Stock" on storefront, disables buy buttons, and blocks checkout attempt.
+* **Business Rules:** `BR-INV-001`, `BR-INV-002`, `BR-INV-004`.
+* **Inputs and Business Information Required:** SKU, requested quantity, warehouse ID.
+* **Expected Business Outcomes:** Zero unfulfillable orders and zero customer dissatisfaction from stock cancellations.
+* **Dependencies:** `FEAT-INV-002`.
 * **Acceptance Criteria:**
-  * **Given** a variant with $\text{On-Hand} = 10$, $\text{Reserved} = 8$, $\text{Safety Stock} = 1$ ($\text{ATS} = 1$), **When** a customer requests quantity 2, **Then** the system rejects the checkout request with an insufficient stock notification.
-  * **Given** a variant with $\text{ATS} = 1$, **When** two concurrent checkout requests attempt to reserve 1 unit simultaneously, **Then** exactly one reservation succeeds, and the other receives an out-of-stock rejection.
-  * **Given** an inventory record, **When** any operation updates stock balance, **Then** the resulting physical available stock cannot be negative.
+  * **Given** a product SKU with `On_Hand = 10`, `Reserved = 8`, `Safety_Stock = 2`, **When** a customer attempts to purchase 1 unit, **Then** checkout is rejected because `ATS = 0`.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
-* **Related Workflow IDs:** `WF-005`, `WF-006`.
+* **Related Workflow IDs:** `WF-003`, `WF-006`.
 
-### FR-INV-002: Real-Time Stock Reservation & Automated Expiration
+### <a id="fr-inv-002"></a>FR-INV-002: Real-Time Stock Reservation & Automated Expiration
 * **Requirement ID:** `FR-INV-002`
-* **Requirement Title:** Checkout Stock Reservation Lifecycle and Automated Expiration
+* **Requirement Title:** Atomic Checkout Stock Reservation with 15-Minute Expiration Hold
 * **Feature ID:** `FEAT-INV-002`
-* **Business Objective:** `OBJ-003`, `OBJ-004`
-* **Requirement Statement:** The system must temporarily reserve inventory for all items in an order upon checkout initiation for a configurable time window (e.g., 15 minutes), automatically releasing the reserved stock back to ATS if payment is not completed before the expiration window.
-* **Description:** Manages the temporary holding of stock while a customer interacts with the external payment gateway.
+* **Business Objective:** `OBJ-003`
+* **Requirement Statement:** The system must atomically reserve inventory upon customer checkout submission for a duration of exactly 15 minutes, automatically releasing reserved stock back to Available-to-Sell if payment confirmation is not received within the TTL window.
+* **Description:** Guarantees inventory availability while a customer completes payment gateway interactions, while preventing indefinite inventory lockup from abandoned carts.
 * **Primary Actor:** System (Automated), `ACT-009` (Customer)
-* **Preconditions:** Customer submits checkout with sufficient ATS stock.
-* **Trigger:** Checkout initiated; transition to payment selection.
+* **Preconditions:** Customer proceeds to payment step of checkout with sufficient ATS.
+* **Trigger:** Customer clicks "Proceed to Payment".
 * **Main Success Scenario:**
-  1. System creates an inventory reservation record linking Order ID, SKU, Quantity, and Expiration Timestamp ($T_{\text{now}} + 15\text{ mins}$).
-  2. System increments `Reserved` stock balance, which decrements `ATS` by the reserved quantity.
+  1. System executes atomic decrement of ATS and increment of Reserved count.
+  2. System assigns a Hold ID with an exact 15-minute expiration timestamp.
   3. Customer completes payment within 15 minutes.
-  4. Payment confirmation triggers conversion of `Reserved` stock into permanently allocated/deducted stock.
-  5. Reservation record transitions to `COMMITTED`.
+  4. System permanently commits the reservation into deducted on-hand stock upon payment capture.
 * **Alternative Scenarios:**
-  * Customer cancels checkout: System immediately cancels reservation and returns stock to ATS.
+  * Customer cancels payment session: System immediately cancels Hold ID and releases stock back to ATS without waiting for 15-minute TTL.
 * **Exception and Failure Scenarios:**
-  * Payment timeout / Abandoned checkout: Expiration timestamp passes without payment confirmation. Background reservation reaper automatically releases the reservation, decrements `Reserved`, and restores `ATS`.
+  * Payment times out: System reaper releases hold after 15 minutes; order transitions to `PAYMENT_TIMEOUT`.
 * **Business Rules:** `BR-INV-003`, `BR-PAY-002`.
-* **Inputs and Business Information Required:** Order reference, SKU list, reserved quantities, reservation TTL parameter.
-* **Expected Business Outcomes:** Stock is protected during active payment, while abandoned checkouts never permanently lock up inventory.
+* **Inputs and Business Information Required:** Order ID, SKU, reserved quantity, timestamp.
+* **Expected Business Outcomes:** Frictionless checkout with zero double-selling and immediate stock recovery on abandonment.
 * **Dependencies:** `FEAT-CHK-001`, `FEAT-PAY-001`.
 * **Acceptance Criteria:**
-  * **Given** a reservation created at 10:00:00 with a 15-minute TTL, **When** no payment confirmation is received by 10:15:01, **Then** the reservation status becomes `EXPIRED` and ATS stock is immediately incremented by the reserved quantity.
-  * **Given** an active reservation, **When** a valid payment success webhook is processed, **Then** the reservation is permanently committed and on-hand stock is deducted.
+  * **Given** an active stock reservation created at 10:00:00 AM, **When** no payment confirmation arrives by 10:15:01 AM, **Then** the reservation is expired and the reserved quantity is returned to Available-to-Sell stock.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-006`, `WF-007`.
 
+### <a id="fr-inv-003"></a>FR-INV-003: Stock Reservation Expiration & Automatic Inventory Release
+* **Requirement ID:** `FR-INV-003`
+* **Requirement Title:** Automated Reservation Expiration Reaper and Inventory Replenishment Release
+* **Feature ID:** `FEAT-INV-002`
+* **Business Objective:** `OBJ-003`
+* **Requirement Statement:** The system must run an automated background reconciliation process that sweeps expired inventory holds every $le 60	ext{ seconds}$, releasing reserved units back to Available-to-Sell and notifying downstream search indexers of renewed availability.
+* **Description:** Provides continuous automated reclamation of inventory held by abandoned checkouts or dropped payment sessions.
+* **Primary Actor:** System (Automated Background Scheduler)
+* **Preconditions:** Inventory holds exist in the persistence layer.
+* **Trigger:** Scheduled interval timer fires (every 60 seconds).
+* **Main Success Scenario:**
+  1. System queries for all active holds where `expires_at < current_timestamp`.
+  2. System atomically increments Available-to-Sell stock by held quantity and decrements Reserved count.
+  3. System marks Hold status as `EXPIRED`.
+  4. System triggers catalog cache and search index update for newly available SKUs.
+* **Alternative Scenarios:**
+  * Zero expired holds found: Process logs heartbeat and exits cleanly.
+* **Exception and Failure Scenarios:**
+  * Database lock conflict during release: System retries release with exponential backoff and alerts if release fails after 3 attempts.
+* **Business Rules:** `BR-INV-003`, `BR-PAY-002`.
+* **Inputs and Business Information Required:** Current timestamp, Hold ID, SKU, quantity.
+* **Expected Business Outcomes:** High inventory velocity and immediate restocking of unpaid items.
+* **Dependencies:** `FEAT-INV-002`, `FEAT-SRCH-001`.
+* **Acceptance Criteria:**
+  * **Given** a reservation that expired at 14:00:00, **When** the reaper runs at 14:00:30, **Then** the SKU's ATS is incremented by the reserved quantity and the hold is flagged `EXPIRED`.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-006`, `WF-007`.
+
+### <a id="fr-inv-004"></a>FR-INV-004: Low-Stock Threshold Alerting & Replenishment Triggers
+* **Requirement ID:** `FR-INV-004`
+* **Requirement Title:** Automated Low-Stock Exception Alerts and Warehouse Replenishment Prompts
+* **Feature ID:** `FEAT-INV-003`
+* **Business Objective:** `OBJ-003`
+* **Requirement Statement:** The system must evaluate SKU Available-to-Sell stock levels after every order decrement, automatically triggering low-stock notification alerts to inventory managers when stock drops below the SKU-configured safety threshold.
+* **Description:** Proactively warns warehouse operations of impending stockouts to prompt timely reorders and distributor replenishment.
+* **Primary Actor:** System (Automated), `ACT-004` (Inventory / Warehouse Operator)
+* **Preconditions:** SKU has configured low-stock threshold value.
+* **Trigger:** Order confirmation decrements inventory below threshold.
+* **Main Success Scenario:**
+  1. System commits order deduction.
+  2. System checks: `ATS <= Low_Stock_Threshold`.
+  3. Condition is true; system flags SKU status as `LOW_STOCK`.
+  4. System dispatches operational alert to inventory management console and email digest.
+* **Alternative Scenarios:**
+  * SKU reaches 0: System flags SKU as `OUT_OF_STOCK` and triggers high-severity stockout alert.
+* **Exception and Failure Scenarios:**
+  * Notification dispatch failure: System retains alert in admin dashboard notification tray.
+* **Business Rules:** `BR-INV-004`.
+* **Inputs and Business Information Required:** SKU, current ATS, configured threshold, warehouse ID.
+* **Expected Business Outcomes:** Reduced out-of-stock downtime through proactive purchasing.
+* **Dependencies:** `FEAT-INV-001`, `FEAT-NTF-001`.
+* **Acceptance Criteria:**
+  * **Given** a SKU with threshold = 5 and current ATS = 6, **When** an order for 2 units is confirmed (new ATS = 4), **Then** a low-stock alert is generated within 10 seconds.
+* **Priority:** `P1`
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-003`.
+
 ---
 
 ## 6. Pricing, Tax & Financial Invoicing
 
-### FR-PRC-001: Price Validation & Cart Revalidation
+### <a id="fr-prc-001"></a>FR-PRC-001: Price Validation & Cart Revalidation
 * **Requirement ID:** `FR-PRC-001`
-* **Requirement Title:** Enforce Pricing Rules and Cart Price Change Revalidation
+* **Requirement Title:** Enforce Selling Price Ceiling and Real-Time Cart Price Revalidation
 * **Feature ID:** `FEAT-PRC-001`
 * **Business Objective:** `OBJ-001`, `OBJ-008`
-* **Requirement Statement:** The system must enforce that Selling Price never exceeds MRP, and must revalidate cart item prices at checkout initiation, notifying the customer of any price fluctuations that occurred while items were in the cart.
-* **Description:** Protects legal retail pricing boundaries and ensures customer transparency when prices change between adding to cart and checking out.
-* **Primary Actor:** System (Automated), `ACT-009` (Customer)
-* **Preconditions:** Products exist in customer cart.
-* **Trigger:** Customer navigates to checkout screen.
+* **Requirement Statement:** The system must strictly enforce that product Selling Price never exceeds Maximum Retail Price (MRP), and must revalidate cart item prices against active catalog prices during checkout, blocking completion and alerting the customer if price discrepancies occur.
+* **Description:** Ensures statutory consumer pricing compliance and prevents customers from purchasing items at stale cached prices.
+* **Primary Actor:** System (Automated), `ACT-003` (Catalog Manager), `ACT-009` (Customer)
+* **Preconditions:** Customer initiates checkout or manager edits catalog price.
+* **Trigger:** Price update in admin, or customer submits checkout step.
 * **Main Success Scenario:**
-  1. System compares price stored in cart snapshot against active catalog selling price for each line item.
-  2. If prices match, checkout proceeds with current active price.
+  1. System verifies cart unit prices match live catalog prices.
+  2. All prices match; system proceeds with checkout calculation.
 * **Alternative Scenarios:**
-  * Price changed (increased or decreased): System updates cart with new active price, highlights the modified items, displays a notification ("The price of [Product] has changed from ₹12,999 to ₹11,999"), and requires explicit customer acknowledgement before proceeding.
+  * Price dropped: Live price is lower than cart price; system automatically updates cart to lower price and informs customer of additional savings.
 * **Exception and Failure Scenarios:**
-  * Administrative attempt to set $\text{Selling Price} > \text{MRP}$: System rejects catalog price update with a validation error.
-* **Business Rules:** `BR-PRC-001`, `BR-CART-001`.
-* **Inputs and Business Information Required:** Cart item SKU, cart snapshot price, catalog active price, catalog MRP.
-* **Expected Business Outcomes:** Zero price discrepancies between checkout display and payment gateway authorization amount.
-* **Dependencies:** `FEAT-CAT-001`, `FEAT-CART-001`.
+  * Price increased: Live price is higher than cart price; system halts checkout, updates cart price, and prompts customer to review and accept the updated total before proceeding.
+  * Selling Price > MRP submitted in admin: System rejects update immediately.
+* **Business Rules:** `BR-PRC-001`, `BR-PRC-002`, `BR-CHK-002`.
+* **Inputs and Business Information Required:** SKU, cart unit price, live catalog Selling Price, MRP.
+* **Expected Business Outcomes:** Strict legal pricing compliance and zero revenue leakage from stale carts.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-CHK-001`.
 * **Acceptance Criteria:**
-  * **Given** an item added to cart at ₹1,000, **When** the catalog price changes to ₹1,200 before checkout, **Then** the checkout system updates the cart total and requires customer re-confirmation.
-  * **Given** a catalog price update request, **When** Selling Price is set to ₹5,500 and MRP is ₹5,000, **Then** the update is rejected.
+  * **Given** an item in a cart at ₹1,000 whose catalog price was changed to ₹1,200, **When** the customer clicks "Proceed to Checkout", **Then** the system blocks payment, updates the cart to ₹1,200, and displays a prominent price change notice.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-005`, `WF-006`.
 
-### FR-FIN-001: Sequential Tax Invoice & Credit Note Generation
+### <a id="fr-fin-001"></a>FR-FIN-001: Statutory GST Tax Calculation & Price Breakdown
 * **Requirement ID:** `FR-FIN-001`
-* **Requirement Title:** Automated Sequential Tax Invoice and Credit Note Issuance
+* **Requirement Title:** Indian GST Statutory Tax Calculation and Regional Component Breakdown
+* **Feature ID:** `FEAT-FIN-001`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must calculate statutory Indian Goods and Services Tax (GST) for every order line item based on destination shipping address and enterprise dispatch location, correctly breaking down taxes into intra-state (CGST + SGST) or inter-state (IGST) components.
+* **Description:** Powers statutory financial compliance for domestic commerce, computing tax liabilities according to legal HSN rate schedules.
+* **Primary Actor:** System (Automated Tax Calculation Engine)
+* **Preconditions:** Enterprise warehouse state and customer delivery address state are resolved.
+* **Trigger:** Checkout calculation or cart summary calculation requested.
+* **Main Success Scenario:**
+  1. System identifies shipping destination state and enterprise origin state.
+  2. If Origin State == Destination State: System calculates CGST (50% of GST rate) and SGST (50% of GST rate).
+  3. If Origin State != Destination State: System calculates IGST (100% of GST rate).
+  4. System extracts base taxable value and tax amounts from tax-inclusive retail display prices:
+     $$\text{Base Price} = \frac{\text{Gross Price}}{1 + \text{GST Rate}}$$
+  5. System records exact tax component breakdowns in order summary.
+* **Alternative Scenarios:**
+  * Zero-rated or exempted accessory items: System applies 0% GST rate.
+* **Exception and Failure Scenarios:**
+  * Unresolved state mapping from PIN code: System halts checkout and prompts customer to verify address details.
+* **Business Rules:** `BR-FIN-001`.
+* **Inputs and Business Information Required:** SKU HSN code, GST rate percentage, origin state code, destination state code, gross item price.
+* **Expected Business Outcomes:** 100% statutory tax audit compliance with accurate GST ledger postings.
+* **Dependencies:** `FEAT-CUST-002`, `FEAT-CAT-001`.
+* **Acceptance Criteria:**
+  * **Given** an intra-state order (Tamil Nadu to Tamil Nadu) with an 18% GST electronics item priced at ₹11,800 gross, **When** tax calculation runs, **Then** Base Value is ₹10,000, CGST is ₹900 (9%), SGST is ₹900 (9%), and IGST is ₹0.
+  * **Given** an inter-state order (Tamil Nadu to Karnataka) with the same item, **When** tax calculation runs, **Then** Base Value is ₹10,000, IGST is ₹1,800 (18%), and CGST/SGST are ₹0.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-002](./08-assumptions-dependencies-open-questions.md#oq-002), [OQ-009](./08-assumptions-dependencies-open-questions.md#oq-009).
+* **Related Workflow IDs:** `WF-006`, `WF-007`.
+
+### <a id="fr-fin-002"></a>FR-FIN-002: Sequential Tax Invoice Generation in PDF
+* **Requirement ID:** `FR-FIN-002`
+* **Requirement Title:** Monotonic Sequential Tax Invoice Generation and Tamper-Resistant PDF Rendering
 * **Feature ID:** `FEAT-FIN-002`
 * **Business Objective:** `OBJ-008`
-* **Requirement Statement:** The system must generate a legally compliant, sequentially numbered, tamper-evident tax invoice upon order payment confirmation, and issue an official credit note upon return/refund approval, retaining immutable financial records for statutory auditing.
-* **Description:** Manages statutory financial document creation. Enforces strict sequential numbering and itemized tax breakdown (CGST, SGST, IGST).
-* **Primary Actor:** System (Automated), `ACT-007` (Finance Officer)
-* **Preconditions:** Order payment status is `PAID` or Return status is `APPROVED`.
-* **Trigger:** Payment confirmation event or refund authorization event.
+* **Requirement Statement:** The system must generate an official, immutable tax invoice with a strictly contiguous, monotonically increasing invoice numbering sequence immediately upon order payment confirmation, rendering a downloadable PDF complying with Indian GST invoicing standards.
+* **Description:** Produces legal commercial tax invoices for customer purchase proof and statutory enterprise tax filings.
+* **Primary Actor:** System (Automated Financial Invoicing Service)
+* **Preconditions:** Order status transitions to `CONFIRMED` with verified payment capture.
+* **Trigger:** Order confirmation event published.
 * **Main Success Scenario:**
-  1. System allocates the next strictly sequential invoice number from the financial sequence generator (e.g., `INV-2026-00042`).
-  2. System captures immutable snapshot of seller GSTIN, buyer billing/shipping address, item HSN codes, taxable base values, and applicable tax rates.
-  3. System compiles and renders a PDF invoice, stores it in secure object storage, and attaches the download link to the customer order record.
-  4. System notifies customer that the invoice is ready for download.
+  1. System allocates next consecutive invoice number from enterprise financial sequence (e.g., `CHEL-2026-000491`).
+  2. System compiles enterprise GSTIN, buyer billing address, line items, HSN codes, tax breakdown, and payment transaction reference.
+  3. System renders permanent PDF invoice document and stores immutable copy in secure object storage.
+  4. System attaches download link to customer order confirmation and archives record for statutory 8-year retention.
 * **Alternative Scenarios:**
-  * Partial return approved: System allocates a sequential Credit Note number (e.g., `CN-2026-00012`) referencing the original invoice number, detailing refunded items and reversed tax amounts.
+  * Customer re-downloads invoice from order history: System serves exact immutable pre-generated PDF.
 * **Exception and Failure Scenarios:**
-  * Sequence generator contention: System ensures atomic incrementing with zero duplicate invoice numbers under concurrent traffic.
-* **Business Rules:** `BR-FIN-001`, `BR-FIN-002`, `BR-FIN-003`.
-* **Inputs and Business Information Required:** Order ID, payment transaction ID, customer billing info, HSN codes, tax breakdown, seller corporate metadata.
-* **Expected Business Outcomes:** 100% tax compliance; zero missing or duplicated invoice numbers.
-* **Dependencies:** `FEAT-PAY-001`, `FEAT-ORD-001`.
+  * Sequence gap detection: If sequence allocation encounters database contention, transaction retries atomically to guarantee zero numbering gaps.
+* **Business Rules:** `BR-FIN-002`.
+* **Inputs and Business Information Required:** Order ID, payment reference ID, enterprise GSTIN, customer name/address, line item breakdown, HSN codes.
+* **Expected Business Outcomes:** 100% compliant statutory invoicing with zero gap penalties during tax audits.
+* **Dependencies:** `FEAT-PAY-001`, `FEAT-ORD-001`, `FEAT-FIN-001`.
 * **Acceptance Criteria:**
-  * **Given** a confirmed and paid order, **When** invoice generation executes, **Then** an invoice is generated with a unique, monotonically increasing sequential number.
-  * **Given** an issued invoice, **When** an administrator or customer attempts to modify invoice line items or tax rates, **Then** the system strictly prohibits edits to the generated document.
+  * **Given** consecutive confirmed orders, **When** invoices are generated, **Then** invoice numbers must be strictly sequential with zero duplicates or missing gaps.
+  * **Given** an issued invoice, **When** an administrator or customer views the invoice at any future date, **Then** the financial figures and invoice content are identical to the original snapshot.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
-* **Related Workflow IDs:** `WF-006`, `WF-010`.
+* **Related Workflow IDs:** `WF-007`.
+
+### <a id="fr-fin-003"></a>FR-FIN-003: Credit Note Generation for Returns & Order Cancellations
+* **Requirement ID:** `FR-FIN-003`
+* **Requirement Title:** Statutory Credit Note Generation for Returned Items and Pre-Dispatch Cancellations
+* **Feature ID:** `FEAT-FIN-002`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must automatically generate a formal GST-compliant Credit Note linked to the original Tax Invoice whenever an order cancellation or return refund is authorized, adjusting enterprise tax liabilities accordingly.
+* **Description:** Maintains statutory accounting compliance for reverse transactions, ensuring tax liabilities are legally reduced when money is returned to consumers.
+* **Primary Actor:** System (Automated), `ACT-007` (Finance Specialist)
+* **Preconditions:** Order cancellation or return inspection is approved.
+* **Trigger:** Refund authorization event.
+* **Main Success Scenario:**
+  1. System identifies original Tax Invoice number.
+  2. System allocates next sequential Credit Note number (e.g., `CN-2026-000104`).
+  3. System computes exact refunded taxable base and GST reversal amounts.
+  4. System renders Credit Note PDF, links it to customer account, and archives record for tax filing.
+* **Alternative Scenarios:**
+  * Partial return: Credit Note reflects only the returned line items and their proportional taxes.
+* **Exception and Failure Scenarios:**
+  * Missing original invoice reference: Credit Note generation is blocked until historical invoice ID is verified.
+* **Business Rules:** `BR-FIN-003`, `BR-RET-003`.
+* **Inputs and Business Information Required:** Original Invoice ID, Refund ID, returned item list, refunded amounts, reason code.
+* **Expected Business Outcomes:** Accurate tax reversal filings and transparent customer accounting.
+* **Dependencies:** `FEAT-RET-002`, `FEAT-FIN-002`.
+* **Acceptance Criteria:**
+  * **Given** an approved customer return for a ₹10,000 item, **When** refund is executed, **Then** a sequential Credit Note is issued referencing the original Tax Invoice and detailing the exact GST reversal.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-009`, `WF-010`.
 
 ---
 
 ## 7. Product Search & Discovery
 
-### FR-SRCH-001: Full-Text Search and Faceted Filtering
+### <a id="fr-srch-001"></a>FR-SRCH-001: Full-Text Search and Faceted Filtering
 * **Requirement ID:** `FR-SRCH-001`
-* **Requirement Title:** Full-Text Search with Multi-Attribute Faceted Navigation
+* **Requirement Title:** Typo-Tolerant Product Search and Multi-Faceted Attribute Filtering
 * **Feature ID:** `FEAT-SRCH-001`
-* **Business Objective:** `OBJ-001`, `OBJ-002`
-* **Requirement Statement:** The system must provide typo-tolerant full-text search across product titles, descriptions, brands, categories, and SKUs, allowing customers to dynamically filter results across category-specific facets (RAM, storage, brand, price range).
-* **Description:** Primary customer discovery engine. Delivers relevant search results in $< 200\text{ms}$.
-* **Primary Actor:** `ACT-009` (Customer), `ACT-010` (Guest)
-* **Preconditions:** Products are in `PUBLISHED` status and indexed.
-* **Trigger:** User enters query in search bar or selects a category filter.
+* **Business Objective:** `OBJ-001`
+* **Requirement Statement:** The system must provide typo-tolerant full-text search across product titles, descriptions, brands, and categories, and support multi-faceted filtering (price range, brand, color, specifications) returning results in $\le 200\text{ ms}$.
+* **Description:** Drives customer product discovery through fast, responsive search and faceted navigation.
+* **Primary Actor:** `ACT-009` (Customer), `ACT-010` (Guest Shopper)
+* **Preconditions:** Products are indexed in the search engine.
+* **Trigger:** Shopper enters keywords in search bar or applies faceted filters.
 * **Main Success Scenario:**
-  1. User enters query (e.g., "iphone 15 pro 256gb").
-  2. System executes search matching title, brand, and variant attributes with fuzzy typo tolerance.
-  3. System returns matching product list along with calculated aggregation facets (available brands, storage options, price ranges, rating counts).
-  4. User clicks facet "RAM: 8 GB"; system refines results to matching subset instantly.
+  1. Shopper inputs query (e.g., "samsng oled").
+  2. Search engine applies fuzzy phonetic matching and resolves typos to "Samsung OLED".
+  3. System returns matching active products with relevant faceted filter counts.
+  4. Shopper filters by "RAM: 16GB" and "Price: Under ₹80,000"; system refines results instantly.
 * **Alternative Scenarios:**
-  * Zero exact matches: System returns suggested alternatives ("Did you mean...?") based on closest phonetic or synonym matches.
+  * Zero exact matches: System returns suggested related products based on category keywords.
 * **Exception and Failure Scenarios:**
-  * Search service failure: System gracefully degrades to basic database title search, preserving catalog browsing.
+  * Search engine cluster timeout: System gracefully falls back to direct database query with basic keyword matching.
 * **Business Rules:** `BR-SRCH-001`, `BR-SRCH-002`.
-* **Inputs and Business Information Required:** Search query string, selected facet key-values, sort option, pagination offset/limit.
-* **Expected Business Outcomes:** High search relevance, low zero-result rates, fast customer discovery.
-* **Dependencies:** `FEAT-CAT-001`.
+* **Inputs and Business Information Required:** Search query string, selected filter facets, sort parameter (price asc/desc, popularity, newest).
+* **Expected Business Outcomes:** Rapid product findability maximizing conversion rates.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-CTG-002`.
 * **Acceptance Criteria:**
-  * **Given** published products in catalog, **When** a user searches with a minor typo (e.g., "samsng"), **Then** relevant Samsung products are returned.
-  * **Given** unpublished or draft products, **When** searched by exact title or SKU, **Then** they are strictly excluded from search results.
+  * **Given** a customer search for "iphoen", **When** search executes, **Then** Apple iPhone listings are returned as top results.
+  * **Given** a search query, **When** results are returned, **Then** response latency is $\le 200\text{ ms}$ for 95% of queries under standard load.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-004`.
+
+### <a id="fr-srch-002"></a>FR-SRCH-002: Search Index Synchronization & Faceted Attribute Filtering
+* **Requirement ID:** `FR-SRCH-002`
+* **Requirement Title:** Near-Real-Time Search Index Updates upon Catalog and Stock Mutations
+* **Feature ID:** `FEAT-SRCH-001`
+* **Business Objective:** `OBJ-001`, `OBJ-003`
+* **Requirement Statement:** The system must synchronize catalog modifications (price changes, description edits, stock exhaustion, new variant publishing) to the search index within $\le 5\text{ seconds}$ during standard operations, ensuring shoppers do not encounter stale prices or out-of-stock listings.
+* **Description:** Maintains high consistency between transactional catalog/inventory databases and the read-optimized search index.
+* **Primary Actor:** System (Automated Indexing Pipeline)
+* **Preconditions:** Catalog mutation committed to primary transactional store.
+* **Trigger:** Domain event emitted (e.g., `ProductPriceUpdated`, `InventoryExhausted`).
+* **Main Success Scenario:**
+  1. Search ingestion pipeline consumes catalog update event.
+  2. System transforms product entity into search document format.
+  3. System commits update to search index within 5 seconds.
+  4. Subsequent customer search queries immediately reflect the updated price or stock status.
+* **Alternative Scenarios:**
+  * Bulk catalog import: Bulk pipeline batches updates and completes index synchronization within 60 seconds.
+* **Exception and Failure Scenarios:**
+  * Index update failure: Pipeline retries with backoff and logs alert to monitoring console.
+* **Business Rules:** `BR-SRCH-002`, `BR-CAT-001`.
+* **Inputs and Business Information Required:** Product ID, mutated attribute set, timestamp.
+* **Expected Business Outcomes:** Search accuracy preventing customer frustration from stale product listings.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-INV-001`.
+* **Acceptance Criteria:**
+  * **Given** a product price change committed in the catalog admin, **When** 5 seconds elapse, **Then** a search API query returns the new price in search results.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-002`, `WF-004`.
+
+### <a id="fr-pdp-001"></a>FR-PDP-001: Product Details Page Merchandising & Real-Time Variant Switching
+* **Requirement ID:** `FR-PDP-001`
+* **Requirement Title:** Interactive Product Details Page (PDP) Merchandising and Dynamic Variant Resolution
+* **Feature ID:** `FEAT-PDP-001`
+* **Business Objective:** `OBJ-001`, `OBJ-002`
+* **Requirement Statement:** The system must render comprehensive product details pages allowing shoppers to switch between variant options (color, storage, RAM) seamlessly, dynamically updating price, high-resolution media gallery, delivery estimate, and live stock availability in real time without full page reload.
+* **Description:** Serves as the primary commercial conversion surface, providing consumers with accurate product specifications and immediate purchase capability.
+* **Primary Actor:** `ACT-009` (Customer), `ACT-010` (Guest Shopper)
+* **Preconditions:** Product is active and published.
+* **Trigger:** Shopper navigates to a product URL or clicks a variant swatch.
+* **Main Success Scenario:**
+  1. Shopper selects a different variant attribute (e.g., switches from 128GB to 256GB).
+  2. System resolves selected combination to specific variant SKU.
+  3. System updates Selling Price, MRP, discount percentage, SKU-specific image gallery, and stock status ("In Stock" / "Only 2 Left").
+  4. System updates "Add to Cart" and "Buy Now" button states accordingly.
+* **Alternative Scenarios:**
+  * Non-existent variant combination: If a specific combination is not manufactured, system greys out the option and prevents selection.
+* **Exception and Failure Scenarios:**
+  * Variant out of stock: System disables purchase buttons and displays "Notify Me" back-in-stock alert prompt.
+* **Business Rules:** `BR-PDP-001`, `BR-PRC-001`, `BR-INV-001`.
+* **Inputs and Business Information Required:** Product slug / ID, selected variant dimension options.
+* **Expected Business Outcomes:** High customer engagement and seamless variant selection driving cart additions.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-INV-001`.
+* **Acceptance Criteria:**
+  * **Given** an active PDP, **When** a shopper clicks a different color swatch, **Then** the image gallery updates to show the selected color within 100ms.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
@@ -364,146 +756,422 @@ All functional requirements in this document strictly adhere to the formalized b
 
 ## 8. Shopping Cart & Checkout Orchestration
 
-### FR-CHK-001: Idempotent Checkout & Order Placement Validation
-* **Requirement ID:** `FR-CHK-001`
-* **Requirement Title:** Secure Checkout Orchestration with Idempotency Protection
-* **Feature ID:** `FEAT-CHK-001`
-* **Business Objective:** `OBJ-001`, `OBJ-004`, `OBJ-005`
-* **Requirement Statement:** The system must validate delivery address serviceability, active item pricing, promotional discounts, and inventory availability during checkout, enforcing idempotent order submission to prevent duplicate orders or multiple charges.
-* **Description:** Orchestrates the transition from shopping cart to formal order. Enforces server-side recalculation and idempotency key checks.
-* **Primary Actor:** `ACT-009` (Customer)
-* **Preconditions:** Cart contains at least one active item; delivery address is selected.
-* **Trigger:** Customer clicks "Proceed to Payment".
+### <a id="fr-cart-001"></a>FR-CART-001: Shopping Cart Persistent Storage & Guest Cart Merge
+* **Requirement ID:** `FR-CART-001`
+* **Requirement Title:** Persistent Shopping Cart Operations and Guest Cart Merging upon Authentication
+* **Feature ID:** `FEAT-CART-001`
+* **Business Objective:** `OBJ-001`
+* **Requirement Statement:** The system must persist customer shopping cart contents across browsing sessions and devices for registered users, and automatically merge anonymous guest carts into the authenticated user cart upon customer login without item loss.
+* **Description:** Eliminates cart abandonment caused by login redirects and provides continuous multi-device shopping.
+* **Primary Actor:** `ACT-009` (Customer), `ACT-010` (Guest Shopper)
+* **Preconditions:** Customer adds items to cart while unauthenticated.
+* **Trigger:** Customer logs in or completes registration.
 * **Main Success Scenario:**
-  1. Client sends checkout request with unique client-generated Idempotency Key.
-  2. Server verifies that the Idempotency Key has not been previously processed.
-  3. Server recalculates subtotal, applies verified coupon discount, calculates shipping fee and taxes based on shipping address.
-  4. Server verifies ATS stock for all items and creates atomic stock reservation (`FR-INV-002`).
-  5. System creates an Order record in `PENDING_PAYMENT` status.
-  6. System returns payment gateway session parameters to client for payment execution.
+  1. Guest shopper adds items to anonymous cart (stored with session token).
+  2. Shopper authenticates with their registered customer credentials.
+  3. System retrieves existing saved cart for the authenticated user.
+  4. System merges items from guest cart: for common SKUs, quantities are combined (up to max item purchase limit); unique SKUs are appended.
+  5. System invalidates guest cart reference and displays merged cart to user.
 * **Alternative Scenarios:**
-  * Duplicate submission (e.g., customer double-clicks button or network retries): System detects existing Idempotency Key, halts duplicate processing, and returns the existing pending checkout response.
+  * Registered user logs in with empty existing cart: Guest cart items are directly assigned to user account.
 * **Exception and Failure Scenarios:**
-  * Price change or stockout detected during checkout: System halts order placement, updates cart, and alerts customer to the variance.
-  * Delivery address unserviceable: System halts checkout and prompts customer to select a different delivery address.
-* **Business Rules:** `BR-CHK-001`, `BR-CHK-002`, `BR-PRC-001`, `BR-INV-001`.
-* **Inputs and Business Information Required:** Idempotency Key, customer ID, delivery address ID, billing address ID, cart ID, coupon code (optional).
-* **Expected Business Outcomes:** Exactly one order created per customer purchase intent; zero duplicate orders.
-* **Dependencies:** `FEAT-CART-001`, `FEAT-INV-002`, `FEAT-FIN-001`, `FEAT-PRM-001`.
+  * Merged quantity exceeds max purchase limit: System caps quantity at limit and informs user.
+* **Business Rules:** `BR-CART-001`, `BR-CART-002`.
+* **Inputs and Business Information Required:** Guest session ID, Customer ID, SKU list, quantities.
+* **Expected Business Outcomes:** Seamless customer experience and higher conversion from guest browsing.
+* **Dependencies:** `FEAT-CUST-001`.
 * **Acceptance Criteria:**
-  * **Given** an identical checkout request submitted twice with the same Idempotency Key, **When** processed, **Then** only one Order is created, and both requests receive the identical order reference.
-  * **Given** an order submission where client attempts to pass a tampered order total, **When** processed, **Then** the server ignores the client value, recalculates the true total server-side, and authorizes only the verified amount.
+  * **Given** a guest cart with SKU A (qty: 1), and a user cart with SKU B (qty: 1), **When** user logs in, **Then** the resulting cart contains both SKU A (qty: 1) and SKU B (qty: 1).
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-011](./08-assumptions-dependencies-open-questions.md#oq-011).
+* **Related Workflow IDs:** `WF-005`.
+
+### <a id="fr-cart-002"></a>FR-CART-002: Cart Maximum Item Quantities & Purchase Limits
+* **Requirement ID:** `FR-CART-002`
+* **Requirement Title:** Enforce SKU Maximum Purchase Limits and Commercial Quantity Caps
+* **Feature ID:** `FEAT-CART-001`
+* **Business Objective:** `OBJ-001`, `OBJ-003`
+* **Requirement Statement:** The system must enforce a strict per-order purchase limit (default: maximum 5 units per SKU per customer order) to prevent bulk reseller hoarding and preserve inventory availability for genuine retail consumers.
+* **Description:** Protects promotional consumer electronics from commercial bulk scalpers and ensures fair product distribution.
+* **Primary Actor:** System (Automated), `ACT-009` (Customer)
+* **Preconditions:** Item added to cart.
+* **Trigger:** Customer attempts to increment item quantity in cart or during add-to-cart action.
+* **Main Success Scenario:**
+  1. Customer selects quantity $le 5$ (or SKU-specific promotional limit).
+  2. System permits quantity update and recalculates cart totals.
+* **Alternative Scenarios:**
+  * Manager configures promotional flash sale limit of 1 unit: System strictly restricts quantity to 1 for that specific SKU.
+* **Exception and Failure Scenarios:**
+  * Customer attempts to set quantity > limit: System blocks increase and displays: "Maximum purchase limit for this item is X units per customer."
+* **Business Rules:** `BR-CART-002`.
+* **Inputs and Business Information Required:** SKU, requested quantity, configured SKU purchase limit.
+* **Expected Business Outcomes:** Protection against unauthorized reseller scalping and broader consumer access.
+* **Dependencies:** `FEAT-CAT-001`.
+* **Acceptance Criteria:**
+  * **Given** an item with a limit of 2 units, **When** a shopper attempts to add a 3rd unit to their cart, **Then** the system rejects the addition with a purchase limit notification.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
+* **Related Workflow IDs:** `WF-005`.
+
+### <a id="fr-wsh-001"></a>FR-WSH-001: Customer Wishlist Management & Saved Items
+* **Requirement ID:** `FR-WSH-001`
+* **Requirement Title:** Customer Wishlist Creation, Item Management and Real-Time Stock/Price Visibility
+* **Feature ID:** `FEAT-WSH-001`
+* **Business Objective:** `OBJ-001`
+* **Requirement Statement:** The system must allow authenticated customers to save products to a personal wishlist, remove items, move items directly into the shopping cart, and view real-time price drops or stock status indicators on saved items.
+* **Description:** Provides customers with a persistent save-for-later registry, supporting future purchasing intent.
+* **Primary Actor:** `ACT-009` (Customer)
+* **Preconditions:** Customer is authenticated.
+* **Trigger:** Customer clicks wishlist heart icon on PDP or browsing page.
+* **Main Success Scenario:**
+  1. Customer adds SKU to wishlist.
+  2. System associates SKU with customer wishlist profile.
+  3. When customer views wishlist, system displays current live price, initial saved price, and live availability.
+  4. Customer clicks "Move to Cart"; system transfers item to cart and removes from wishlist.
+* **Alternative Scenarios:**
+  * Unauthenticated shopper clicks wishlist: System prompts login and saves item immediately upon authentication.
+* **Exception and Failure Scenarios:**
+  * Item discontinued: Wishlist displays "Discontinued by Manufacturer" indicator.
+* **Business Rules:** `BR-WSH-001`.
+* **Inputs and Business Information Required:** Customer ID, SKU ID, saved timestamp.
+* **Expected Business Outcomes:** Improved customer retention and purchase re-engagement.
+* **Dependencies:** `FEAT-CUST-001`, `FEAT-CAT-001`.
+* **Acceptance Criteria:**
+  * **Given** an authenticated customer with an item in their wishlist, **When** they click "Move to Cart", **Then** the item is added to their cart and removed from the wishlist.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-005`.
+
+### <a id="fr-chk-001"></a>FR-CHK-001: Idempotent Checkout & Order Placement Validation
+* **Requirement ID:** `FR-CHK-001`
+* **Requirement Title:** Idempotent Checkout Orchestration and Server-Side Financial Validation
+* **Feature ID:** `FEAT-CHK-001`
+* **Business Objective:** `OBJ-001`, `OBJ-003`, `OBJ-008`
+* **Requirement Statement:** The system must validate all checkout calculations server-side (items, promotions, taxes, shipping fees), mandate a unique client Idempotency Key to prevent double-charging on multiple clicks, and atomically create the order in `PENDING_PAYMENT` status with locked inventory.
+* **Description:** Protects financial and inventory integrity during order creation, completely disregarding untrusted client-side mathematical values.
+* **Primary Actor:** `ACT-009` (Customer)
+* **Preconditions:** Customer has items in cart, selects serviceable delivery address, and submits checkout.
+* **Trigger:** Customer clicks "Proceed to Payment".
+* **Main Success Scenario:**
+  1. Client generates unique Idempotency Key (UUID v4) and submits checkout payload.
+  2. System checks idempotency registry: key is new.
+  3. System re-fetches live catalog prices, recalculates promotions, evaluates taxes, and calculates shipping fee.
+  4. System requests atomic stock reservation for 15 minutes (`FR-INV-002`).
+  5. Reservation granted; system creates order in `PENDING_PAYMENT` status.
+  6. System initiates payment gateway intent and returns session token to client.
+* **Alternative Scenarios:**
+  * Repeated submission with identical Idempotency Key: System identifies in-flight or completed checkout and returns existing pending order details without re-reserving stock or creating duplicate orders.
+* **Exception and Failure Scenarios:**
+  * Concurrent stock exhaustion: Inventory reservation denied; system aborts checkout and informs customer.
+  * Price discrepancy: Live price changed during checkout; system halts checkout and requires cart refresh.
+* **Business Rules:** `BR-CHK-001`, `BR-CHK-002`, `BR-INV-001`.
+* **Inputs and Business Information Required:** Idempotency Key, customer ID, delivery address ID, cart ID, coupon code (optional).
+* **Expected Business Outcomes:** Zero duplicate orders from double-clicking and 100% accurate server-verified financial totals.
+* **Dependencies:** `FEAT-INV-002`, `FEAT-FIN-001`, `FEAT-PAY-001`.
+* **Acceptance Criteria:**
+  * **Given** a checkout submission, **When** the identical request payload and Idempotency Key is received twice within 60 seconds, **Then** only one order is created and only one inventory reservation is made.
+  * **Given** a client payload claiming a total of ₹5,000, **When** server calculation resolves total to ₹6,200, **Then** the client total is ignored and ₹6,200 is used for payment creation.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-006](./08-assumptions-dependencies-open-questions.md#oq-006).
 * **Related Workflow IDs:** `WF-006`.
+
+### <a id="fr-chk-002"></a>FR-CHK-002: Real-Time Cart Revalidation & Price Lock at Checkout
+* **Requirement ID:** `FR-CHK-002`
+* **Requirement Title:** Revalidate Cart Items and Lock Financial Totals During Checkout Session
+* **Feature ID:** `FEAT-CHK-001`
+* **Business Objective:** `OBJ-001`, `OBJ-008`
+* **Requirement Statement:** The system must lock all financial totals (item unit prices, applied discounts, taxes, and delivery charges) once the order enters `PENDING_PAYMENT`, guaranteeing that the customer is charged the exact locked sum even if underlying catalog prices update during their 15-minute payment session.
+* **Description:** Protects consumer trust by providing a guaranteed price lock during the active payment window.
+* **Primary Actor:** System (Automated Checkout Engine)
+* **Preconditions:** Order created in `PENDING_PAYMENT` with active stock reservation.
+* **Trigger:** Payment gateway session initiation.
+* **Main Success Scenario:**
+  1. System snapshots financial values on the order entity.
+  2. Catalog price of an ordered item is modified by an admin while customer is entering UPI PIN.
+  3. Customer completes payment; system captures the exact snapshot price recorded on the order.
+  4. Order confirms successfully at the agreed checkout price.
+* **Alternative Scenarios:**
+  * Payment session expires: Price lock is released; if customer resumes checkout, a new cart revalidation is executed against current catalog prices.
+* **Exception and Failure Scenarios:**
+  * Gateway charges an amount different from the locked order total: System marks transaction as mismatched, flags security alert, and does not confirm order.
+* **Business Rules:** `BR-CHK-001`, `BR-PRC-001`.
+* **Inputs and Business Information Required:** Order ID, locked amount snapshot, payment callback amount.
+* **Expected Business Outcomes:** Predictable, legally sound checkout transactions.
+* **Dependencies:** `FEAT-CHK-001`, `FEAT-PAY-001`.
+* **Acceptance Criteria:**
+  * **Given** an order created in `PENDING_PAYMENT` with locked total ₹24,999, **When** the catalog price changes to ₹26,999 prior to payment capture, **Then** the customer is charged ₹24,999 and the order is confirmed without error.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-006`, `WF-007`.
 
 ---
 
 ## 9. Payment Gateway Orchestration & Reconciliation
 
-### FR-PAY-001: Payment Gateway Webhook Ingestion & Delayed Payment Resolution
+### <a id="fr-pay-001"></a>FR-PAY-001: Payment Gateway Webhook Ingestion & Delayed Payment Resolution
 * **Requirement ID:** `FR-PAY-001`
-* **Requirement Title:** Resilient Payment Gateway Webhook Handling and Status Reconciliation
+* **Requirement Title:** Idempotent Cryptographic Webhook Processing and Late Payment Reconciliation
 * **Feature ID:** `FEAT-PAY-001`
-* **Business Objective:** `OBJ-005`
-* **Requirement Statement:** The system must securely ingest, cryptographically verify, and idempotently process asynchronous payment gateway webhooks, resolving pending transactions and handling late payment success after reservation expiration.
-* **Description:** Manages external payment outcomes. Guarantees that payment state transitions are handled reliably even during network dropouts or delayed callbacks.
+* **Business Objective:** `OBJ-005`, `OBJ-008`
+* **Requirement Statement:** The system must process payment gateway webhooks idempotently after validating cryptographic HMAC signatures, and handle delayed payment captures arriving after stock reservation expiry according to deterministic stock availability rules.
+* **Description:** Ensures reliable, tamper-evident payment reconciliation between third-party payment gateways and internal order records.
 * **Primary Actor:** `ACT-011` (Payment Gateway), System (Automated)
-* **Preconditions:** Order created in `PENDING_PAYMENT` status with active payment attempt.
-* **Trigger:** Payment gateway dispatches webhook notification (Payment Success, Payment Failed, Payment Authorized).
+* **Preconditions:** Gateway sends webhook event payload with cryptographic signature header.
+* **Trigger:** Inbound webhook HTTP POST request received.
 * **Main Success Scenario:**
-  1. System receives webhook payload and verifies cryptographic HMAC signature using gateway secret.
-  2. System checks whether payment event ID has already been processed (Idempotency check).
-  3. System matches payment transaction reference against internal Order ID.
-  4. System transitions Order status from `PENDING_PAYMENT` to `CONFIRMED`.
-  5. System permanently commits inventory reservation (`FR-INV-002`), triggers invoice generation (`FR-FIN-001`), and queues order for warehouse fulfillment.
+  1. System verifies HMAC SHA-256 signature against registered gateway secret.
+  2. System checks idempotency table for event ID: event is new.
+  3. System matches payment gateway reference to internal Order ID.
+  4. If reservation is active: System marks order `CONFIRMED`, commits stock deduction, issues tax invoice, and returns HTTP 200 OK.
 * **Alternative Scenarios:**
-  * Payment Failed webhook: System marks payment attempt as `FAILED`, leaves order open for retry, or transitions to `CANCELLED` upon expiration.
+  * Duplicate webhook received: System verifies signature, detects previously processed event ID, and immediately returns HTTP 200 OK without re-processing.
 * **Exception and Failure Scenarios:**
-  * Invalid signature: System rejects webhook with HTTP 401 and logs security alert.
-  * Delayed Payment Success after Stock Expiration: Customer pays, but gateway webhook arrives after the 15-minute reservation expired and the stock was sold to another customer. System detects insufficient stock, transitions order to `PAYMENT_RECEIVED_OUT_OF_STOCK`, and immediately triggers an automated full refund workflow (`FR-RET-002`).
+  * Invalid signature: System rejects request with HTTP 401 Unauthorized and logs high-severity security alert.
+  * Late Payment Arrival (Reservation Expired):
+    * **Case A (Stock Available):** System re-reserves stock and confirms order.
+    * **Case B (Stock Sold Out):** System cancels order, sets status `PAYMENT_RECEIVED_OUT_OF_STOCK`, and initiates immediate 100% automated refund to original payment source.
 * **Business Rules:** `BR-PAY-001`, `BR-PAY-002`, `BR-PAY-003`.
-* **Inputs and Business Information Required:** Webhook signature header, payment transaction ID, order reference ID, payment amount, currency, status code.
-* **Expected Business Outcomes:** 100% payment accuracy; zero lost payments; automated handling of race-condition edge cases.
+* **Inputs and Business Information Required:** Webhook raw payload, signature header, gateway transaction ID, order reference, payment status.
+* **Expected Business Outcomes:** 100% financial transaction accuracy and automated resolution of late payments.
 * **Dependencies:** `FEAT-ORD-001`, `FEAT-INV-002`, `FEAT-RET-002`.
 * **Acceptance Criteria:**
-  * **Given** an identical payment success webhook received 3 times due to gateway retries, **When** processed, **Then** the order is transitioned to `CONFIRMED` once, and subsequent events are acknowledged with HTTP 200 without duplicate order processing.
-  * **Given** a payment success webhook where the underlying stock reservation has expired and inventory is zero, **When** processed, **Then** an automated refund is created, the order is cancelled, and the customer is notified.
+  * **Given** an invalid HMAC webhook signature, **When** processed by the webhook endpoint, **Then** the system rejects with HTTP 401 and zero order state mutations occur.
+  * **Given** a payment captured after the 15-minute hold where the last unit was purchased by another buyer, **When** webhook arrives, **Then** an automated 100% refund is initiated and status transitions to `PAYMENT_RECEIVED_OUT_OF_STOCK`.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-003](./08-assumptions-dependencies-open-questions.md#oq-003), [OQ-004](./08-assumptions-dependencies-open-questions.md#oq-004).
+* **Related Workflow IDs:** `WF-007`.
+
+### <a id="fr-pay-002"></a>FR-PAY-002: Payment Gateway Failure Handling & Retry Orchestration
+* **Requirement ID:** `FR-PAY-002`
+* **Requirement Title:** Manage Payment Failures, Error Messaging and Customer Retry Opportunities
+* **Feature ID:** `FEAT-PAY-001`
+* **Business Objective:** `OBJ-005`
+* **Requirement Statement:** The system must capture payment failure reasons reported by the gateway (e.g., insufficient funds, bank authentication declined, network timeout), present clear non-technical error guidance to the customer, and maintain the open inventory reservation for the remainder of the 15-minute window to permit payment retries.
+* **Description:** Recovers potentially lost sales by allowing customers to retry payment with alternative payment methods without losing their reserved cart items.
+* **Primary Actor:** System (Automated), `ACT-009` (Customer)
+* **Preconditions:** Payment gateway returns a failure callback or declined webhook.
+* **Trigger:** Customer transaction fails on gateway interface.
+* **Main Success Scenario:**
+  1. System logs payment failure code and friendly description.
+  2. System records failed attempt under order audit trail.
+  3. System displays retry interface to customer: "Payment declined by bank. Please try another card or UPI."
+  4. Customer selects UPI, completes payment successfully within remaining TTL.
+  5. Order transitions to `CONFIRMED`.
+* **Alternative Scenarios:**
+  * Customer abandons retry: 15-minute timer expires; system releases stock and marks order `PAYMENT_FAILED`.
+* **Exception and Failure Scenarios:**
+  * Fraud alert flagged by gateway: System blocks retry on that payment instrument and flags account.
+* **Business Rules:** `BR-PAY-002`, `BR-INV-003`.
+* **Inputs and Business Information Required:** Order ID, failure code, failure message, remaining TTL seconds.
+* **Expected Business Outcomes:** Maximized payment recovery rates and improved customer conversion.
+* **Dependencies:** `FEAT-PAY-001`, `FEAT-INV-002`.
+* **Acceptance Criteria:**
+  * **Given** an order with 8 minutes remaining on its reservation, **When** a credit card payment is declined, **Then** the reservation remains active and the customer is presented with alternative payment options.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-007`.
 
+### <a id="fr-pay-003"></a>FR-PAY-003: Gateway Settlement Reconciliation & Discrepancy Reporting
+* **Requirement ID:** `FR-PAY-003`
+* **Requirement Title:** Automated Daily Gateway Settlement Reconciliation and Discrepancy Flagging
+* **Feature ID:** `FEAT-PAY-002`
+* **Business Objective:** `OBJ-005`, `OBJ-008`
+* **Requirement Statement:** The system must perform an automated daily reconciliation between payment gateway settlement reports and internal order ledger entries, automatically identifying and flagging discrepancies (unsettled orders, fee variances, missing captures, unrecognized refunds) for financial review.
+* **Description:** Guarantees enterprise financial control by matching bank settlement batches against commercial order records.
+* **Primary Actor:** System (Automated), `ACT-007` (Finance Specialist)
+* **Preconditions:** Payment gateway publishes daily settlement report via API or SFTP.
+* **Trigger:** Daily reconciliation job executes (e.g., 02:00 AM IST).
+* **Main Success Scenario:**
+  1. System ingests gateway settlement statement for previous day.
+  2. System matches each settlement transaction ID against internal payment records.
+  3. System validates gross amount, gateway processing fees, GST on fees, and net settlement deposit.
+  4. System marks matched orders as `RECONCILED`.
+  5. System generates reconciliation summary report for Finance team.
+* **Alternative Scenarios:**
+  * Discrepancy identified (e.g., order confirmed but missing from gateway payout): System marks record as `RECONCILIATION_EXCEPTION` and routes alert to Finance Specialist.
+* **Exception and Failure Scenarios:**
+  * Settlement report missing or format corrupted: System raises alert to Finance Lead.
+* **Business Rules:** `BR-PAY-003`.
+* **Inputs and Business Information Required:** Gateway settlement report, internal order ledger, fee schedule.
+* **Expected Business Outcomes:** 100% financial traceability and zero unaccounted revenue leakage.
+* **Dependencies:** `FEAT-PAY-001`, `FEAT-RPT-001`.
+* **Acceptance Criteria:**
+  * **Given** a daily settlement report with 500 transactions, **When** reconciliation runs, **Then** 100% of matched orders transition to `RECONCILED` and any variance $> ₹1$ generates a financial exception alert.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-014`.
+
 ---
 
 ## 10. Order Management & Warehouse Fulfillment
 
-### FR-ORD-001: Order State Transitions and Warehouse Picking/Packing
+### <a id="fr-ord-001"></a>FR-ORD-001: Order State Transitions and Warehouse Picking/Packing
 * **Requirement ID:** `FR-ORD-001`
-* **Requirement Title:** Enforce Order Lifecycle State Machine and Warehouse Handover
+* **Requirement Title:** Validated Order State Machine and Warehouse Picking/Packing Lifecycle
 * **Feature ID:** `FEAT-ORD-001`
-* **Business Objective:** `OBJ-004`, `OBJ-006`
-* **Requirement Statement:** The system must enforce valid order state transitions (`PENDING_PAYMENT` $\rightarrow$ `CONFIRMED` $\rightarrow$ `PROCESSING` $\rightarrow$ `PACKED` $\rightarrow$ `DISPATCHED` $\rightarrow$ `DELIVERED`), preventing illegal state jumps and coordinating warehouse picklist and packing slip generation.
-* **Description:** Governs order operational progression. Ensures warehouse personnel follow standardized operational steps.
-* **Primary Actor:** `ACT-005` (Fulfillment Specialist)
-* **Preconditions:** Order status is `CONFIRMED`.
-* **Trigger:** Warehouse operator accesses fulfillment queue.
+* **Business Objective:** `OBJ-004`
+* **Requirement Statement:** The system must enforce a deterministic, non-reversible order state machine (`PENDING_PAYMENT` $\rightarrow$ `CONFIRMED` $\rightarrow$ `PROCESSING` $\rightarrow$ `PACKED` $\rightarrow$ `SHIPPED` $\rightarrow$ `OUT_FOR_DELIVERY` $\rightarrow$ `DELIVERED`), strictly validating role authorizations and operational preconditions for each transition.
+* **Description:** Governs the entire physical and logical lifecycle of customer orders from confirmation through doorstep delivery.
+* **Primary Actor:** System (Automated), `ACT-004` (Warehouse / Fulfillment Specialist)
+* **Preconditions:** Order exists in valid upstream state.
+* **Trigger:** Operator scans barcode or system event occurs.
 * **Main Success Scenario:**
-  1. Operator selects confirmed orders and generates consolidated Warehouse Picklist.
-  2. Order status transitions to `PROCESSING`.
-  3. Operator physically picks items, scans SKU barcodes to verify accuracy, and generates customer Packing Slip.
-  4. Order status transitions to `PACKED`.
-  5. System triggers courier consignment booking (`FR-SHP-001`).
+  1. Payment captures; order enters `CONFIRMED`.
+  2. Warehouse operator generates pick list; order enters `PROCESSING`.
+  3. Operator picks physical units, verifies SKU and IMEI barcodes; order enters `PACKED`.
+  4. Courier partner picks up parcel and scans AWB; order enters `SHIPPED`.
+  5. Courier webhook reports out for delivery; order enters `OUT_FOR_DELIVERY`.
+  6. Final delivery confirmed by courier; order enters terminal state `DELIVERED`.
 * **Alternative Scenarios:**
-  * Order cancellation requested while `CONFIRMED`: System permits immediate cancellation, releases inventory, and triggers automated refund.
+  * Customer cancellation: Allowed strictly before order enters `PACKED` status (`FR-ORD-002`).
 * **Exception and Failure Scenarios:**
-  * Attempt to cancel order in `DISPATCHED` status: System blocks self-service cancellation and informs customer that order has already left the warehouse and must follow return procedures.
-  * Barcode mismatch during packing: System flags wrong-item error and prevents packing slip generation until correct item is scanned.
-* **Business Rules:** `BR-ORD-001`, `BR-ORD-002`, `BR-ORD-003`.
-* **Inputs and Business Information Required:** Order ID, operator ID, scanned SKU barcodes, warehouse bin location.
-* **Expected Business Outcomes:** 100% packing accuracy; transparent fulfillment progression.
+  * Invalid transition attempt (e.g., trying to jump from `PROCESSING` directly to `DELIVERED`): System rejects operation with a state machine violation error.
+  * Barcode mismatch during packing: System alerts operator that scanned device does not match order SKU.
+* **Business Rules:** `BR-ORD-001`, `BR-ORD-002`, `BR-ORD-004`.
+* **Inputs and Business Information Required:** Order ID, target state, operator ID, scanned SKU/serial barcodes, timestamp.
+* **Expected Business Outcomes:** Complete operational visibility and zero shipping errors.
 * **Dependencies:** `FEAT-INV-001`, `FEAT-SHP-001`.
 * **Acceptance Criteria:**
-  * **Given** an order in `PACKED` status, **When** an operator attempts to transition it directly to `DELIVERED` bypassing `DISPATCHED`, **Then** the transition is blocked by the state machine.
-  * **Given** an order in `PROCESSING` status, **When** customer requests cancellation, **Then** fulfillment is aborted, items are returned to warehouse stock, and refund is initiated.
+  * **Given** an order in `CONFIRMED` state, **When** an operator initiates picking, **Then** the order successfully transitions to `PROCESSING` and a pick list is generated.
+  * **Given** an order in `SHIPPED` state, **When** an API call attempts to transition state back to `PROCESSING`, **Then** the system strictly rejects the transition as illegal.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
-* **Related Workflow IDs:** `WF-008`, `WF-009`.
+* **Related Workflow IDs:** `WF-008`.
+
+### <a id="fr-ord-002"></a>FR-ORD-002: Customer Order Cancellation Prior to Dispatch
+* **Requirement ID:** `FR-ORD-002`
+* **Requirement Title:** Customer Self-Service Order Cancellation Prior to Packaging and Dispatch
+* **Feature ID:** `FEAT-ORD-001`
+* **Business Objective:** `OBJ-004`, `OBJ-005`
+* **Requirement Statement:** The system must allow customers to self-service cancel an order while it remains in `CONFIRMED` or `PROCESSING` status, immediately releasing committed inventory and triggering an automated 100% refund, while strictly blocking cancellation once the order transitions to `PACKED` or `SHIPPED`.
+* **Description:** Provides customer flexibility while preventing operational chaos and shipping wasted freight once warehouse packing has commenced.
+* **Primary Actor:** `ACT-009` (Customer)
+* **Preconditions:** Order status is `CONFIRMED` or `PROCESSING`.
+* **Trigger:** Customer clicks "Cancel Order" in order management view.
+* **Main Success Scenario:**
+  1. Customer selects cancellation reason code from predefined list.
+  2. System verifies order status is prior to `PACKED`.
+  3. System transitions order to `CANCELLED`.
+  4. System immediately releases inventory back to Available-to-Sell stock.
+  5. System triggers automated refund dispatch to payment gateway (`FR-RET-002`).
+  6. System issues statutory Credit Note (`FR-FIN-003`) and notifies customer via SMS/Email.
+* **Alternative Scenarios:**
+  * Administrator cancels order: System allows administrative cancellation with mandatory supervisor reason code.
+* **Exception and Failure Scenarios:**
+  * Order is already `PACKED` or `SHIPPED`: System blocks cancellation and informs customer: "Order is already packed for shipment and cannot be cancelled. You may refuse delivery or initiate a return upon receipt."
+* **Business Rules:** `BR-ORD-003`, `BR-RET-003`, `BR-FIN-003`.
+* **Inputs and Business Information Required:** Order ID, customer ID, cancellation reason code.
+* **Expected Business Outcomes:** Immediate inventory restock and rapid refund processing without manual support intervention.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-RET-002`, `FEAT-INV-001`.
+* **Acceptance Criteria:**
+  * **Given** an order in `CONFIRMED` status, **When** the customer submits cancellation, **Then** order status becomes `CANCELLED`, inventory is restored to ATS, and refund is dispatched within 5 seconds.
+  * **Given** an order in `PACKED` status, **When** the customer attempts cancellation, **Then** the system blocks the request.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-009`.
+
+### <a id="fr-ord-003"></a>FR-ORD-003: Warehouse Order Picking, Packing & Manifest Handoff
+* **Requirement ID:** `FR-ORD-003`
+* **Requirement Title:** Warehouse Batch Pick Lists, Serial Number Verification and Manifest Handoff
+* **Feature ID:** `FEAT-ORD-001`
+* **Business Objective:** `OBJ-004`
+* **Requirement Statement:** The system must generate consolidated warehouse pick lists sorted by bin location, enforce handheld barcode scanning of SKU and individual device serial numbers (IMEI/Serial) during packing, and generate official courier handover manifests.
+* **Description:** Streamlines physical warehouse operations and establishes serialized device tracking for warranty and fraud prevention.
+* **Primary Actor:** `ACT-004` (Fulfillment Specialist / Warehouse Operator)
+* **Preconditions:** Orders exist in `CONFIRMED` status.
+* **Trigger:** Warehouse operator initiates wave fulfillment batch.
+* **Main Success Scenario:**
+  1. System compiles wave pick list grouped by warehouse zone and bin location.
+  2. Operator picks items and brings them to packaging bench.
+  3. Operator scans order packing slip barcode.
+  4. Operator scans product EAN barcode and unique device serial/IMEI barcode.
+  5. System validates scanned serial against manufacturer format rules and binds IMEI to the order record.
+  6. System generates shipping label and packing slip.
+  7. Operator packs parcel, affixes label, and scans parcel onto courier handover manifest.
+* **Alternative Scenarios:**
+  * Non-serialized electronics accessories: System mandates SKU barcode scan but bypasses serial number prompt.
+* **Exception and Failure Scenarios:**
+  * Scanned serial already registered to another active order: System halts packing and raises duplicate serial security exception.
+* **Business Rules:** `BR-ORD-004`, `BR-SHP-001`.
+* **Inputs and Business Information Required:** Batch ID, Order ID, scanned SKU, scanned IMEI/Serial number, package weight.
+* **Expected Business Outcomes:** Zero picking errors and 100% serialized tracking of high-value electronics.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-SHP-001`.
+* **Acceptance Criteria:**
+  * **Given** a smartphone order packing step, **When** the operator attempts to mark the order `PACKED` without scanning a valid IMEI, **Then** the system denies completion until a valid IMEI barcode is scanned.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-008`.
 
 ---
 
 ## 11. Shipping, Logistics & Delivery Tracking
 
-### FR-SHP-001: Courier Consignment Booking & AWB Tracking Integration
+### <a id="fr-shp-001"></a>FR-SHP-001: Courier Consignment Booking & AWB Tracking Integration
 * **Requirement ID:** `FR-SHP-001`
-* **Requirement Title:** Automated Courier Booking, Shipping Label Issuance, and Tracking
+* **Requirement Title:** Automated Third-Party Courier Consignment Booking and Shipping Label PDF
 * **Feature ID:** `FEAT-SHP-001`
 * **Business Objective:** `OBJ-006`
-* **Requirement Statement:** The system must integrate with courier logistics partner APIs to automatically book consignments upon packing, generate printable shipping labels with scannable AWB barcodes, and ingest real-time delivery tracking events.
-* **Description:** Automates outbound shipping logistics and milestone visibility for both customers and operations.
-* **Primary Actor:** `ACT-005` (Fulfillment Specialist), `ACT-012` (Courier Partner)
-* **Preconditions:** Order status is `PACKED`.
-* **Trigger:** Fulfillment operator confirms packing completion.
+* **Requirement Statement:** The system must automatically book consignments with integrated courier logistics partners (e.g., Delhivery, Blue Dart, Shiprocket) upon order packing, generating a compliant Air Waybill (AWB) number and printable thermal shipping label PDF.
+* **Description:** Eliminates manual waybill data entry and automates the logistics dispatch lifecycle.
+* **Primary Actor:** System (Automated), `ACT-012` (Courier Logistics Partner)
+* **Preconditions:** Order is packed and package dimensions/weight are captured.
+* **Trigger:** Order transitions to `PACKED`.
 * **Main Success Scenario:**
-  1. System submits consignment booking to courier partner API with parcel weight, dimensions, and customer address.
-  2. Courier API returns Air Waybill (AWB) number and printable shipping label PDF.
-  3. System attaches AWB number to order record and renders label for operator to affix to parcel.
-  4. Courier picks up parcel; operator scans manifest; order transitions to `DISPATCHED`.
-  5. Inbound courier webhooks (In-Transit, Out for Delivery, Delivered) automatically update order tracking timeline and dispatch customer notifications.
+  1. System transmits consignment booking payload to courier partner API (recipient address, weight, dimensions, declared value, invoice number).
+  2. Courier API allocates unique AWB tracking number and returns label stream.
+  3. System renders printable shipping label PDF with scannable AWB barcode.
+  4. System binds AWB to order record and sets up tracking webhook listener.
 * **Alternative Scenarios:**
-  * Delivery failed (Customer unavailable): Courier updates status to `DELIVERY_ATTEMPTED`; system alerts customer and schedules automatic re-attempt (up to 3 attempts).
+  * Primary courier API down: System automatically fails over to secondary configured courier partner API.
 * **Exception and Failure Scenarios:**
-  * Courier API outage: System queues booking in an asynchronous retry queue with exponential backoff and alerts logistics manager if unfulfilled after 30 minutes.
-  * Undeliverable after 3 attempts: Courier initiates Return to Origin (RTO); order transitions to `RTO_IN_TRANSIT`.
-* **Business Rules:** `BR-SHP-001`, `BR-SHP-002`.
-* **Inputs and Business Information Required:** Order ID, package weight (kg), dimensions (LxWxH cm), destination PIN code, carrier partner credentials.
-* **Expected Business Outcomes:** Automated shipping workflow; sub-minute label generation; complete shipment traceability.
-* **Dependencies:** `FEAT-INT-001`, `FEAT-ORD-001`, `FEAT-NTF-001`.
+  * Courier reports PIN code unserviceable for COD: System flags consignment exception and alerts operations lead.
+* **Business Rules:** `BR-SHP-001`, `BR-INT-001`.
+* **Inputs and Business Information Required:** Order ID, recipient address, contact phone, weight (kg), dimensions (LxWxH cm), declared value (₹).
+* **Expected Business Outcomes:** Rapid, automated dispatch and immediate shipment trackability.
+* **Dependencies:** `FEAT-ORD-001`, `DEP-002`.
 * **Acceptance Criteria:**
-  * **Given** an order in `PACKED` status, **When** consignment booking succeeds, **Then** an AWB number is stored and order transitions to `DISPATCHED` only upon manifest handover scan.
-  * **Given** a courier webhook indicating `DELIVERED`, **When** received and verified, **Then** order transitions to `DELIVERED`, delivery timestamp is captured, and the return eligibility window opens.
+  * **Given** a packed order, **When** consignment booking executes, **Then** an AWB number is generated and linked to the order within 3 seconds.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-005](./08-assumptions-dependencies-open-questions.md#oq-005).
+* **Related Workflow IDs:** `WF-008`.
+
+### <a id="fr-shp-002"></a>FR-SHP-002: Real-Time Courier Tracking Webhook Ingestion & Status Updates
+* **Requirement ID:** `FR-SHP-002`
+* **Requirement Title:** Courier Tracking Webhook Ingestion, Transit Milestones and Customer Alerts
+* **Feature ID:** `FEAT-SHP-001`
+* **Business Objective:** `OBJ-006`
+* **Requirement Statement:** The system must ingest real-time tracking webhooks from courier partners, update order tracking milestones (`In Transit`, `Reached Destination Hub`, `Out for Delivery`, `Delivered`, `Delivery Failed / NDR`), and dispatch automated SMS/WhatsApp alerts for critical delivery events.
+* **Description:** Keeps customers informed throughout parcel transit and enables proactive Non-Delivery Report (NDR) management.
+* **Primary Actor:** `ACT-012` (Courier Logistics Partner), System (Automated)
+* **Preconditions:** Order has active AWB number.
+* **Trigger:** Courier tracking scan event received via webhook or polling API.
+* **Main Success Scenario:**
+  1. System ingests tracking event with timestamp, location, and status code.
+  2. System updates order delivery milestone timeline.
+  3. When status changes to `Out for Delivery`, system dispatches delivery notification with courier delivery agent contact.
+  4. When status changes to `Delivered`, system marks order `DELIVERED`, starts the return eligibility timer, and sends delivery confirmation.
+* **Alternative Scenarios:**
+  * Non-Delivery Report (NDR): Courier reports "Customer Not Available"; system triggers automated WhatsApp message to customer requesting preferred re-delivery slot.
+* **Exception and Failure Scenarios:**
+  * Return to Origin (RTO) initiated: Courier flags parcel uncontactable after 3 attempts; system transitions order to `RTO_IN_TRANSIT` and queues warehouse inwarding.
+* **Business Rules:** `BR-SHP-002`, `BR-NTF-001`.
+* **Inputs and Business Information Required:** AWB number, tracking milestone code, location, timestamp, failure reason code (if NDR).
+* **Expected Business Outcomes:** Reduced RTO rates and transparent shipment visibility.
+* **Dependencies:** `FEAT-SHP-001`, `FEAT-NTF-001`.
+* **Acceptance Criteria:**
+  * **Given** a courier webhook reporting "Delivered", **When** processed, **Then** order status transitions to `DELIVERED`, customer receives delivery confirmation SMS within 1 minute, and the 7-day return eligibility countdown starts.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
@@ -513,173 +1181,270 @@ All functional requirements in this document strictly adhere to the formalized b
 
 ## 12. Returns, Replacements & Refunds
 
-### FR-RET-001: Customer Return Request Lifecycle and Warehouse Inspection
+### <a id="fr-ret-001"></a>FR-RET-001: Customer Return Request Lifecycle and Warehouse Inspection
 * **Requirement ID:** `FR-RET-001`
-* **Requirement Title:** Manage Return Requests, Reverse Logistics, and Warehouse Quality Inspection
+* **Requirement Title:** Enforce 7-Day Return Eligibility and Warehouse Device Condition Inspection
 * **Feature ID:** `FEAT-RET-001`
-* **Business Objective:** `OBJ-007`, `OBJ-003`
-* **Requirement Statement:** The system must allow customers to submit return/replacement requests for eligible delivered orders within a configured return policy window (e.g., 7 days), track reverse logistics pickup, and mandate physical quality inspection at the warehouse before refund authorization.
-* **Description:** Governs reverse logistics for consumer electronics. Enforces policy deadlines and prevents fraudulent returns of used or swapped items.
-* **Primary Actor:** `ACT-009` (Customer), `ACT-004` (Warehouse Operator)
-* **Preconditions:** Order status is `DELIVERED` and current timestamp $\le \text{Delivery Timestamp} + 7\text{ days}$.
-* **Trigger:** Customer submits return request on delivered order.
+* **Business Objective:** `OBJ-007`
+* **Requirement Statement:** The system must enforce a strict 7-calendar-day return eligibility window from delivery timestamp for consumer electronics, requiring customers to provide reason codes and defect photographs, and mandating physical warehouse inspection before refund approval.
+* **Description:** Protects the enterprise from fraudulent returns while honoring genuine defect resolutions.
+* **Primary Actor:** `ACT-009` (Customer), `ACT-004` (Warehouse Inspector)
+* **Preconditions:** Order is in `DELIVERED` status within the 7-calendar-day eligibility window.
+* **Trigger:** Customer submits return request from order history.
 * **Main Success Scenario:**
-  1. Customer selects delivered item, chooses return reason (e.g., "Defective item", "Wrong color sent"), uploads mandatory verification photos, and selects preference (Replacement or Refund).
-  2. System validates return window eligibility and approves return pickup.
-  3. Reverse logistics courier collects item and delivers parcel to enterprise warehouse.
-  4. Warehouse operator inspects item: verifies serial number/IMEI matches shipped product, checks physical condition, and grades item.
-  5. Operator submits inspection grade: `APPROVED_DEFECTIVE` or `APPROVED_RESTOCKABLE`.
-  6. System triggers automated refund (`FR-RET-002`) or creates a replacement fulfillment order.
+  1. Customer selects eligible item, specifies reason code (Defective, Damaged in Transit, Wrong Item), and uploads clear photos.
+  2. System validates request is within 7 days of delivery timestamp.
+  3. System creates Return Merchandise Authorization (RMA) in `RETURN_REQUESTED` status.
+  4. Reverse courier picks up parcel and transits to enterprise warehouse.
+  5. Warehouse inspector scans returned device IMEI, inspects condition against checklist (original packaging, accessories, physical damage), and marks inspection as `APPROVED`.
+  6. System triggers refund remittance (`FR-RET-002`).
 * **Alternative Scenarios:**
-  * Inspection rejected (e.g., customer returned an old phone with mismatched serial number, or item shows physical customer damage): Operator marks inspection as `REJECTED` with photographic proof and explanation note. Parcel is returned to customer; refund is denied.
+  * Customer requests replacement: If stock is available, system creates replacement order at ₹0 instead of issuing refund.
 * **Exception and Failure Scenarios:**
-  * Request submitted past 7 days: System disables return button and displays "Return window expired" message.
-* **Business Rules:** `BR-RET-001`, `BR-RET-002`, `BR-RET-003`.
-* **Inputs and Business Information Required:** Order ID, item SKU, return reason code, customer photos, inspection grade, inspector user ID.
-* **Expected Business Outcomes:** High customer satisfaction on genuine defects; zero financial losses to return fraud.
-* **Dependencies:** `FEAT-ORD-001`, `FEAT-INV-001`, `FEAT-RET-002`.
+  * Return window expired: Customer attempts return on day 8; system rejects request with notice directing customer to manufacturer warranty service.
+  * Inspection rejected: Inspector detects IMEI mismatch or customer-induced damage; system marks return `REJECTED`, attaches inspection photos, denies refund, and arranges return of device to customer.
+* **Business Rules:** `BR-RET-001`, `BR-RET-002`.
+* **Inputs and Business Information Required:** Order ID, item SKU, return reason code, defect description, customer photos, inspection outcome code.
+* **Expected Business Outcomes:** Controlled return fraud and audited device condition tracking.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-SHP-001`.
 * **Acceptance Criteria:**
-  * **Given** an order delivered 8 days ago, **When** customer attempts to initiate return, **Then** the system blocks the request.
-  * **Given** a returned product received at warehouse, **When** inspector verifies matching serial number and undamaged state, **Then** inspection approval initiates refund processing within 1 business hour.
+  * **Given** an order delivered 8 days ago, **When** the customer attempts to submit a return, **Then** the platform blocks the submission with an "Eligibility Expired" notice.
+  * **Given** an inwarded return with a mismatched IMEI, **When** the inspector records "IMEI Mismatch", **Then** the return is flagged `REJECTED` and refund processing is blocked.
 * **Priority:** `P1`
-* **Requirement Status:** `CONFIRMED`
-* **Open Questions:** See [OQ-008](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-008).
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** See [OQ-008](./08-assumptions-dependencies-open-questions.md#oq-008).
 * **Related Workflow IDs:** `WF-010`.
 
-### FR-RET-002: Automated Refund Remittance to Source Instrument
+### <a id="fr-ret-002"></a>FR-RET-002: Automated Refund Remittance to Source Instrument
 * **Requirement ID:** `FR-RET-002`
-* **Requirement Title:** Automated Refund Calculation and Remittance to Original Payment Source
+* **Requirement Title:** Automated Refund Processing to Original Payment Instrument
 * **Feature ID:** `FEAT-RET-002`
-* **Business Objective:** `OBJ-005`, `OBJ-008`
-* **Requirement Statement:** The system must automatically calculate eligible refund amounts (pro-rata item base price, item taxes, deducting non-refundable shipping fees where applicable) and disburse refunds directly to the customer's original payment source via payment gateway APIs.
-* **Description:** Executes financial disbursement for cancelled or returned purchases. Prevents manual refund leakage.
-* **Primary Actor:** System (Automated), `ACT-007` (Finance Officer)
-* **Preconditions:** Return inspection approved or order cancelled prior to warehouse dispatch.
-* **Trigger:** Return approval event or order cancellation event.
+* **Business Objective:** `OBJ-005`
+* **Requirement Statement:** The system must disburse approved refunds strictly to the customer's original payment source (Credit Card, Net Banking, UPI) via payment gateway refund APIs, completely prohibiting cash payouts for online payments.
+* **Description:** Ensures compliance with anti-money laundering (AML) regulations and automates refund accounting.
+* **Primary Actor:** System (Automated), `ACT-007` (Finance Specialist)
+* **Preconditions:** Return inspection is `APPROVED` or order is cancelled prior to packaging.
+* **Trigger:** Return approval or cancellation event.
 * **Main Success Scenario:**
-  1. System calculates refundable amount based on line-item price minus itemized coupon discounts plus applicable line taxes.
-  2. System verifies payment gateway transaction reference from original order.
-  3. System calls payment gateway Refund API requesting remittance of exact calculated amount to original card/UPI account.
-  4. Gateway confirms refund initiation with a gateway refund reference number.
-  5. System generates official Credit Note (`FR-FIN-001`), marks refund status as `COMPLETED`, and notifies customer via SMS/Email with refund reference.
+  1. System calculates refundable amount (pro-rata item price plus taxes).
+  2. System issues payment gateway refund API call referencing original gateway payment ID.
+  3. Gateway returns refund reference number and confirms initiation.
+  4. System records refund transaction ID, generates Credit Note (`FR-FIN-003`), and transitions return status to `REFUND_COMPLETED`.
+  5. System notifies customer via SMS/Email with refund reference.
 * **Alternative Scenarios:**
-  * Refund on Cash on Delivery (COD) order: System prompts customer to securely provide verified bank account / UPI VPA for direct bank transfer.
+  * Cash on Delivery (COD) order refund: System prompts customer for verified bank account details (IFSC, Account Number) or UPI VPA and initiates payout via gateway transfer API.
 * **Exception and Failure Scenarios:**
-  * Gateway refund failure (e.g., customer closed credit card account): System transitions refund to `RETRY_QUEUED` and alerts finance officer for manual bank wire transfer.
+  * Gateway refund API failure: System queues refund for automated retry with exponential backoff and alerts Finance Specialist if failure persists $> 24\text{ hours}$.
 * **Business Rules:** `BR-RET-003`, `BR-FIN-003`.
-* **Inputs and Business Information Required:** Order ID, payment transaction ID, refund amount, reason code, authorized officer ID (if manual override).
-* **Expected Business Outcomes:** Rapid customer refund turnaround; 100% auditable accounting records.
-* **Dependencies:** `FEAT-PAY-001`, `FEAT-FIN-001`, `FEAT-NTF-001`.
+* **Inputs and Business Information Required:** Order ID, Payment Gateway Ref ID, refund amount (₹), reason code.
+* **Expected Business Outcomes:** Rapid, compliant customer refunds with complete financial auditability.
+* **Dependencies:** `FEAT-PAY-001`, `FEAT-FIN-002`.
 * **Acceptance Criteria:**
-  * **Given** an approved return for an item paid via UPI, **When** refund processes, **Then** an API call is made to the payment gateway targeting the original transaction ID, and a Credit Note is generated.
-  * **Given** an order where a ₹500 discount was applied across two items, **When** one item is returned, **Then** the refund reflects only the proportional discounted price paid, not the full pre-discount price.
+  * **Given** an approved return for an order paid via UPI, **When** refund processing triggers, **Then** the gateway refund API is called targeting the original UPI transaction ID and a Credit Note is generated.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-009`, `WF-010`.
 
+### <a id="fr-ret-003"></a>FR-RET-003: Return Authorization & Reverse Courier Pickup Scheduling
+* **Requirement ID:** `FR-RET-003`
+* **Requirement Title:** Automated Reverse Logistics Consignment Booking and Pickup Scheduling
+* **Feature ID:** `FEAT-RET-001`
+* **Business Objective:** `OBJ-006`, `OBJ-007`
+* **Requirement Statement:** The system must automatically schedule a reverse pickup with integrated courier logistics partners upon return approval, generating a reverse AWB and providing the customer with pickup tracking.
+* **Description:** Automates reverse supply chain logistics, eliminating manual pickup booking by support staff.
+* **Primary Actor:** System (Automated), `ACT-012` (Courier Partner)
+* **Preconditions:** Customer return request meets initial policy validation.
+* **Trigger:** Return request approval.
+* **Main Success Scenario:**
+  1. System transmits reverse pickup booking payload to courier partner API (customer address, package weight, return center address).
+  2. Courier API allocates reverse AWB number and confirms pickup window (e.g., next business day).
+  3. System attaches reverse AWB to RMA record and dispatches pickup instructions to customer via SMS/WhatsApp.
+  4. Courier agent collects package, scans AWB, and transits parcel to enterprise warehouse.
+* **Alternative Scenarios:**
+  * Courier reverse pickup unserviceable: System alerts support agent to arrange alternative national carrier pickup.
+* **Exception and Failure Scenarios:**
+  * Customer cancels return: System calls courier API to cancel reverse pickup consignment.
+* **Business Rules:** `BR-RET-002`, `BR-SHP-001`.
+* **Inputs and Business Information Required:** RMA ID, customer address, package weight, courier partner code.
+* **Expected Business Outcomes:** Fast reverse logistics turnaround and audited chain of custody for returned devices.
+* **Dependencies:** `FEAT-RET-001`, `DEP-002`.
+* **Acceptance Criteria:**
+  * **Given** an approved return request, **When** reverse pickup booking executes, **Then** a reverse AWB is generated and pickup confirmation is dispatched to the customer within 10 seconds.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-010`.
+
 ---
 
 ## 13. Promotions, Coupons & Discounts
 
-### FR-PRM-001: Coupon Redemption Engine and Non-Stacking Enforcement
+### <a id="fr-prm-001"></a>FR-PRM-001: Coupon Redemption Engine and Non-Stacking Enforcement
 * **Requirement ID:** `FR-PRM-001`
-* **Requirement Title:** Promotional Coupon Validation, Usage Limits, and Discount Allocation
+* **Requirement Title:** Strict Promotional Coupon Non-Stacking and Usage Quota Governance
 * **Feature ID:** `FEAT-PRM-001`
 * **Business Objective:** `OBJ-001`, `OBJ-008`
-* **Requirement Statement:** The system must validate coupon codes against eligibility criteria (validity window, minimum cart value, category/brand restrictions, per-customer usage limits), distribute discounts proportionally across line items, and strictly prohibit unauthorized coupon stacking.
-* **Description:** Promotional engine driving customer incentives while enforcing margin protection rules.
-* **Primary Actor:** `ACT-009` (Customer), `ACT-008` (Marketing Manager)
-* **Preconditions:** Promotional coupon configured and active.
-* **Trigger:** Customer applies coupon code in shopping cart or checkout.
+* **Requirement Statement:** The system must enforce that promotional coupons cannot be stacked on a single order (maximum one coupon per order), validate global and per-customer redemption limits, and verify minimum order value requirements before applying discounts.
+* **Description:** Protects enterprise gross margins from coupon abuse and unintended discount compounding.
+* **Primary Actor:** `ACT-009` (Customer)
+* **Preconditions:** Customer applies promo code in cart or checkout.
+* **Trigger:** Customer submits coupon code.
 * **Main Success Scenario:**
-  1. Customer enters coupon code (e.g., `TECHFEST10`).
-  2. System verifies coupon status: active, current time within start/end dates, total usage limit not exceeded.
-  3. System verifies customer eligibility: user has not exceeded individual redemption limit (e.g., max 1 redemption per customer).
-  4. System verifies cart meets minimum order value (e.g., cart total $\ge ₹20,000$).
-  5. System calculates discount amount (e.g., 10% off up to a maximum cap of ₹2,500).
-  6. System proportionally allocates discount across eligible line items and updates order summary.
+  1. Customer enters promo code (e.g., `SAVE10`).
+  2. System checks code validity: active status, within start/end dates, global quota not exhausted.
+  3. System checks customer redemption history: customer has not exceeded per-user limit (`BR-PRM-001`).
+  4. System verifies cart meets minimum purchase threshold.
+  5. System calculates discount amount (capped at maximum discount limit).
+  6. System applies discount and updates order summary.
 * **Alternative Scenarios:**
-  * Customer removes coupon: System recalculates order totals with standard active prices.
+  * Replacing existing coupon: Customer applies code B while code A is active; system prompts customer to confirm replacement of code A.
 * **Exception and Failure Scenarios:**
-  * Attempt to apply second coupon: System rejects with "Only one promotional coupon can be applied per order" (`BR-PRM-001`).
-  * Cart value falls below threshold after quantity reduction: System automatically invalidates applied coupon and alerts customer.
+  * Code expired or quota exhausted: System rejects code with explicit error notice.
+  * Attempting to stack coupons via API manipulation: System strictly accepts only the single most recently applied valid code.
 * **Business Rules:** `BR-PRM-001`, `BR-PRM-002`.
-* **Inputs and Business Information Required:** Coupon code, customer ID, cart line items, cart subtotal.
-* **Expected Business Outcomes:** Promotional sales growth with strict financial safeguards against coupon exploitation.
+* **Inputs and Business Information Required:** Coupon code, customer ID, cart total, item category IDs.
+* **Expected Business Outcomes:** Predictable promotional spending and zero margin erosion from coupon stacking.
 * **Dependencies:** `FEAT-CART-001`, `FEAT-CHK-001`.
 * **Acceptance Criteria:**
-  * **Given** an order with an active coupon applied, **When** a user enters a second discount coupon, **Then** the system rejects the second code unless the user chooses to replace the existing one.
-  * **Given** a coupon with a minimum order value of ₹10,000, **When** applied to a cart of ₹8,500, **Then** the coupon application is rejected with an explanatory message.
+  * **Given** an order with coupon A applied, **When** the customer applies coupon B, **Then** coupon A is removed and only coupon B is applied (zero stacking).
+  * **Given** a coupon with a 1-time usage limit per user, **When** a customer attempts to redeem it a second time, **Then** the system rejects redemption with "Coupon already redeemed".
 * **Priority:** `P1`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-011`.
 
+### <a id="fr-prm-002"></a>FR-PRM-002: Pro-Rata Item-Level Discount Allocation & Free Shipping Application
+* **Requirement ID:** `FR-PRM-002`
+* **Requirement Title:** Proportionally Allocate Cart-Level Discounts Across Eligible Line Items
+* **Feature ID:** `FEAT-PRM-001`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must proportionally allocate cart-level promotional discounts across eligible order line items on a pro-rata value basis, ensuring accurate line-item taxable values and correct pro-rata refund calculations in the event of partial returns.
+* **Description:** Ensures statutory tax compliance and accurate partial refund handling when basket-level discounts are applied.
+* **Primary Actor:** System (Automated Calculation Engine)
+* **Preconditions:** Valid coupon or basket discount applied to cart.
+* **Trigger:** Order pricing calculation executed.
+* **Main Success Scenario:**
+  1. System calculates total eligible order discount (e.g., ₹1,000 off).
+  2. System computes each eligible line item's percentage of total eligible cart value.
+  3. System allocates discount proportionally across line items, rounding to nearest currency subunit (paise) with residual penny adjustment on the largest item.
+  4. System calculates GST on the net discounted price of each line item.
+* **Alternative Scenarios:**
+  * Free Shipping promotion: System zeroes the delivery fee component without altering product line item prices.
+* **Exception and Failure Scenarios:**
+  * Ineligible items in cart: System excludes ineligible items (e.g., clearance items) from discount distribution.
+* **Business Rules:** `BR-PRM-002`, `BR-FIN-001`.
+* **Inputs and Business Information Required:** Line item prices, discount amount, eligibility flags.
+* **Expected Business Outcomes:** Flawless financial integrity and audit-ready partial return calculations.
+* **Dependencies:** `FEAT-PRM-001`, `FEAT-FIN-001`.
+* **Acceptance Criteria:**
+  * **Given** a cart with Item A (₹6,000) and Item B (₹4,000) and a ₹1,000 discount, **When** pro-rata allocation runs, **Then** Item A receives ₹600 discount (net ₹5,400) and Item B receives ₹400 discount (net ₹3,600).
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-006`, `WF-011`.
+
 ---
 
 ## 14. Notifications & Customer Communications
 
-### FR-NTF-001: Multi-Channel Event-Driven Notification Delivery
+### <a id="fr-ntf-001"></a>FR-NTF-001: Multi-Channel Event-Driven Notification Delivery
 * **Requirement ID:** `FR-NTF-001`
-* **Requirement Title:** Asynchronous Multi-Channel Transactional Notification Relay
+* **Requirement Title:** Event-Driven Asynchronous Notification Relay with Multi-Channel Fallback
 * **Feature ID:** `FEAT-NTF-001`
 * **Business Objective:** `OBJ-006`, `OBJ-007`
-* **Requirement Statement:** The system must dispatch standardized, personalized transactional notifications across SMS, Email, and WhatsApp for critical business events (account verification, order confirmation, dispatch with tracking link, delivery confirmation, refund processed), tracking delivery statuses and retrying on transient provider failures.
-* **Description:** Manages automated customer communication. Separates critical transactional messages from promotional marketing.
-* **Primary Actor:** System (Automated), `ACT-013` (Messaging Gateway)
-* **Preconditions:** Business event triggered with recipient contact information.
-* **Trigger:** Domain event published (e.g., `OrderConfirmedEvent`, `ShipmentDispatchedEvent`).
+* **Requirement Statement:** The system must ingest domain events asynchronously and dispatch transactional customer notifications across SMS, WhatsApp, and Email, automatically falling back to SMS if WhatsApp delivery fails or times out within 60 seconds.
+* **Description:** Guarantees critical transactional messaging (OTPs, order confirmations, dispatch alerts) reaches consumers promptly regardless of third-party gateway outages.
+* **Primary Actor:** System (Automated Notification Engine)
+* **Preconditions:** Domain event published with recipient contact data.
+* **Trigger:** Critical lifecycle event published (e.g., `OrderConfirmedEvent`, `OTPGeneratedEvent`).
 * **Main Success Scenario:**
-  1. System matches event to approved notification template.
-  2. System injects contextual parameters (Customer Name, Order Number, AWB Tracking URL, Item Count).
-  3. System determines channel routing (SMS for OTPs; Email + WhatsApp for Order Confirmation and Tracking).
-  4. System dispatches message to messaging gateway API.
-  5. Gateway confirms delivery; system records delivery timestamp in notification log.
+  1. System listens to domain event and matches it to a registered notification template.
+  2. System resolves customer preferred channel (e.g., WhatsApp).
+  3. System dispatches message to primary channel gateway.
+  4. Gateway confirms successful delivery; system logs delivery timestamp.
 * **Alternative Scenarios:**
-  * WhatsApp delivery fails or user not on WhatsApp: System automatically falls back to standard SMS notification within 60 seconds.
+  * WhatsApp fallback to SMS: WhatsApp gateway reports customer unreachable or delivery times out after 60 seconds; system automatically dispatches message via national SMS gateway.
 * **Exception and Failure Scenarios:**
-  * Gateway transient failure: System queues message for retry with exponential backoff (up to 3 retries over 15 minutes).
+  * All channels fail: System retries dispatch with exponential backoff and logs an operational alert.
 * **Business Rules:** `BR-NTF-001`.
-* **Inputs and Business Information Required:** Template ID, recipient phone/email, parameter map, message priority (High/Normal).
-* **Expected Business Outcomes:** Real-time customer awareness; drastic reduction in customer anxiety inquiries.
-* **Dependencies:** `FEAT-INT-001`.
+* **Inputs and Business Information Required:** Event type, recipient phone/email, template parameters (Order ID, tracking URL, OTP code).
+* **Expected Business Outcomes:** 99.9% delivery rate for mission-critical transactional alerts.
+* **Dependencies:** `DEP-003`, `FEAT-INT-001`.
 * **Acceptance Criteria:**
-  * **Given** a confirmed order event, **When** processed, **Then** both an email containing the tax invoice PDF link and an SMS/WhatsApp message containing the tracking reference are dispatched within 10 seconds.
+  * **Given** a WhatsApp dispatch that fails or times out after 60 seconds, **When** failure is detected, **Then** the system automatically dispatches the identical notification via SMS within 5 seconds.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
-* **Open Questions:** See [OQ-015](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-015).
+* **Open Questions:** See [OQ-015](./08-assumptions-dependencies-open-questions.md#oq-015).
 * **Related Workflow IDs:** `WF-012`.
 
 ---
 
-## 15. Customer Support & Service Requests
+## 15. Reviews, Ratings & Customer Feedback
 
-### FR-SUP-001: Integrated Support Ticket Lifecycle Linked to Orders
+### <a id="fr-rev-001"></a>FR-REV-001: Verified-Buyer Product Review Submission & Moderation Lifecycle
+* **Requirement ID:** `FR-REV-001`
+* **Requirement Title:** Verified-Buyer Review Submission, Rating Governance and Moderation Queue
+* **Feature ID:** `FEAT-REV-001`
+* **Business Objective:** `OBJ-007`
+* **Requirement Statement:** The system must restrict product rating and review submission strictly to verified buyers who have completed a delivered purchase of that SKU, route all submissions through an administrative moderation queue, and compute aggregated star ratings.
+* **Description:** Establishes trustworthy social proof while preventing fake reviews, competitor spam, and abusive content.
+* **Primary Actor:** `ACT-009` (Customer), `ACT-006` (Customer Support / Moderator)
+* **Preconditions:** Customer has an order containing the SKU in `DELIVERED` status.
+* **Trigger:** Customer submits star rating (1-5) and written review from order history.
+* **Main Success Scenario:**
+  1. Customer submits rating, title, review body, and optional product photos.
+  2. System verifies customer purchased the item and order is `DELIVERED`.
+  3. System flags review as `VERIFIED_PURCHASER` and sets status to `PENDING_MODERATION`.
+  4. Moderator reviews content in admin portal and clicks `APPROVED`.
+  5. Review publishes to product page and system recalculates aggregate SKU rating.
+* **Alternative Scenarios:**
+  * Customer updates existing review: Review returns to moderation queue before updated text is published.
+* **Exception and Failure Scenarios:**
+  * Non-buyer attempts review submission: System blocks submission with error: "Only verified purchasers of this item may submit reviews."
+  * Profanity / spam detected: Automated filter flags review as `AUTO_FLAGGED` for priority moderator review or auto-rejection.
+* **Business Rules:** `BR-REV-001`.
+* **Inputs and Business Information Required:** Order ID, SKU, star rating (1-5), review title, body text, optional photos.
+* **Expected Business Outcomes:** Authentic consumer reviews enhancing brand credibility.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-CAT-001`.
+* **Acceptance Criteria:**
+  * **Given** a customer who has not purchased SKU X, **When** they attempt to submit a review for SKU X, **Then** submission is denied.
+  * **Given** a submitted review, **When** approved by a moderator, **Then** it appears on the live PDP and the product's aggregate rating updates.
+* **Priority:** `P2`
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** See [OQ-012](./08-assumptions-dependencies-open-questions.md#oq-012).
+* **Related Workflow IDs:** `WF-004`.
+
+---
+
+## 16. Customer Support & Service Requests
+
+### <a id="fr-sup-001"></a>FR-SUP-001: Integrated Support Ticket Lifecycle Linked to Orders
 * **Requirement ID:** `FR-SUP-001`
-* **Requirement Title:** Customer Service Ticket Management Linked to Order History
+* **Requirement Title:** Contextual Customer Support Case Management Linked to Orders and Deliveries
 * **Feature ID:** `FEAT-SUP-001`
 * **Business Objective:** `OBJ-007`
-* **Requirement Statement:** The system must provide integrated support ticketing, allowing customers to raise inquiries directly against specific orders and enabling support representatives to investigate order histories, add internal notes, and track resolution SLAs.
-* **Description:** Centralizes customer dispute and inquiry handling.
-* **Primary Actor:** `ACT-006` (Customer Support Agent), `ACT-009` (Customer)
-* **Preconditions:** Customer has an active or historical order.
-* **Trigger:** Customer submits help request from order details screen.
+* **Requirement Statement:** The system must allow customers to raise support tickets linked directly to specific Order IDs, consignment tracking numbers, or return requests, enabling support agents to review full operational history and communicate directly through an audited ticketing thread.
+* **Description:** Streamlines customer inquiry resolution by providing support operators with instant commercial and fulfillment context.
+* **Primary Actor:** `ACT-009` (Customer), `ACT-006` (Customer Support Representative)
+* **Preconditions:** Customer is authenticated.
+* **Trigger:** Customer clicks "Get Help with Order" or submits inquiry form.
 * **Main Success Scenario:**
-  1. Customer selects order, selects issue category (e.g., "Delayed Delivery", "Missing Item", "Technical Inquiry"), and types description.
-  2. System generates unique ticket number (e.g., `TKT-2026-8812`) and links it to Order ID and Customer ID.
-  3. Support agent views unified dashboard displaying customer contact info, order status, courier AWB tracking status, and payment logs.
-  4. Agent communicates resolution to customer via ticket interface and updates status to `RESOLVED`.
+  1. Customer selects order, chooses issue category (Delivery Delay, Damaged Parcel, Invoicing), and types message.
+  2. System generates ticket ID, attaches complete order snapshot and courier tracking history, and assigns to support queue.
+  3. Support agent inspects context, enters response or initiates operational action.
+  4. Customer receives notification and views reply in support portal.
+  5. Ticket is resolved and marked `CLOSED`.
 * **Alternative Scenarios:**
-  * Ticket escalated: Agent reassigns ticket to Warehouse Supervisor or Finance Specialist for specialized review.
+  * Agent escalates ticket to Finance or Warehouse supervisor with internal private note.
 * **Exception and Failure Scenarios:**
-  * Unresolved ticket exceeds SLA threshold (e.g., 24 hours): System automatically alerts Customer Support Lead.
+  * SLA breach warning: If ticket remains unassigned $> 4\text{ hours}$, system raises priority to High and alerts support lead.
 * **Business Rules:** `BR-SUP-001`.
-* **Inputs and Business Information Required:** Order ID, ticket category, customer description, internal resolution notes, agent ID.
-* **Expected Business Outcomes:** Fast resolution times; complete historical record of customer communications.
-* **Dependencies:** `FEAT-ORD-001`.
+* **Inputs and Business Information Required:** Customer ID, Order ID (optional), category code, message text, attachments.
+* **Expected Business Outcomes:** Faster resolution times (MTTR) and higher customer satisfaction.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-SHP-001`.
 * **Acceptance Criteria:**
-  * **Given** an open support ticket, **When** a support agent accesses the ticket, **Then** the system presents the complete live order status, payment history, and courier tracking timeline on the single ticket view.
+  * **Given** an open ticket linked to Order 12345, **When** a support agent opens the ticket, **Then** current order status, line items, delivery tracking, and payment history are displayed in the context panel.
 * **Priority:** `P1`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
@@ -687,123 +1452,376 @@ All functional requirements in this document strictly adhere to the formalized b
 
 ---
 
-## 16. Analytics, Auditing & Executive Reporting
+## 17. Analytics, Auditing & Executive Reporting
 
-### FR-RPT-001: Executive Sales, Margin & Inventory Velocity Reporting
+### <a id="fr-rpt-001"></a>FR-RPT-001: Executive Sales, Margin & Inventory Velocity Reporting
 * **Requirement ID:** `FR-RPT-001`
-* **Requirement Title:** Executive Commercial Performance and Inventory Velocity Reports
+* **Requirement Title:** Executive Commercial Performance, Tax Liability and Inventory Velocity Analytics
 * **Feature ID:** `FEAT-RPT-001`
-* **Business Objective:** `OBJ-009`, `OBJ-008`
-* **Requirement Statement:** The system must generate operational and financial reports covering gross revenue, net revenue, average order value, category sales velocity, return rates, and stock replenishment recommendations, filterable by date range and exportable to CSV/Excel.
-* **Description:** Delivers core business intelligence for executive decision-making.
-* **Primary Actor:** `ACT-001` (Business Owner), `ACT-007` (Finance Officer)
-* **Preconditions:** Historical transaction and inventory records exist.
-* **Trigger:** Operator requests report via administrative dashboard.
+* **Business Objective:** `OBJ-009`
+* **Requirement Statement:** The system must aggregate operational and financial data into executive reporting dashboards, providing real-time visibility into Gross Merchandise Value (GMV), net revenue, statutory tax liabilities, return rates, and SKU inventory velocity, with CSV/Excel export capabilities.
+* **Description:** Delivers commercial intelligence to leadership for inventory planning, financial reconciliation, and margin optimization.
+* **Primary Actor:** `ACT-001` (Business Owner), `ACT-007` (Finance Lead)
+* **Preconditions:** Operator has executive reporting permissions.
+* **Trigger:** Operator opens reporting dashboard or schedules automated report export.
 * **Main Success Scenario:**
-  1. User selects report type (e.g., "Sales by Brand", "Inventory Turnover", "Tax Liability Summary"), date range, and export format.
-  2. System queries reporting data models and compiles metrics.
-  3. System renders report visualizations and provides download of exportable spreadsheet.
+  1. Operator selects date range and reporting dimension (Daily, Weekly, Monthly).
+  2. System computes GMV, net sales, discounts, shipping collections, and refund deductions.
+  3. System displays charts and tabular summaries.
+  4. Operator clicks "Export CSV"; system generates downloadable data file.
 * **Alternative Scenarios:**
-  * Scheduled daily digest: System automatically compiles previous day's GMV, order count, and payment success rate and emails executive summary to the Business Owner at 07:00 AM daily.
+  * Inventory Velocity Report: System calculates days-of-inventory-remaining per SKU based on 30-day run rate.
 * **Exception and Failure Scenarios:**
-  * Large date range query: System executes reporting queries asynchronously to prevent performance degradation on live transactional operations.
-* **Business Rules:** `BR-RPT-001`, `BR-AUD-001`.
-* **Inputs and Business Information Required:** Report type, date range start/end, brand/category filters, export format.
-* **Expected Business Outcomes:** Clear visibility into commercial margins, fast-moving vs stagnant SKUs, and tax liabilities.
-* **Dependencies:** `FEAT-ORD-001`, `FEAT-FIN-001`, `FEAT-INV-001`.
+  * High-volume aggregation queries must run against read replicas to prevent performance degradation on primary transactional databases.
+* **Business Rules:** `BR-RPT-001`.
+* **Inputs and Business Information Required:** Date filter, dimension keys, output format.
+* **Expected Business Outcomes:** Data-driven purchasing decisions and clear financial oversight.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-FIN-001`.
 * **Acceptance Criteria:**
-  * **Given** a requested sales report for a completed month, **When** generated, **Then** the reported net sales amount strictly equals the sum of confirmed payment revenues minus authorized refunds and tax components.
+  * **Given** an export request for Monthly Sales, **When** generated, **Then** Gross Sales minus Discounts minus Refunds equals Net Revenue with 100% mathematical precision.
 * **Priority:** `P1`
 * **Requirement Status:** `CONFIRMED`
-* **Open Questions:** See [OQ-018](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-018).
+* **Open Questions:** See [OQ-018](./08-assumptions-dependencies-open-questions.md#oq-018).
 * **Related Workflow IDs:** `WF-014`.
 
-### FR-AUD-001: Immutable Business Audit Trail & Sensitive Action Logging
+### <a id="fr-aud-001"></a>FR-AUD-001: Immutable Business Audit Trail & Sensitive Action Logging
 * **Requirement ID:** `FR-AUD-001`
-* **Requirement Title:** Immutable Logging of Privileged Administrative and Commercial Actions
-* **Feature ID:** `FEAT-AUD-001`
+* **Requirement Title:** Immutable Write-Once Audit Logging for Privileged and Sensitive Business Actions
+* **Feature ID:** `FEAT-ADM-002`, `FEAT-AUD-001`
 * **Business Objective:** `OBJ-008`
-* **Requirement Statement:** The system must record an immutable, write-once audit log entry for every privileged administrative modification (catalog price updates, manual inventory count adjustments, role assignments, order cancellations, and exceptional refunds), capturing the operator identity, timestamp, IP address, previous value, new value, and mandatory reason code.
-* **Description:** Protects enterprise assets against unauthorized manipulation or insider fraud.
-* **Primary Actor:** `ACT-002` (System Administrator), `ACT-001` (Business Owner)
-* **Preconditions:** Staff operator performs a mutation on business data.
-* **Trigger:** Administrative state change or data mutation.
+* **Requirement Statement:** The system must capture an immutable, tamper-evident audit record for every sensitive administrative mutation (price changes, manual refunds, inventory overrides, user role edits), recording operator ID, timestamp, IP address, before/after value snapshots, and mandatory business justification codes.
+* **Description:** Establishes complete non-repudiation and accountability across all enterprise administrative operations.
+* **Primary Actor:** System (Automated), `ACT-002` (System Administrator)
+* **Preconditions:** Administrative operator performs a data mutation.
+* **Trigger:** Sensitive mutation API request executed.
 * **Main Success Scenario:**
-  1. Operator modifies catalog selling price from ₹49,999 to ₹44,999.
-  2. System prompts for mandatory change reason code (e.g., "Weekend Flash Sale Promo").
-  3. System commits price change and atomically writes audit log record containing operator ID, timestamp, before/after snapshot, IP, and reason.
-  4. Audit record is appended to immutable audit repository.
+  1. Operator submits price override or manual refund.
+  2. System captures before state and proposed after state.
+  3. System writes structured audit record to append-only, tamper-resistant audit store.
+  4. System executes mutation only if audit write succeeds.
 * **Alternative Scenarios:**
-  * Querying audit history: Authorized executive reviews chronological log of all changes applied to a specific SKU or user account.
+  * Authorized auditor searches audit log: System provides multi-criteria filtering by operator, SKU, order ID, or date range.
 * **Exception and Failure Scenarios:**
-  * Attempt to delete or edit audit record: Operation is strictly prohibited at software and database levels.
+  * Attempt to modify or delete audit log: System strictly prohibits modification or deletion (Write-Once, Read-Many / WORM).
 * **Business Rules:** `BR-AUD-001`.
-* **Inputs and Business Information Required:** Operator ID, entity type, entity ID, action type, before snapshot, after snapshot, client IP, reason code.
-* **Expected Business Outcomes:** Total traceability; forensic audit readiness for internal and external regulatory reviews.
-* **Dependencies:** None.
+* **Inputs and Business Information Required:** Operator ID, role, action code, resource ID, before snapshot, after snapshot, justification note, IP address, timestamp.
+* **Expected Business Outcomes:** 100% operational non-repudiation and fraud prevention.
+* **Dependencies:** `FEAT-ADM-001`.
 * **Acceptance Criteria:**
-  * **Given** a price change executed by an administrator, **When** the audit log is inspected, **Then** an unalterable record exists showing the exact old price, new price, user ID, timestamp, and justification.
-  * **Given** any administrative role, **When** attempting to execute a `DELETE` or `UPDATE` on the audit log repository, **Then** the operation is rejected.
+  * **Given** a price change from ₹10,000 to ₹9,000 by Operator A, **When** executed, **Then** an audit entry is created recording Operator A, old price, new price, and timestamp, which cannot be deleted by any user.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-016`.
 
+### <a id="fr-aud-002"></a>FR-AUD-002: Administrative Audit Trail Export & Tampering Verification
+* **Requirement ID:** `FR-AUD-002`
+* **Requirement Title:** Cryptographic Audit Trail Export and Hash-Chained Tamper Verification
+* **Feature ID:** `FEAT-ADM-002`, `FEAT-AUD-001`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must provide cryptographic verification of audit log integrity (e.g., cryptographic hash chains or digital signatures) and allow authorized enterprise auditors to export signed audit logs for statutory compliance audits.
+* **Description:** Enables independent external auditors to verify that historical operational logs have not been retroactively altered.
+* **Primary Actor:** `ACT-001` (Business Owner), `ACT-002` (System Administrator)
+* **Preconditions:** Operator has executive compliance audit permissions.
+* **Trigger:** Auditor initiates audit export or verification drill.
+* **Main Success Scenario:**
+  1. Auditor requests verification of audit log block for specified date range.
+  2. System recalculates cryptographic hash chain across chronological records.
+  3. Hashes match stored signatures; system returns "Audit Integrity Verified: Zero Tampering Detected".
+  4. System exports signed archive for regulatory submission.
+* **Alternative Scenarios:**
+  * Scheduled integrity sweep: System runs nightly verification job and alerts if hash mismatch occurs.
+* **Exception and Failure Scenarios:**
+  * Hash mismatch detected: System triggers critical security incident alert to Business Owner.
+* **Business Rules:** `BR-AUD-001`.
+* **Inputs and Business Information Required:** Date range, auditor authorization credentials.
+* **Expected Business Outcomes:** Defensible compliance records meeting regulatory evidentiary standards.
+* **Dependencies:** `FEAT-AUD-001`.
+* **Acceptance Criteria:**
+  * **Given** an exported audit log dataset, **When** cryptographic verification is evaluated, **Then** any single altered character causes validation to fail.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-016`.
+
+### <a id="fr-dat-001"></a>FR-DAT-001: Bulk Product Catalog & Inventory Spreadsheet Import/Export
+* **Requirement ID:** `FR-DAT-001`
+* **Requirement Title:** High-Volume Bulk Catalog and Inventory Spreadsheet Data Exchange
+* **Feature ID:** `FEAT-DAT-001`
+* **Business Objective:** `OBJ-002`, `OBJ-003`
+* **Requirement Statement:** The system must allow Catalog and Inventory Managers to import and export bulk catalog listings, pricing adjustments, and inventory adjustments via standardized CSV/Excel spreadsheets, performing full schema and business rule validation before committing batch transactions.
+* **Description:** Accelerates large-scale merchandising operations, allowing staff to update hundreds of SKUs or price points in a single operation.
+* **Primary Actor:** `ACT-003` (Catalog Manager), `ACT-004` (Inventory Operator)
+* **Preconditions:** Operator has bulk data exchange permissions.
+* **Trigger:** Operator uploads spreadsheet or requests catalog export.
+* **Main Success Scenario:**
+  1. Operator uploads CSV with 500 SKU updates (SKU, Selling Price, On-Hand Stock).
+  2. System validates row data formats, SKU existence, and business rules (e.g., Selling Price <= MRP).
+  3. Validation passes; system applies updates in an atomic batch and logs audit entries.
+  4. System provides summary report: "500 rows processed, 500 successful, 0 errors."
+* **Alternative Scenarios:**
+  * Partial row errors: System rejects invalid rows, applies valid rows (or rolls back entire batch based on operator selection), and returns an annotated error spreadsheet.
+* **Exception and Failure Scenarios:**
+  * Corrupted file structure: System rejects file immediately without processing any mutations.
+* **Business Rules:** `BR-CAT-001`, `BR-PRC-001`, `BR-INV-001`.
+* **Inputs and Business Information Required:** CSV/XLSX file, batch operation type (Catalog, Price, Inventory).
+* **Expected Business Outcomes:** Operational efficiency in catalog maintenance without sacrificing data validation rigor.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-INV-001`.
+* **Acceptance Criteria:**
+  * **Given** an uploaded spreadsheet where row 10 has Selling Price > MRP, **When** bulk import validation runs, **Then** row 10 is flagged with an explicit pricing rule error.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-019](./08-assumptions-dependencies-open-questions.md#oq-019).
+* **Related Workflow IDs:** `WF-002`.
+
 ---
 
-## 17. Platform Security, Operational Resilience & Continuity
+## 18. Platform Security, Operational Resilience & Continuity
 
-### FR-SEC-001: Sensitive Credential Protection and Payment Tokenization
+### <a id="fr-sec-001"></a>FR-SEC-001: Sensitive Credential Protection and Payment Tokenization
 * **Requirement ID:** `FR-SEC-001`
-* **Requirement Title:** Zero Raw Cardholder Storage and Strong Credential Security
+* **Requirement Title:** Zero Cardholder Storage and Cryptographic Credential Protection
 * **Feature ID:** `FEAT-SEC-001`
-* **Business Objective:** `OBJ-008`, `OBJ-010`
-* **Requirement Statement:** The system must strictly prohibit storing raw customer payment card details or CVVs within platform databases, requiring tokenized gateway integrations, and must enforce strong cryptographic hashing for all customer and operator credentials.
-* **Description:** Core security and compliance requirement. Enforces zero cardholder liability and modern password hashing standards.
-* **Primary Actor:** System (Automated), `ACT-002` (Administrator)
-* **Preconditions:** Customer submits payment credentials during checkout.
-* **Trigger:** Checkout payment step.
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must strictly prohibit storing, processing, or transmitting raw credit/debit card numbers (PANs) or CVVs, delegating card data capture to certified third-party payment gateways, and must store all user passwords using salted cryptographic hashes (bcrypt or Argon2id).
+* **Description:** Protects the enterprise against cardholder data compromise and isolates platform infrastructure from PCI-DSS Level 1 scope.
+* **Primary Actor:** System (Automated Security Architecture)
+* **Preconditions:** System receives customer authentication or checkout request.
+* **Trigger:** Customer registers, logs in, or submits payment.
 * **Main Success Scenario:**
-  1. Customer enters card details into secure payment gateway iframe/SDK directly communicating with PCI-DSS certified gateway.
-  2. Platform receives only a masked token (e.g., `tok_visa_4242`) and card metadata (brand: Visa, last 4 digits: 4242).
-  3. Platform persists only the token and transaction ID.
+  1. Customer enters card details on gateway-hosted iframe / checkout interface.
+  2. Gateway tokenizes card and returns non-sensitive token to Chellaa platform.
+  3. Chellaa platform stores only token and truncated last-4 digits for display.
+  4. Passwords hashed with unique cryptographic salt before persistence.
+* **Alternative Scenarios:**
+  * Customer changes password: Old password hash replaced with newly derived hash.
 * **Exception and Failure Scenarios:**
-  * Attempt to pass raw PAN/CVV through application backend APIs: System gateway filters immediately reject request and log security alert.
+  * Raw PAN detected in incoming payload: System rejects request immediately, masks payload, and triggers high-severity security alert.
 * **Business Rules:** `BR-SEC-001`, `BR-SEC-002`.
-* **Inputs and Business Information Required:** Gateway transaction token, masked card representation.
-* **Expected Business Outcomes:** Zero PCI-DSS scope liability for core platform; complete immunity against database card breaches.
-* **Dependencies:** `FEAT-PAY-001`.
+* **Inputs and Business Information Required:** Gateway payment token, password string.
+* **Expected Business Outcomes:** Zero cardholder liability and robust protection against credential theft.
+* **Dependencies:** `DEP-001`, `ASM-008`.
 * **Acceptance Criteria:**
-  * **Given** any transaction executed on the platform, **When** database records are audited, **Then** zero raw primary account numbers (PAN), CVVs, or bank account PINs exist anywhere in persistent storage or application logs.
+  * **Given** an audit of application databases and server logs, **When** searched for credit card PAN formats, **Then** zero raw card numbers or CVVs exist.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
-* **Related Workflow IDs:** `WF-007`.
+* **Related Workflow IDs:** `WF-001`, `WF-007`.
 
-### FR-INT-001: Integration Circuit Breaking and Provider Outage Isolation
+### <a id="fr-sec-002"></a>FR-SEC-002: Brute-Force Rate Limiting & Account Lockout Defense
+* **Requirement ID:** `FR-SEC-002`
+* **Requirement Title:** Automated Brute-Force Protection, API Rate Limiting and Account Lockout Governance
+* **Feature ID:** `FEAT-SEC-001`
+* **Business Objective:** `OBJ-008`
+* **Requirement Statement:** The system must enforce automated rate limiting on public authentication and search endpoints, and temporarily lock any customer or operator account after 5 consecutive failed login attempts, requiring self-service OTP verification or administrator unlock to restore access.
+* **Description:** Defends customer accounts and platform infrastructure against automated credential stuffing, brute-force password cracking, and scraping bots.
+* **Primary Actor:** System (Automated Threat Defense)
+* **Preconditions:** User submits login attempt.
+* **Trigger:** Consecutive failed authentication credentials submitted.
+* **Main Success Scenario:**
+  1. User enters incorrect password.
+  2. System increments failed attempt counter for account and IP address.
+  3. If counter reaches 5: System locks account for 30 minutes, invalidates counter, and sends security alert to registered phone/email.
+* **Alternative Scenarios:**
+  * Successful login resets failed attempt counter to zero.
+  * Customer unlocks account early by completing SMS OTP verification.
+* **Exception and Failure Scenarios:**
+  * IP-based DDoS or scraping burst: Gateway rate limiter returns HTTP 429 Too Many Requests to abusive IP addresses.
+* **Business Rules:** `BR-SEC-002`.
+* **Inputs and Business Information Required:** User identity, client IP address, user agent, attempt count.
+* **Expected Business Outcomes:** Zero compromised customer accounts from automated brute-force attacks.
+* **Dependencies:** `FEAT-SEC-001`, `FEAT-NTF-001`.
+* **Acceptance Criteria:**
+  * **Given** an account with 4 failed login attempts, **When** a 5th incorrect password is submitted, **Then** the account is locked and all subsequent login attempts within 30 minutes are blocked.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-001`.
+
+### <a id="fr-int-001"></a>FR-INT-001: Integration Circuit Breaking and Provider Outage Isolation
 * **Requirement ID:** `FR-INT-001`
-* **Requirement Title:** External Provider Fault Isolation and Circuit Breaker Resilience
+* **Requirement Title:** Integration Circuit Breaking, Timeout Budgets and Fault Isolation
 * **Feature ID:** `FEAT-INT-001`
 * **Business Objective:** `OBJ-010`
-* **Requirement Statement:** The system must isolate external third-party integration points (payment gateways, courier APIs, SMS gateways) using timeouts, retry queues, and circuit breakers, ensuring that a third-party outage never causes cascading failure of the core commerce platform.
-* **Description:** Ensures architectural resilience against volatile external dependencies.
-* **Primary Actor:** `ACT-014` (SRE / Operations), System (Automated)
-* **Preconditions:** External integration calls executed.
-* **Trigger:** External provider experiences elevated latency or error rates.
+* **Requirement Statement:** The system must wrap all synchronous external service integrations (payment gateways, courier APIs, messaging gateways) with circuit breaker patterns and strict timeout budgets ($\le 3\text{ seconds}$), preventing downstream partner outages from exhausting platform server threads or crashing core commerce funnels.
+* **Description:** Ensures platform resilience and fault containment when external SaaS providers suffer degradation or downtime.
+* **Primary Actor:** System (Automated Integration Architecture)
+* **Preconditions:** External integration call executed.
+* **Trigger:** Downstream provider returns timeouts or 5xx server errors.
 * **Main Success Scenario:**
-  1. System calls courier API to generate shipping label with a 3-second timeout.
-  2. Courier API responds successfully within 400ms; shipment is booked.
+  1. Circuit breaker monitors external call error rates.
+  2. When error rate exceeds 50% over rolling window, circuit trips to `OPEN`.
+  3. Subsequent requests fail fast immediately without waiting for timeouts.
+  4. System executes graceful fallback (e.g., switches to secondary courier or queues notification).
+  5. System periodically tests downstream health via `HALF_OPEN` probes.
 * **Alternative Scenarios:**
-  * Transient timeout: System retries call using exponential backoff up to 3 times before queuing operation for background worker retry.
+  * Provider recovers: Probes succeed; circuit transitions back to `CLOSED`.
 * **Exception and Failure Scenarios:**
-  * Sustained provider outage (e.g., 50% failure rate over 20 calls): Circuit breaker trips to `OPEN`. System immediately diverts requests to secondary provider or queues requests asynchronously without hanging customer-facing threads, preventing thread pool exhaustion.
+  * Payment gateway outage: Circuit trips, checkout alerts customer to select alternative payment method or try again shortly.
 * **Business Rules:** `BR-INT-001`.
-* **Inputs and Business Information Required:** Provider endpoint, timeout threshold, failure rate threshold, retry limit.
-* **Expected Business Outcomes:** 99.9% platform availability regardless of external vendor downtime.
-* **Dependencies:** None.
+* **Inputs and Business Information Required:** Provider endpoint, timeout threshold, error rate threshold.
+* **Expected Business Outcomes:** Uninterrupted customer shopping during third-party service provider outages.
+* **Dependencies:** `DEP-001`, `DEP-002`, `DEP-003`.
 * **Acceptance Criteria:**
-  * **Given** an external SMS provider experiencing complete outage, **When** customer requests an OTP, **Then** the primary failure is isolated within 2 seconds, and the request fails over to the secondary messaging provider or returns a clean error without freezing the checkout funnel.
+  * **Given** an external courier API experiencing 100% latency $> 5$ seconds, **When** 5 consecutive requests fail, **Then** the circuit breaker trips open, failing subsequent requests in $< 10\text{ ms}$ with fallback routing.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
 * **Open Questions:** None.
 * **Related Workflow IDs:** `WF-015`.
+
+### <a id="fr-ops-001"></a>FR-OPS-001: Platform Distributed Telemetry & Health Alerting
+* **Requirement ID:** `FR-OPS-001`
+* **Requirement Title:** Distributed Request Correlation Tracing and Real-Time Operational Alerting
+* **Feature ID:** `FEAT-OPS-001`
+* **Business Objective:** `OBJ-010`
+* **Requirement Statement:** The system must propagate an immutable, globally unique Trace ID across all synchronous API requests and asynchronous event messages, exposing standardized health endpoints and operational metrics to trigger automated alerts when system error rates exceed 2%.
+* **Description:** Enables instant end-to-end diagnostics and proactive detection of technical or commercial anomalies.
+* **Primary Actor:** System (Automated Telemetry Framework), `ACT-002` (System Administrator)
+* **Preconditions:** Inbound request arrives at platform gateway.
+* **Trigger:** HTTP request received or scheduled background job started.
+* **Main Success Scenario:**
+  1. Gateway generates unique Trace ID and injects it into request context headers.
+  2. All downstream services log operations using structured JSON with the Trace ID.
+  3. When an exception occurs, SRE team queries centralized logs by Trace ID to see the exact sequence of events across services within seconds.
+  4. Metric scraper monitors error rates; when error rate is normal ($< 2\%$), system operates in green state.
+* **Alternative Scenarios:**
+  * Error rate exceeds threshold: System dispatches automated PagerDuty / Slack alert to on-call engineer within 60 seconds.
+* **Exception and Failure Scenarios:**
+  * Logging pipeline backpressure: Asynchronous buffers prevent telemetry logging from slowing down customer transactions.
+* **Business Rules:** `BR-OPS-001`.
+* **Inputs and Business Information Required:** Trace ID, service name, timestamp, log level, message, duration.
+* **Expected Business Outcomes:** Mean-Time-to-Detect (MTTD) $< 1$ minute and rapid incident triage.
+* **Dependencies:** `FEAT-OPS-001`.
+* **Acceptance Criteria:**
+  * **Given** an end-to-end checkout transaction, **When** querying centralized logging for its Trace ID, **Then** 100% of involved service log records are returned in chronological sequence.
+* **Priority:** `P0`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-022](./08-assumptions-dependencies-open-questions.md#oq-022).
+* **Related Workflow IDs:** `WF-015`.
+
+### <a id="fr-rel-001"></a>FR-REL-001: Automated Release Verification & Quality Gates
+* **Requirement ID:** `FR-REL-001`
+* **Requirement Title:** Automated CI/CD Quality Gates and Zero-Downtime Deployment Verification
+* **Feature ID:** `FEAT-REL-001`
+* **Business Objective:** `OBJ-010`
+* **Requirement Statement:** The system must enforce automated build verification quality gates (100% unit test pass rate, $\ge 80\%$ test coverage, zero critical security vulnerabilities) and support zero-downtime rolling production deployments without dropping active customer shopping sessions.
+* **Description:** Eliminates deployment-induced downtime and protects production stability through automated quality gates.
+* **Primary Actor:** System (Automated CI/CD Pipeline), `ACT-002` (System Administrator)
+* **Preconditions:** Code commit submitted to repository branch.
+* **Trigger:** Pull request merge or release tag created.
+* **Main Success Scenario:**
+  1. Pipeline executes static analysis, unit tests, integration tests, and security scans.
+  2. All quality gates pass.
+  3. Pipeline deploys new version using rolling update or blue-green strategy.
+  4. Platform drains connections gracefully from old instances and routes traffic to verified healthy instances.
+  5. Deployment completes with zero customer HTTP 5xx errors.
+* **Alternative Scenarios:**
+  * Health check failure during deployment: Automated rollback triggers immediately, reverting traffic to previous stable version.
+* **Exception and Failure Scenarios:**
+  * Quality gate failure: Pipeline terminates build, blocks deployment, and alerts engineering team.
+* **Business Rules:** `BR-REL-001`.
+* **Inputs and Business Information Required:** Build artifact, test results, vulnerability scan report.
+* **Expected Business Outcomes:** Frequent, reliable deployments without customer shopping disruptions.
+* **Dependencies:** `FEAT-REL-001`.
+* **Acceptance Criteria:**
+  * **Given** an active customer checkout session during a production release, **When** deployment executes, **Then** the customer transaction completes successfully with zero dropped connections.
+* **Priority:** `P1`
+* **Requirement Status:** `CONFIRMED`
+* **Open Questions:** See [OQ-021](./08-assumptions-dependencies-open-questions.md#oq-021).
+* **Related Workflow IDs:** None.
+
+### <a id="fr-bcm-001"></a>FR-BCM-001: Automated Backup Scheduling & Point-in-Time Recovery Verification
+* **Requirement ID:** `FR-BCM-001`
+* **Requirement Title:** Automated Continuous Database Backups and Point-in-Time Recovery
+* **Feature ID:** `FEAT-BCM-001`
+* **Business Objective:** `OBJ-010`
+* **Requirement Statement:** The system must execute continuous automated database backups with write-ahead log archiving to achieve a Recovery Point Objective (RPO) $\le 5\text{ minutes}$, and maintain tested automated restoration procedures supporting a Recovery Time Objective (RTO) $\le 2\text{ hours}$ in disaster recovery scenarios.
+* **Description:** Guarantees business survival and data restoration in the event of catastrophic data corruption or cloud provider data center failure.
+* **Primary Actor:** System (Automated Backup Architecture), `ACT-002` (System Administrator)
+* **Preconditions:** Database persistence clusters active.
+* **Trigger:** Scheduled backup timer and continuous transaction log shipping.
+* **Main Success Scenario:**
+  1. System takes daily full snapshots and continuously ships write-ahead transaction logs to geo-redundant storage.
+  2. Backups are encrypted at rest with AES-256.
+  3. Scheduled automated restore drill restores database snapshot to isolated staging cluster and executes data consistency check.
+  4. System confirms restore completed within 2 hours with data loss $< 5$ minutes.
+* **Alternative Scenarios:**
+  * Catastrophic failover: Infrastructure team triggers disaster recovery automation; platform provisions secondary region and restores data within 2 hours.
+* **Exception and Failure Scenarios:**
+  * Backup failure: Automated monitoring alerts SRE team within 15 minutes of missed backup.
+* **Business Rules:** `BR-BCM-001`.
+* **Inputs and Business Information Required:** Database transaction logs, snapshot ID, target restoration timestamp.
+* **Expected Business Outcomes:** Guaranteed data protection and enterprise business continuity.
+* **Dependencies:** `FEAT-BCM-001`.
+* **Acceptance Criteria:**
+  * **Given** a catastrophic database failure occurring at 14:00, **When** point-in-time recovery is performed, **Then** all transactions committed up to at least 13:55 are fully recovered (RPO $\le 5$ min) within 120 minutes (RTO $\le 2$ hr).
+* **Priority:** `P0`
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** See [OQ-017](./08-assumptions-dependencies-open-questions.md#oq-017).
+* **Related Workflow IDs:** None.
+
+---
+
+## 19. Advanced Merchandising (Post-Launch Capabilities)
+
+### <a id="fr-adv-001"></a>FR-ADV-001: Electronics Product Bundles & Accessory Kit Pricing
+* **Requirement ID:** `FR-ADV-001`
+* **Requirement Title:** Electronics Product Bundles and Dynamic Accessory Kit Discounting
+* **Feature ID:** `FEAT-ADV-001`
+* **Business Objective:** `OBJ-001`, `OBJ-002`
+* **Requirement Statement:** The system must allow Catalog Managers to configure product accessory bundles (e.g., Smartphone + 65W Fast Charger + Protective Case) with discounted bundle pricing, dynamically verifying stock availability for all constituent items before permitting bundle checkout.
+* **Description:** Increases Average Order Value (AOV) by encouraging consumers to purchase essential accessories with core electronics.
+* **Primary Actor:** `ACT-003` (Catalog Manager), `ACT-009` (Customer)
+* **Preconditions:** Individual products exist in catalog.
+* **Trigger:** Catalog Manager creates bundle listing, or customer adds bundle to cart.
+* **Main Success Scenario:**
+  1. Manager defines bundle components and bundle selling price.
+  2. Storefront displays bundle deal on product details page.
+  3. Customer clicks "Add Bundle to Cart".
+  4. System verifies Available-to-Sell stock for all bundle constituent SKUs.
+  5. System reserves inventory for each constituent SKU atomically and adds bundle to cart with pro-rata discount breakdown.
+* **Alternative Scenarios:**
+  * One bundle component out of stock: System disables bundle purchase and displays "Bundle Unavailable - [Component Name] Out of Stock".
+* **Exception and Failure Scenarios:**
+  * Return of bundle item: Customer returns one item from bundle; refund calculated based on pro-rata bundle discount, preventing discount exploitation.
+* **Business Rules:** `BR-ADV-001`, `BR-INV-001`, `BR-RET-003`.
+* **Inputs and Business Information Required:** Bundle ID, constituent SKU list, bundle price, individual discount allocations.
+* **Expected Business Outcomes:** Increased basket size and enhanced accessory sales velocity.
+* **Dependencies:** `FEAT-CAT-001`, `FEAT-INV-001`.
+* **Acceptance Criteria:**
+  * **Given** a bundle composed of Item X (stock = 5) and Item Y (stock = 0), **When** a shopper views the bundle, **Then** the bundle buy button is disabled due to Item Y stock exhaustion.
+* **Priority:** `P3`
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** See [OQ-014](./08-assumptions-dependencies-open-questions.md#oq-014).
+* **Related Workflow IDs:** `WF-002`, `WF-005`.
+
+### <a id="fr-adv-002"></a>FR-ADV-002: Customer Back-in-Stock Notification Alerts
+* **Requirement ID:** `FR-ADV-002`
+* **Requirement Title:** Automated Customer Back-in-Stock Alerts upon Warehouse Replenishment
+* **Feature ID:** `FEAT-ADV-002`
+* **Business Objective:** `OBJ-001`, `OBJ-003`
+* **Requirement Statement:** The system must allow shoppers to register for automated back-in-stock notifications on sold-out SKUs, and automatically dispatch transactional email/SMS/WhatsApp alerts to registered shoppers when new inventory is inwarded at the warehouse.
+* **Description:** Recovers demand for out-of-stock electronics by notifying interested customers immediately upon replenishment.
+* **Primary Actor:** `ACT-009` (Customer), System (Automated)
+* **Preconditions:** Product variant is out of stock (`ATS = 0`).
+* **Trigger:** Customer submits "Notify Me When Available" request, and warehouse later inwards stock.
+* **Main Success Scenario:**
+  1. Shopper submits email or phone number on out-of-stock PDP.
+  2. System records subscription request linked to customer and SKU ID.
+  3. Warehouse operator inwards new inventory stock for that SKU (`ATS > 0`).
+  4. System notification batcher triggers back-in-stock alerts to subscribers with direct purchase link.
+  5. System marks notification requests as fulfilled.
+* **Alternative Scenarios:**
+  * Low replenishment volume: If only 2 units are inwarded and 50 shoppers subscribed, system notifies first 5 subscribers (FIFO queue) to prevent customer frustration.
+* **Exception and Failure Scenarios:**
+  * Customer unsubscribes prior to replenishment: System removes notification record.
+* **Business Rules:** `BR-ADV-002`, `BR-NTF-001`.
+* **Inputs and Business Information Required:** Customer contact info, SKU ID, timestamp.
+* **Expected Business Outcomes:** Immediate sales velocity upon restocking and improved customer satisfaction.
+* **Dependencies:** `FEAT-INV-001`, `FEAT-NTF-001`.
+* **Acceptance Criteria:**
+  * **Given** a subscribed customer for SKU Z, **When** warehouse inwards 10 units of SKU Z, **Then** a back-in-stock alert is dispatched to the customer within 60 seconds.
+* **Priority:** `P2`
+* **Requirement Status:** `PROPOSED`
+* **Open Questions:** None.
+* **Related Workflow IDs:** `WF-003`, `WF-012`.

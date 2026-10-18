@@ -76,7 +76,7 @@ Quality attributes are defined independently of specific vendor implementations,
 * **Priority:** `P0`
 * **Dependencies:** `FEAT-INV-001`, `FEAT-CHK-001`.
 * **Acceptance / Verification Method:** Distributed load test sustaining 1,000 OPM for 15 minutes with zero oversell incidents.
-* **Approval Status:** `PROPOSED` (See [OQ-016](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-016))
+* **Approval Status:** `PROPOSED` (See [OQ-016](./08-assumptions-dependencies-open-questions.md#oq-016))
 
 #### NFR-SCL-002: Catalog & Historical Order Volume Capacity
 * **Quality Attribute:** Scalability (Data Capacity)
@@ -104,7 +104,7 @@ Quality attributes are defined independently of specific vendor implementations,
 * **Priority:** `P0`
 * **Dependencies:** None.
 * **Acceptance / Verification Method:** Monthly uptime calculation: $( \text{Uptime Hours} / \text{Total Hours} ) \times 100$.
-* **Approval Status:** `PROPOSED` (See [OQ-017](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-017))
+* **Approval Status:** `PROPOSED` (See [OQ-017](./08-assumptions-dependencies-open-questions.md#oq-017))
 
 #### NFR-AVL-002: Fault Isolation & Graceful Service Degradation
 * **Quality Attribute:** Reliability & Fault Tolerance
@@ -153,7 +153,7 @@ Quality attributes are defined independently of specific vendor implementations,
 #### NFR-SEC-001: Zero Cardholder Data Exposure (PCI-DSS Compliance)
 * **Quality Attribute:** Security (Regulatory Compliance)
 * **Requirement Statement:** The platform must strictly prohibit storing, logging, or caching raw Primary Account Numbers (PAN), CVVs, or cardholder PINs in application databases or filesystem logs. Card processing must use certified payment gateway tokenization.
-* **Business Rationale:** Legal compliance with payment scheme mandates; eliminates enterprise liability for cardholder breaches.
+* **Business Rationale:** Supports architectural compliance with PCI-DSS Self-Assessment Questionnaire (SAQ A) requirements by delegating card data capture to certified third-party payment gateways; reduces enterprise liability and PCI-DSS audit scope.
 * **Measurement Method:** Automated static code analysis, database schema inspections, and dynamic log scanning.
 * **Target Value:** Zero instances of raw PAN or CVV in storage.
 * **Scope:** Platform-wide.
@@ -177,7 +177,7 @@ Quality attributes are defined independently of specific vendor implementations,
 #### NFR-SEC-003: Personal Data Protection & Privacy Governance (DPDPA 2023)
 * **Quality Attribute:** Security & Privacy
 * **Requirement Statement:** The system must protect customer Personally Identifiable Information (PII) using AES-256 encryption at rest and TLS 1.3 in transit, support customer data export and anonymization workflows, and redact customer phone numbers/emails from centralized operational logs.
-* **Business Rationale:** Strict statutory compliance with the Indian Digital Personal Data Protection Act (DPDPA 2023).
+* **Business Rationale:** Provides architectural support for data protection controls aligned with the Indian Digital Personal Data Protection Act (DPDPA 2023); formal regulatory compliance requires organizational policy sign-off and legal validation.
 * **Measurement Method:** Privacy audit checklist and automated log masking verification.
 * **Target Value:** 100% PII log redaction; encrypted data stores.
 * **Scope:** Customer Profile & Logging Systems.
@@ -246,7 +246,7 @@ Quality attributes are defined independently of specific vendor implementations,
 * **Priority:** `P0`
 * **Dependencies:** `FEAT-BCM-001`.
 * **Acceptance / Verification Method:** Disaster recovery tabletop and automated restore drill from backup snapshot to staging cluster.
-* **Approval Status:** `PROPOSED` (See [OQ-017](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-017))
+* **Approval Status:** `PROPOSED` (See [OQ-017](./08-assumptions-dependencies-open-questions.md#oq-017))
 
 ---
 

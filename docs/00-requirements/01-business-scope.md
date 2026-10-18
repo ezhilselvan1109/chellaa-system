@@ -1,16 +1,17 @@
 # Business Requirements Document (BRD)
+
 ## Document 01: Business Scope & Boundaries
 
-| Document Attribute | Details |
-| :--- | :--- |
-| **Document ID** | BRD-DOC-01 |
-| **Document Title** | Business Scope, Boundary Definition, and Exclusions |
-| **Project Name** | Chellaa E-Commerce Platform |
+| Document Attribute            | Details                                                                |
+| :---------------------------- | :--------------------------------------------------------------------- |
+| **Document ID**         | BRD-DOC-01                                                             |
+| **Document Title**      | Business Scope, Boundary Definition, and Exclusions                    |
+| **Project Name**        | Chellaa E-Commerce Platform                                            |
 | **Target Architecture** | Backend-First Microservices Ecosystem (Phase 1: Requirements Baseline) |
-| **Business Model** | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C) |
-| **Version** | 1.0.0-DRAFT |
-| **Lifecycle Status** | `PENDING_APPROVAL` |
-| **Author** | Senior Business Analyst & E-Commerce Requirements Engineering Team |
+| **Business Model**      | Single-Retailer Direct-to-Consumer (D2C) & Business-to-Consumer (B2C)  |
+| **Version**             | 1.0.0-DRAFT                                                            |
+| **Lifecycle Status**    | `PENDING_APPROVAL`                                                   |
+| **Author**              | Senior Business Analyst & E-Commerce Requirements Engineering Team     |
 
 ---
 
@@ -101,15 +102,15 @@ flowchart LR
 
 To protect the single-retailer business model and prevent architectural distortion, the following capabilities are **Strictly Excluded**:
 
-| Excluded Capability | Rationale for Exclusion | Impact on Architecture |
-| :--- | :--- | :--- |
-| **Third-Party Seller Registration / KYC** | Platform is 100% owned by a single enterprise. No external vendor onboarding. | Eliminates vendor onboarding pipelines, KYC document stores, and vendor status workflows. |
-| **Seller Portals / Vendor Dashboards** | Only enterprise-authorized internal staff access administrative capabilities. | No multi-tenant admin portals or vendor-specific data partitioning required. |
-| **Multi-Vendor "Buy Box" or Product Listings** | A single product SKU has only one inventory source, one price, and one owner. | Eliminates complex multi-merchant product catalog mapping and price competition engines. |
-| **Marketplace Commissions & Fee Deductions** | All revenue belongs directly to the retailer. No transaction fee deduction. | Eliminates commission settlement calculators and multi-party revenue split logic. |
-| **Vendor Payouts & Escrow Disbursement** | No funds are held in escrow for third parties or disbursed to external seller bank accounts. | Removes automated seller banking integrations, payout schedules, and vendor tax withholding. |
-| **Buyer-Seller Dispute Arbitration** | Customer support is direct between customer and enterprise staff. | Eliminates multi-party arbitration workflows and vendor penalty systems. |
-| **Vendor-Specific Logistics Management** | All shipping originates from enterprise-managed warehouses or fulfillment centers. | Eliminates vendor drop-shipping coordination and vendor-managed carrier accounts. |
+| Excluded Capability                                  | Rationale for Exclusion                                                                      | Impact on Architecture                                                                       |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| **Third-Party Seller Registration / KYC**      | Platform is 100% owned by a single enterprise. No external vendor onboarding.                | Eliminates vendor onboarding pipelines, KYC document stores, and vendor status workflows.    |
+| **Seller Portals / Vendor Dashboards**         | Only enterprise-authorized internal staff access administrative capabilities.                | No multi-tenant admin portals or vendor-specific data partitioning required.                 |
+| **Multi-Vendor "Buy Box" or Product Listings** | A single product SKU has only one inventory source, one price, and one owner.                | Eliminates complex multi-merchant product catalog mapping and price competition engines.     |
+| **Marketplace Commissions & Fee Deductions**   | All revenue belongs directly to the retailer. No transaction fee deduction.                  | Eliminates commission settlement calculators and multi-party revenue split logic.            |
+| **Vendor Payouts & Escrow Disbursement**       | No funds are held in escrow for third parties or disbursed to external seller bank accounts. | Removes automated seller banking integrations, payout schedules, and vendor tax withholding. |
+| **Buyer-Seller Dispute Arbitration**           | Customer support is direct between customer and enterprise staff.                            | Eliminates multi-party arbitration workflows and vendor penalty systems.                     |
+| **Vendor-Specific Logistics Management**       | All shipping originates from enterprise-managed warehouses or fulfillment centers.           | Eliminates vendor drop-shipping coordination and vendor-managed carrier accounts.            |
 
 ---
 
@@ -117,17 +118,17 @@ To protect the single-retailer business model and prevent architectural distorti
 
 The following capabilities represent potential strategic enhancements that are **deferred** to subsequent phases and must not be engineered during the initial backend foundation:
 
-| Capability Group | Description | Target Phase | Status |
-| :--- | :--- | :--- | :--- |
-| **Customer Web & Mobile Client Applications** | React/TypeScript customer shopping web app and native mobile apps (iOS/Android). | Phase 2 | `DEFERRED` |
-| **Admin Web Application UI** | Dedicated administrative single-page application (SPA) for internal operators. | Phase 2 | `DEFERRED` |
-| **AI-Powered Recommendation Engine** | Machine-learning personalized product recommendations ("Customers who bought this also bought..."). | Phase 3 | `PROPOSED` |
-| **Loyalty Rewards & Store Credit** | Customer points accumulation, tiered VIP memberships, and wallet store credits. | Phase 3 | `PROPOSED` |
-| **Gift Cards & Voucher Management** | Purchasing and redeeming digital gift cards and promotional vouchers. | Phase 3 | `PROPOSED` |
-| **Customer Referral Programs** | Unique referral links, invite-a-friend credits, and advocate rewards. | Phase 3 | `PROPOSED` |
-| **Subscription & Recurring Orders** | Automated replenishment orders for consumable electronics (batteries, printer cartridges). | Phase 4 | `PROPOSED` |
-| **Cross-Border / Multi-Currency Commerce** | Multi-currency pricing, international courier integration, and cross-border customs declarations. | Phase 4 | `UNDECIDED` |
-| **Advanced Warehouse Automation** | Barcode/RFID scanner handheld integration, automated bin-picking, and robotic sortation. | Phase 4 | `PROPOSED` |
+| Capability Group                                    | Description                                                                                         | Target Phase | Status        |
+| :-------------------------------------------------- | :-------------------------------------------------------------------------------------------------- | :----------- | :------------ |
+| **Customer Web & Mobile Client Applications** | React/TypeScript customer shopping web app and native mobile apps (iOS/Android).                    | Phase 2      | `DEFERRED`  |
+| **Admin Web Application UI**                  | Dedicated administrative single-page application (SPA) for internal operators.                      | Phase 2      | `DEFERRED`  |
+| **AI-Powered Recommendation Engine**          | Machine-learning personalized product recommendations ("Customers who bought this also bought..."). | Phase 3      | `PROPOSED`  |
+| **Loyalty Rewards & Store Credit**            | Customer points accumulation, tiered VIP memberships, and wallet store credits.                     | Phase 3      | `PROPOSED`  |
+| **Gift Cards & Voucher Management**           | Purchasing and redeeming digital gift cards and promotional vouchers.                               | Phase 3      | `PROPOSED`  |
+| **Customer Referral Programs**                | Unique referral links, invite-a-friend credits, and advocate rewards.                               | Phase 3      | `PROPOSED`  |
+| **Subscription & Recurring Orders**           | Automated replenishment orders for consumable electronics (batteries, printer cartridges).          | Phase 4      | `PROPOSED`  |
+| **Cross-Border / Multi-Currency Commerce**    | Multi-currency pricing, international courier integration, and cross-border customs declarations.   | Phase 4      | `UNDECIDED` |
+| **Advanced Warehouse Automation**             | Barcode/RFID scanner handheld integration, automated bin-picking, and robotic sortation.            | Phase 4      | `PROPOSED`  |
 
 ---
 
@@ -172,14 +173,14 @@ classDiagram
     ChellaaPlatform --> EnterpriseWarehouseStaff : Issues Picklists & Inspection Queues
 ```
 
-| Domain | Chellaa Software Owns | External System Owns | Human Operator Owns |
-| :--- | :--- | :--- | :--- |
-| **Product Merchandising** | Catalog structure, variants, pricing, specifications, and inventory thresholds. | Media file storage / CDN delivery. | Product copywriting, image curation, and pricing strategy decisions. |
-| **Inventory** | Logical inventory balance, reservations, stock movement ledger, safety stock alerts. | N/A | Physical unloading, bin placement, cycle counts, damaged item grading. |
-| **Payments** | Payment transaction state, order link, cart amount validation, reconciliation ledger. | Cardholder data capture, PCI DSS compliance, banking network routing, 3D Secure OTP. | Manual chargeback review, dispute submission to merchant bank. |
-| **Logistics** | Consignment booking, packing slip generation, AWB tracking updates, customer alerts. | Fleet routing, physical transportation, doorstep delivery, OTP-based delivery verification. | Physical packaging, courier handover, package weighment verification. |
-| **Returns** | Return request validation, policy window check, refund calculation, replacement order creation. | Reverse logistics transit. | Physical package opening, serial number verification, cosmetic/functional grading. |
-| **Customer Support** | Ticket creation, order linking, communication history, status changes. | Telephony/VoIP PBX infrastructure (if applicable). | Customer phone/chat conversation, investigation, goodwill voucher decisions. |
+| Domain                          | Chellaa Software Owns                                                                           | External System Owns                                                                        | Human Operator Owns                                                                |
+| :------------------------------ | :---------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------- |
+| **Product Merchandising** | Catalog structure, variants, pricing, specifications, and inventory thresholds.                 | Media file storage / CDN delivery.                                                          | Product copywriting, image curation, and pricing strategy decisions.               |
+| **Inventory**             | Logical inventory balance, reservations, stock movement ledger, safety stock alerts.            | N/A                                                                                         | Physical unloading, bin placement, cycle counts, damaged item grading.             |
+| **Payments**              | Payment transaction state, order link, cart amount validation, reconciliation ledger.           | Cardholder data capture, PCI DSS compliance, banking network routing, 3D Secure OTP.        | Manual chargeback review, dispute submission to merchant bank.                     |
+| **Logistics**             | Consignment booking, packing slip generation, AWB tracking updates, customer alerts.            | Fleet routing, physical transportation, doorstep delivery, OTP-based delivery verification. | Physical packaging, courier handover, package weighment verification.              |
+| **Returns**               | Return request validation, policy window check, refund calculation, replacement order creation. | Reverse logistics transit.                                                                  | Physical package opening, serial number verification, cosmetic/functional grading. |
+| **Customer Support**      | Ticket creation, order linking, communication history, status changes.                          | Telephony/VoIP PBX infrastructure (if applicable).                                          | Customer phone/chat conversation, investigation, goodwill voucher decisions.       |
 
 ---
 
@@ -187,17 +188,17 @@ classDiagram
 
 The operational context for the platform baseline is defined below. Key unresolved decisions are explicitly highlighted.
 
-| Scope Dimension | Specification / Baseline Parameter | Decision Status | Open Decision Reference |
-| :--- | :--- | :--- | :--- |
-| **Primary Operating Country** | India (Domestic Retail Operations). | `PROPOSED` | See [OQ-001](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-001) |
-| **Transaction Currency** | Indian Rupee (INR - ₹). Single currency baseline. | `PROPOSED` | See [OQ-002](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-002) |
-| **Pricing Convention** | Tax-Inclusive Retail Pricing (MRP / Display price includes applicable taxes). | `PROPOSED` | See [OQ-009](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-009) |
-| **Tax Framework** | Goods and Services Tax (GST) compliant (CGST, SGST, IGST calculation based on origin and delivery states). | `PROPOSED` | See [OQ-009](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-009) |
-| **Supported Languages** | English (en-IN) primary; multi-language localization deferred. | `PROPOSED` | See [OQ-002](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-002) |
-| **Delivery Serviceability** | Pan-India domestic PIN-code serviceability via courier partner API check. | `PROPOSED` | See [OQ-005](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-005) |
-| **Cash on Delivery (COD)** | Restricted to eligible PIN codes and order values under a confirmed threshold (e.g., ₹10,000). | `UNDECIDED` | See [OQ-006](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-006) |
-| **Warehouse Architecture** | Single primary central fulfillment center at launch, with multi-warehouse ready schema. | `PROPOSED` | See [OQ-007](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-007) |
-| **Data Privacy & Governance** | Compliance with Indian Digital Personal Data Protection Act (DPDPA 2023) and consumer protection rules. | `PROPOSED` | See [OQ-020](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-020) |
+| Scope Dimension                     | Specification / Baseline Parameter                                                                                          | Decision Status | Open Decision Reference                                             |
+| :---------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- | :-------------- | :------------------------------------------------------------------ |
+| **Primary Operating Country** | India (Domestic Retail Operations).                                                                                         | `PROPOSED`    | See [OQ-001](./08-assumptions-dependencies-open-questions.md#oq-001) |
+| **Transaction Currency**      | Indian Rupee (INR - ₹). Single currency baseline.                                                                          | `PROPOSED`    | See [OQ-002](./08-assumptions-dependencies-open-questions.md#oq-002) |
+| **Pricing Convention**        | Tax-Inclusive Retail Pricing (MRP / Display price includes applicable taxes).                                               | `PROPOSED`    | See [OQ-009](./08-assumptions-dependencies-open-questions.md#oq-009) |
+| **Tax Framework**             | Goods and Services Tax (GST) compliant (CGST, SGST, IGST calculation based on origin and delivery states).                  | `PROPOSED`    | See [OQ-009](./08-assumptions-dependencies-open-questions.md#oq-009) |
+| **Supported Languages**       | English (en-IN) primary; multi-language localization deferred.                                                              | `PROPOSED`    | See [OQ-002](./08-assumptions-dependencies-open-questions.md#oq-002) |
+| **Delivery Serviceability**   | Pan-India domestic PIN-code serviceability via courier partner API check.                                                   | `PROPOSED`    | See [OQ-005](./08-assumptions-dependencies-open-questions.md#oq-005) |
+| **Cash on Delivery (COD)**    | Restricted to eligible PIN codes and order values under a confirmed threshold (e.g., ₹10,000).                             | `UNDECIDED`   | See [OQ-006](./08-assumptions-dependencies-open-questions.md#oq-006) |
+| **Warehouse Architecture**    | Single primary central fulfillment center at launch, with multi-warehouse ready schema.                                     | `PROPOSED`    | See [OQ-007](./08-assumptions-dependencies-open-questions.md#oq-007) |
+| **Data Privacy & Governance** | Support for Indian Digital Personal Data Protection Act (DPDPA 2023) controls with 8-year financial tax document retention. | `CONFIRMED`   | See [OQ-020](./08-assumptions-dependencies-open-questions.md#oq-020) |
 
 ---
 

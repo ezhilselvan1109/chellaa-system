@@ -36,16 +36,16 @@ The platform's primary business objectives are defined below. Each objective is 
 
 | Objective ID | Objective Title | Business Objective Statement | Target Outcome / KPI Alignment | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **OBJ-001** | Direct Digital Sales Channel | Establish an owned, scalable direct-to-consumer online sales channel to capture market share in consumer electronics and home appliances. | Launch digital catalog with 100% self-managed pricing, promotions, and checkout capabilities. | `CONFIRMED` |
-| **OBJ-002** | Catalog & Brand Governance | Enable centralized administrative management of comprehensive multi-variant product catalogs, brand identities, hierarchical categories, and technical specifications. | Support catalog expansion to 10,000+ SKUs with rich variant dimensions (color, storage, RAM, configuration). | `CONFIRMED` |
-| **OBJ-003** | Real-Time Inventory Control | Maintain 99.9% inventory record accuracy across all enterprise storage locations and prevent overselling through strict reservation policies. | Zero overselling incidents under concurrent customer checkout traffic. | `CONFIRMED` |
-| **OBJ-004** | Automated Order Processing | Streamline the order lifecycle from checkout to delivery with zero manual data re-entry between administrative, warehouse, and courier steps. | Reduce order-to-dispatch latency to under 4 business hours for in-stock items. | `CONFIRMED` |
-| **OBJ-005** | Secure & Reconciled Payments | Provide reliable, frictionless payment options via external gateway integrations with automated settlement and refund reconciliation. | Maintain payment success rate >= 95% and automated reconciliation rate >= 99.5%. | `CONFIRMED` |
-| **OBJ-006** | End-to-End Logistics Tracking | Integrate with verified third-party courier and logistics partners to provide automated waybill generation and real-time delivery milestone tracking. | Provide milestone tracking for 100% of dispatched orders. | `CONFIRMED` |
-| **OBJ-007** | Customer Self-Service & Support | Empower customers with transparent order status, self-service cancellation, eligible return/replacement requests, and support ticket tracking. | Reduce customer support inquiries regarding "Where Is My Order" (WISMO) by 60%. | `CONFIRMED` |
-| **OBJ-008** | Regulatory & Tax Compliance | Ensure full compliance with jurisdictional tax calculation, sequential invoice generation, credit note issuance, and customer data privacy obligations. | 100% audit-compliant tax invoices and verifiable transaction audit logs. | `CONFIRMED` |
-| **OBJ-009** | Actionable Business Intelligence | Provide the business owner with real-time operational reporting on gross merchandise value (GMV), net margins, inventory velocity, and fulfillment efficiency. | Daily automated reconciliation, sales velocity reports, and stock replenishment alerts. | `CONFIRMED` |
-| **OBJ-010** | High Operational Availability | Ensure enterprise-grade system resilience, failure isolation, and zero lost business transactions during peak promotional traffic. | 99.9% application uptime and zero silent transaction loss during third-party outages. | `PROPOSED` |
+| <a id="obj-001"></a>**OBJ-001** | Direct Digital Sales Channel | Establish an owned, scalable direct-to-consumer online sales channel to capture market share in consumer electronics and home appliances. | Launch digital catalog with 100% self-managed pricing, promotions, and checkout capabilities. | `CONFIRMED` |
+| <a id="obj-002"></a>**OBJ-002** | Catalog & Brand Governance | Enable centralized administrative management of comprehensive multi-variant product catalogs, brand identities, hierarchical categories, and technical specifications. | Support catalog expansion to 10,000+ SKUs with rich variant dimensions (color, storage, RAM, configuration). | `CONFIRMED` |
+| <a id="obj-003"></a>**OBJ-003** | Real-Time Inventory Control | Maintain 99.9% inventory record accuracy across all enterprise storage locations and prevent overselling through strict reservation policies. | Zero overselling incidents under concurrent customer checkout traffic. | `CONFIRMED` |
+| <a id="obj-004"></a>**OBJ-004** | Automated Order Processing | Streamline the order lifecycle from checkout to delivery with zero manual data re-entry between administrative, warehouse, and courier steps. | Reduce order-to-dispatch latency to under 4 business hours for in-stock items. | `CONFIRMED` |
+| <a id="obj-005"></a>**OBJ-005** | Secure & Reconciled Payments | Provide reliable, frictionless payment options via external gateway integrations with automated settlement and refund reconciliation. | Maintain payment success rate >= 95% and automated reconciliation rate >= 99.5%. | `CONFIRMED` |
+| <a id="obj-006"></a>**OBJ-006** | End-to-End Logistics Tracking | Integrate with verified third-party courier and logistics partners to provide automated waybill generation and real-time delivery milestone tracking. | Provide milestone tracking for 100% of dispatched orders. | `CONFIRMED` |
+| <a id="obj-007"></a>**OBJ-007** | Customer Self-Service & Support | Empower customers with transparent order status, self-service cancellation, eligible return/replacement requests, and support ticket tracking. | Reduce customer support inquiries regarding "Where Is My Order" (WISMO) by 60%. | `CONFIRMED` |
+| <a id="obj-008"></a>**OBJ-008** | Regulatory & Tax Compliance | Ensure full compliance with jurisdictional tax calculation, sequential invoice generation, credit note issuance, and customer data privacy obligations. | 100% audit-compliant tax invoices and verifiable transaction audit logs. | `CONFIRMED` |
+| <a id="obj-009"></a>**OBJ-009** | Actionable Business Intelligence | Provide the business owner with real-time operational reporting on gross merchandise value (GMV), net margins, inventory velocity, and fulfillment efficiency. | Daily automated reconciliation, sales velocity reports, and stock replenishment alerts. | `CONFIRMED` |
+| <a id="obj-010"></a>**OBJ-010** | High Operational Availability | Ensure enterprise-grade system resilience, failure isolation, and zero lost business transactions during peak promotional traffic. | 99.9% application uptime and zero silent transaction loss during third-party outages (subject to [OQ-017](./08-assumptions-dependencies-open-questions.md#oq-017)). | `PROPOSED` |
 
 ---
 
@@ -161,18 +161,18 @@ To validate that the business requirements achieve the owner’s commercial goal
 
 | Metric ID | KPI Name | Definition / Calculation Method | Target Value | Baseline Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **KPI-001** | Checkout Conversion Rate | $( \text{Completed Orders} / \text{Checkouts Initiated} ) \times 100$ | $\ge 70\%$ | `PROPOSED` |
-| **KPI-002** | Inventory Record Accuracy (IRA) | $( \text{Physical Count Matches} / \text{Total System SKUs} ) \times 100$ | $\ge 99.5\%$ | `CONFIRMED` |
-| **KPI-003** | Stockout / Oversell Incident Rate | $( \text{Oversold Order Cancellations} / \text{Total Placed Orders} ) \times 100$ | $0.00\%$ | `CONFIRMED` |
-| **KPI-004** | Order Fulfillment Latency | Time elapsed from payment confirmation to carrier dispatch handover | $\le 24\text{ hours}$ (Standard) / $\le 4\text{ hours}$ (Express) | `PROPOSED` |
-| **KPI-005** | Payment Success Rate | $( \text{Successful Payment Attempts} / \text{Total Initiated Payments} ) \times 100$ | $\ge 95.0\%$ | `PROPOSED` |
-| **KPI-006** | Payment Reconciliation Rate | $( \text{Automated Matched Transactions} / \text{Total Transactions} ) \times 100$ | $\ge 99.0\%$ | `PROPOSED` |
-| **KPI-007** | Delivery On-Time Rate | $( \text{Shipments Delivered On/Before Promise Date} / \text{Total Dispatched Shipments} ) \times 100$ | $\ge 95.0\%$ | `PROPOSED` |
-| **KPI-008** | Order Return Rate | $( \text{Returned Order Value} / \text{Gross Merchandise Value} ) \times 100$ | $\le 5.0\%$ (Electronics) | `PROPOSED` |
-| **KPI-009** | Refund Cycle Time | Time elapsed from return inspection approval to refund initiation | $\le 4\text{ business hours}$ | `PROPOSED` |
-| **KPI-010** | Support Ticket Resolution Time | Mean Time to Resolve (MTTR) for customer support tickets | $\le 12\text{ hours}$ | `PROPOSED` |
-| **KPI-011** | Average Order Value (AOV) | $\text{Gross Revenue} / \text{Total Number of Orders}$ | Tracked monthly | `UNDECIDED` |
-| **KPI-012** | Platform Availability | $( \text{Total Uptime Hours} / \text{Total Operating Hours} ) \times 100$ | $\ge 99.90\%$ | `PROPOSED` |
+| <a id="kpi-001"></a>**KPI-001** | Checkout Conversion Rate | $( \text{Completed Orders} / \text{Checkouts Initiated} ) \times 100$ | $\ge 70\%$ | `PROPOSED` |
+| <a id="kpi-002"></a>**KPI-002** | Inventory Record Accuracy (IRA) | $( \text{Physical Count Matches} / \text{Total System SKUs} ) \times 100$ | $\ge 99.5\%$ | `CONFIRMED` |
+| <a id="kpi-003"></a>**KPI-003** | Stockout / Oversell Incident Rate | $( \text{Oversold Order Cancellations} / \text{Total Placed Orders} ) \times 100$ | $0.00\%$ | `CONFIRMED` |
+| <a id="kpi-004"></a>**KPI-004** | Order Fulfillment Latency | Time elapsed from payment confirmation to carrier dispatch handover | $\le 24\text{ hours}$ (Standard) / $\le 4\text{ hours}$ (Express) | `PROPOSED` |
+| <a id="kpi-005"></a>**KPI-005** | Payment Success Rate | $( \text{Successful Payment Attempts} / \text{Total Initiated Payments} ) \times 100$ | $\ge 95.0\%$ | `PROPOSED` |
+| <a id="kpi-006"></a>**KPI-006** | Payment Reconciliation Rate | $( \text{Automated Matched Transactions} / \text{Total Transactions} ) \times 100$ | $\ge 99.0\%$ | `PROPOSED` |
+| <a id="kpi-007"></a>**KPI-007** | Delivery On-Time Rate | $( \text{Shipments Delivered On/Before Promise Date} / \text{Total Dispatched Shipments} ) \times 100$ | $\ge 95.0\%$ | `PROPOSED` |
+| <a id="kpi-008"></a>**KPI-008** | Order Return Rate | $( \text{Returned Order Value} / \text{Gross Merchandise Value} ) \times 100$ | $\le 5.0\%$ (Electronics) | `PROPOSED` |
+| <a id="kpi-009"></a>**KPI-009** | Refund Cycle Time | Time elapsed from return inspection approval to refund initiation | $\le 4\text{ business hours}$ | `PROPOSED` |
+| <a id="kpi-010"></a>**KPI-010** | Support Ticket Resolution Time | Mean Time to Resolve (MTTR) for customer support tickets | $\le 12\text{ hours}$ | `PROPOSED` |
+| <a id="kpi-011"></a>**KPI-011** | Average Order Value (AOV) | $\text{Gross Revenue} / \text{Total Number of Orders}$ | Tracked monthly | `UNDECIDED` |
+| <a id="kpi-012"></a>**KPI-012** | Platform Availability | $( \text{Total Uptime Hours} / \text{Total Operating Hours} ) \times 100$ | $\ge 99.90\%$ | `PROPOSED` |
 
 ---
 

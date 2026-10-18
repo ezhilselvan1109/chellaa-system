@@ -78,7 +78,7 @@ Workflows distinguish clearly between:
 * **Expected Final Business State:** Account is `ACTIVE`; Customer is authenticated; Audit record created.
 * **Dependencies:** `FEAT-CUST-001`, `FEAT-NTF-001`.
 * **Related Functional Requirements:** `FR-CUST-001`.
-* **Unresolved Decisions:** See [OQ-010](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-010).
+* **Unresolved Decisions:** See [OQ-010](./08-assumptions-dependencies-open-questions.md#oq-010).
 
 ```mermaid
 sequenceDiagram
@@ -302,7 +302,7 @@ flowchart TD
 * **Expected Final Business State:** Order created in `PENDING_PAYMENT`; Inventory held in `RESERVED` status for 15 minutes; Payment intent active.
 * **Dependencies:** `FEAT-CHK-001`, `FEAT-INV-002`, `FEAT-FIN-001`, `FEAT-PAY-001`.
 * **Related Functional Requirements:** `FR-CHK-001`, `FR-INV-002`.
-* **Unresolved Decisions:** See [OQ-006](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-006) (COD Policy).
+* **Unresolved Decisions:** See [OQ-006](./08-assumptions-dependencies-open-questions.md#oq-006) (COD Policy).
 
 ```mermaid
 sequenceDiagram
@@ -349,12 +349,14 @@ sequenceDiagram
   * **Customer Browser Redirect arrives before Webhook:** System verifies status via synchronous return token, displays "Payment Received - Confirming Order", and waits for authoritative webhook.
 * **Failure Paths:**
   * **Payment Failed / Declined:** Gateway webhook reports `payment.failed`; system marks payment attempt as failed, alerts customer, and keeps reservation open until 15-minute TTL expires to allow retry.
-  * **Late Payment on Expired Stock:** Payment captures after 15-minute TTL, and stock was sold to someone else; system executes `BR-PAY-002`: marks order `PAYMENT_RECEIVED_OUT_OF_STOCK`, cancels order, and triggers automatic 100% refund.
+  * **Late Payment on Expired Reservation:** Payment confirmation captures after 15-minute TTL:
+    * **Case A (Stock Still Available):** System attempts to immediately re-reserve available on-hand stock (`ATS >= order quantity`) and transitions order to `CONFIRMED`.
+    * **Case B (Stock Exhausted):** If stock has been claimed by concurrent shoppers, system executes `BR-PAY-002`: marks order `PAYMENT_RECEIVED_OUT_OF_STOCK`, cancels order, and triggers automatic 100% refund remittance to original payment source.
   * **Dropped Webhook / Stale Pending:** Webhook is lost; background job detects order pending $> 30\text{ mins}$, queries gateway status API (`BR-PAY-003`), and synchronizes authoritative state.
 * **Business Rules Applied:** `BR-PAY-001`, `BR-PAY-002`, `BR-PAY-003`, `BR-ORD-003`, `BR-FIN-002`.
-* **Expected Final Business State:** Order is `CONFIRMED`; Stock is permanently allocated; Invoice is issued; Customer notified.
+* **Expected Final Business State:** Order is `CONFIRMED` (or refunded if out of stock); Stock is permanently allocated; Invoice is issued; Customer notified.
 * **Dependencies:** `FEAT-PAY-001`, `FEAT-ORD-001`, `FEAT-FIN-001`, `FEAT-INV-002`.
-* **Related Functional Requirements:** `FR-PAY-001`, `FR-FIN-001`.
+* **Related Functional Requirements:** `FR-PAY-001`, `FR-PAY-002`, `FR-FIN-001`.
 * **Unresolved Decisions:** None.
 
 ```mermaid
@@ -369,9 +371,12 @@ flowchart TD
     H --> I[Generate Sequential Tax Invoice PDF]
     I --> J[Dispatch Confirmation SMS/Email/WhatsApp]
     J --> K[Queue Order in Warehouse Fulfillment Queue]
-    F -->|Reservation Expired & Stock Sold Out| L[Mark PAYMENT_RECEIVED_OUT_OF_STOCK]
-    L --> M[Initiate Immediate 100% Automated Refund to Source]
-    M --> N[Alert Customer & Offer Apology / Alternative]
+    F -->|Reservation Expired| L{Is ATS Stock Still Available?}
+    L -->|Case A: Stock Available| M[Re-reserve Stock & Confirm Order]
+    M --> G
+    L -->|Case B: Stock Exhausted| N[Mark PAYMENT_RECEIVED_OUT_OF_STOCK]
+    N --> O[Initiate Immediate 100% Automated Refund to Source]
+    O --> P[Alert Customer & Offer Apology / Alternative]
 ```
 
 ---
@@ -498,7 +503,7 @@ flowchart TD
 * **Expected Final Business State:** Return closed; Credit Note issued; Refund remitted; Stock appropriately quarantined or restocked.
 * **Dependencies:** `FEAT-RET-001`, `FEAT-RET-002`, `FEAT-FIN-002`, `FEAT-PAY-001`.
 * **Related Functional Requirements:** `FR-RET-001`, `FR-RET-002`.
-* **Unresolved Decisions:** See [OQ-008](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-008).
+* **Unresolved Decisions:** See [OQ-008](./08-assumptions-dependencies-open-questions.md#oq-008).
 
 ```mermaid
 sequenceDiagram
@@ -597,7 +602,7 @@ flowchart TD
 * **Expected Final Business State:** Notification delivered; Delivery audit record saved.
 * **Dependencies:** `FEAT-NTF-001`, `FEAT-INT-001`.
 * **Related Functional Requirements:** `FR-NTF-001`.
-* **Unresolved Decisions:** See [OQ-015](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-015).
+* **Unresolved Decisions:** See [OQ-015](./08-assumptions-dependencies-open-questions.md#oq-015).
 
 ```mermaid
 sequenceDiagram

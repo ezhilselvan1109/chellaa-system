@@ -206,7 +206,7 @@ graph TD
 
 ### 2.10 ACT-010: Guest Shopper
 * **Actor Type:** Human (Unregistered End-User)
-* **Status:** `PROPOSED` (Subject to Open Decision [OQ-011](file:///d:/learning/Microservice/backend/docs/00-requirements/08-assumptions-dependencies-open-questions.md#oq-011))
+* **Status:** `PROPOSED` (Subject to Open Decision [OQ-011](./08-assumptions-dependencies-open-questions.md#oq-011))
 * **Business Responsibility:** Browses the store catalog and creates temporary shopping carts without upfront account registration.
 * **Goals:** Rapidly evaluate products and optionally execute checkout with minimal friction.
 * **Permitted Business Activities:**
