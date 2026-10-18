@@ -8,6 +8,7 @@
 | **Target Repository** | [`ezhilselvan1109/chellaa-system`](https://github.com/ezhilselvan1109/chellaa-system) (Branch: `dev`) |
 | **File Location** | `docs/00-requirements/review/phase-2-architecture-planning.md` |
 | **Creation Date** | 2026-10-18 |
+| **Last Audited & Updated** | 2026-10-18 |
 | **Author Role** | Principal Software Architect, Domain-Driven Design Specialist & Distributed Systems Engineer |
 | **Governance Status** | **`NON_BINDING_PLANNING`** (Planning Artifact Only — Awaiting Formal Phase 1 Sign-Off) |
 | **Phase 1 Baseline Status** | **`PENDING_APPROVAL`** (Maintained strictly per governance constraints) |
@@ -17,11 +18,15 @@
 ## 1. Purpose, Scope and Non-Binding Status
 
 ### 1.1 Purpose
-This planning package defines the technical analysis plans, architectural evaluation frameworks, candidate domain boundaries, cross-cutting engineering strategies, comparative trade-offs, and deliverable acceptance criteria required before formal Phase 2 Technical Architecture design can begin for the Chellaa single-retailer e-commerce platform.
+This planning package establishes the architectural evaluation frameworks, technical analysis plans, candidate domain boundaries, cross-cutting engineering strategies, comparative trade-offs, and deliverable acceptance criteria required before formal Phase 2 Technical Architecture design can begin for the Chellaa single-retailer e-commerce platform.
+
+* **Related Exploratory Discovery & Audit Artifacts:**
+  * **Architecture Audit Report:** [\`docs/00-requirements/review/phase-2-architecture-planning-audit.md\`](./phase-2-architecture-planning-audit.md) (\`ARCH-AUDIT-01\`)
+  * **Step 02A Discovery & Domain Boundary Analysis:** [\`docs/00-requirements/review/architecture-discovery-and-domain-boundaries.md\`](./architecture-discovery-and-domain-boundaries.md) (\`ARCH-DISC-01\`)
 
 ### 1.2 Non-Binding Status
 * **Exploratory & Preparatory Only:** This artifact is strictly a preparatory planning document. It does **not** authorize final architectural decisions, select immutable production frameworks, prescribe mandatory microservice boundaries, create database schemas, or initiate software implementation.
-* **Proposals Pending Authorization:** All technical patterns, structural options, and toolchain recommendations contained herein are explicitly designated as **`PROPOSED`**. None shall be treated as binding or approved until formal Phase 2 architecture design is authorized and individual Architecture Decision Records (ADRs) are ratified.
+* **Proposals Pending Authorization:** All technical patterns, structural options, and toolchain evaluations contained herein are explicitly designated as **`PROPOSED for Evaluation`**. None shall be treated as binding, approved, or pre-selected until formal Phase 2 architecture design is authorized and individual Architecture Decision Records (ADRs) are formally ratified.
 * **Strict Governance Gate:** Transitioning to formal technical architecture design under `docs/01-architecture/` is strictly prohibited until the Enterprise Business Owner executes the formal Phase 1 sign-off in [`docs/00-requirements/11-review-and-approval.md`](../11-review-and-approval.md).
 
 ### 1.3 Scope Boundaries
@@ -47,24 +52,30 @@ The governance state of the Chellaa platform remains strictly aligned with the b
 2. **Zero Commercial Inventions:** No unresolved business question (`OQ-001` through `OQ-022`) has been decided on behalf of the business owner.
 3. **No Premature Architecture Files:** No architectural specifications, C4 diagrams, or ADRs have been placed in `docs/01-architecture/`.
 4. **No Code Implementation:** No source code, database migrations, API definitions, deployment manifests, or package installations have been performed.
-5. **Traceability Preservation:** All architectural explorations maintain 100% backward traceability to the Phase 1 Business Requirements Document (BRD).
+5. **Traceability Preservation:** All architectural explorations maintain 100% backward traceability to the Phase 1 Business Requirements Document (BRD) suite ([`00-business-overview.md`](../00-business-overview.md) through [`11-review-and-approval.md`](../11-review-and-approval.md)).
 
 ---
 
-## 3. Architecture Objectives Derived from the BRD
+## 3. Architecture Objectives and Quantitative Targets Categorization
 
-The architectural planning is derived directly from the business objectives, core features, and non-functional requirements established in the Phase 1 BRD:
+The architectural planning is derived directly from the business objectives, core features, and non-functional requirements established in the Phase 1 BRD. To ensure strict governance, every quantitative target is explicitly classified below:
 
-| Objective Category | Target Metrics & Constraints | Source Requirement IDs |
-| :--- | :--- | :--- |
-| **High Concurrency & Flash Sales** | Support a baseline of **100 orders/minute** with burst auto-scaling to **1,000 orders/minute** during promotional surges without inventory overselling or checkout degradation. | `NFR-SCL-001`, `FEAT-CHK-001`, `FEAT-INV-001`, `OQ-016` |
-| **Catalog Scale & Discovery** | Maintain sub-second responsiveness across an active catalog of up to **100,000 SKUs** with rich multi-variant attributes and dynamic specifications. | `NFR-SCL-002`, `FEAT-CAT-001`, `FEAT-SRCH-001` |
-| **Storefront Latency Budgets** | Faceted catalog search and browsing responses within **$\le 200\text{ms}$ ($p95$)**; complete checkout submission within **$\le 1,000\text{ms}$ ($p95$)**. | `NFR-PERF-001`, `NFR-PERF-002` |
-| **High Availability & Business Continuity** | Core checkout availability of **99.9% uptime** during operational windows; automated database backups with **RPO $\le 5\text{ minutes}$** and **RTO $\le 2\text{ hours}$**. | `NFR-AVL-001`, `NFR-BCM-001`, `OQ-017` |
-| **Zero Overselling & Stock Integrity** | Absolute stock integrity via atomic reservations during checkout; zero negative inventory balances under concurrent flash-sale load. | `BR-INV-001`, `BR-INV-002`, `BR-CHK-001`, `FR-INV-001` |
-| **Financial & Statutory Compliance** | Sequential tax invoice generation with tamper-evident audit trails; full GST compliance (CGST/SGST/IGST); zero storage of sensitive cardholder PAN/CVV data. | `BR-FIN-001`, `BR-FIN-002`, `BR-SEC-001`, `NFR-SEC-001`, `DEP-004` |
-| **Security & Data Privacy** | Cryptographic customer password hashing (bcrypt/Argon2id); AES-256 PII encryption at rest; automated PII redaction from operational log streams; strict staff RBAC. | `FR-SEC-001`, `NFR-SEC-002`, `NFR-SEC-003`, `BR-ADM-001`, `BR-ADM-002` |
-| **Operational Traceability** | 100% of distributed transactions tagged with immutable W3C Trace IDs; Write-Once, Read-Many (WORM) audit logging of privileged back-office mutations. | `NFR-OBS-001`, `NFR-OBS-002`, `FR-AUD-001`, `BR-AUD-001`, `BR-OPS-001` |
+| Target / Metric | Target Value | Target Classification | Source Requirement IDs | Architectural Implication |
+| :--- | :--- | :--- | :--- | :--- |
+| **Baseline Order Throughput** | 100 sustained orders/minute | **Proposed Requirement** | [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001) | Baseline sizing for thread pools, connection pools, and database I/O. |
+| **Peak Surge Order Throughput** | 1,000 peak orders/minute | **Open Commercial Decision** (Provisional Target) | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001) | Sizing for Kafka partitions, horizontal container auto-scaling, and Redis cache clusters. |
+| **Active Catalog Capacity** | Up to 100,000 active SKUs | **Confirmed Requirement** | [`NFR-SCL-002`](../07-non-functional-requirements.md#nfr-scl-002), [`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001) | Sizing for search indexes, database table partitioning, and memory footprints. |
+| **Search & Browsing Latency** | $\le 200\text{ms}$ ($p95$) | **Proposed Requirement** | [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001) | Mandates dedicated search indexing / read models isolated from OLTP writes. |
+| **Checkout Submission Latency** | $\le 1,000\text{ms}$ ($p95$) | **Proposed Requirement** | [`NFR-PERF-002`](../07-non-functional-requirements.md#nfr-perf-002) | Requires low-latency atomic reservation and asynchronous post-order processing. |
+| **Batch Catalog Import** | 5,000 SKUs in $\le 15\text{ min}$ | **Proposed Requirement** | [`NFR-PERF-003`](../07-non-functional-requirements.md#nfr-perf-003), [`FEAT-DAT-001`](../03-business-feature-inventory.md#feat-dat-001) | Mandates asynchronous batch worker with streaming chunk validation. |
+| **Core Checkout Availability** | 99.9% uptime during operational windows | **Open Commercial Decision** (Provisional Target) | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001) | Evaluates Multi-AZ deployment and health check circuit breakers. |
+| **Disaster Recovery (RPO / RTO)** | RPO $\le 5\text{ min}$, RTO $\le 2\text{ hours}$ | **Open Commercial Decision** (Provisional Target) | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001) | Requires automated continuous WAL archiving, PITR, and standby failover runbooks. |
+| **Cardholder Data Storage** | Zero PAN / CVV stored | **Confirmed Requirement** | [`BR-SEC-001`](../05-business-rules.md#br-sec-001), [`NFR-SEC-001`](../07-non-functional-requirements.md#nfr-sec-001) | Enforces client-side tokenization via PCI DSS Level 1 certified gateway SDKs. |
+| **Customer Password Security** | bcrypt (factor $ge 12$) or Argon2id | **Confirmed Requirement** | [`FR-SEC-001`](../04-functional-requirements.md#fr-sec-001), [`NFR-SEC-002`](../07-non-functional-requirements.md#nfr-sec-002) | Mandates salted cryptographic hashing before persistence. |
+| **Customer PII Protection** | AES-256 at rest, automated log redaction | **Confirmed Requirement** | [`NFR-SEC-003`](../07-non-functional-requirements.md#nfr-sec-003) | Enforces database field-level encryption and regex log interceptors. |
+| **Audit Ledger Retention** | 8-year statutory retention | **Open Commercial Decision** (Provisional Target) | [`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020), [`BR-DAT-001`](../05-business-rules.md#br-dat-001) | Sizing for WORM storage tiers and immutable cold archive replication. |
+| **Cash on Delivery (COD) Ceiling** | ₹10,000 order ceiling | **Open Commercial Decision** (Provisional Target) | [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006), [`BR-PAY-001`](../05-business-rules.md#br-pay-001) | Sizing post-delivery cash collection reconciliation and delivery OTP state machines. |
+| **Single Warehouse Topology** | Central enterprise warehouse | **Operational Assumption** | [`ASM-007`](../08-assumptions-dependencies-open-questions.md#asm-007) | Architecture initially assumes single-node inventory ledger with warehouse zones. |
 
 ---
 
@@ -72,7 +83,7 @@ The architectural planning is derived directly from the business objectives, cor
 
 The following fundamental engineering principles will be evaluated during formal Phase 2 architecture design to ensure systemic resilience, modularity, and operational maintainability:
 
-1. **Domain-Driven Design (DDD) & Ubiquitous Language:** Align software boundaries directly with business capabilities. Formulate explicit Bounded Contexts with strictly enforced ubiquitous language shared across business stakeholders and engineering.
+1. **Domain-Driven Design (DDD) & Ubiquitous Language:** Align software boundaries directly with business capabilities. Formulate explicit Bounded Contexts with strictly enforced ubiquitous language shared across business stakeholders and engineering ([`10-glossary.md`](../10-glossary.md)).
 2. **Loose Coupling & High Cohesion:** Components within a domain boundary must be highly cohesive, collaborating to fulfill a single business lifecycle. Dependencies between distinct domains must be loosely coupled via published contracts (APIs and asynchronous events).
 3. **Single Source of Truth & Authoritative Data Ownership:** Every business entity and transactional ledger must have exactly one authoritative owning domain. Direct cross-database joins or unauthorized writes across domain boundaries are strictly prohibited.
 4. **Failure Isolation & Blast Radius Containment:** Architectural designs must guarantee that peripheral or non-critical failures (e.g., third-party SMS gateway downtime, recommendation engine degradation, or logistics webhook delays) cannot compromise the core checkout and payment funnel.
@@ -109,7 +120,7 @@ graph TD
         D9["09. Cart & Saved Items"]
         D10["10. Checkout Orchestration"]
         D11["11. Inventory & Warehouse Operations"]
-        D12["12. Promotions & Coupons"]
+        D12["12. Pricing & Promotions"]
         D13["13. Orders & Order Lifecycle"]
         D14["14. Payments & Reconciliation"]
         D15["15. Tax & Invoicing"]
@@ -142,7 +153,7 @@ graph TD
 
 | Domain ID & Name | Business Responsibility | Relevant Requirement IDs | Dependencies & Open Decisions | Possible Boundaries to Investigate |
 | :--- | :--- | :--- | :--- | :--- |
-| **01. Identity & Access Management (IAM)** | Administrative staff authentication, MFA enforcement, role-based access control (RBAC), and session lifecycle governance. | `FEAT-ADM-001`<br>`FEAT-ADM-001`<br>`FR-SEC-001`, `FR-SEC-002`<br>`BR-ADM-001`, `BR-ADM-002` | `DEP-006` (Key vault).<br>Evaluate whether administrative IAM shares the identity provider with retail customers or remains an isolated internal service. | Investigate separating internal staff IAM from customer authentication to isolate administrative credential blast radius. |
+| **01. Identity & Access Management (IAM)** | Administrative staff authentication, MFA enforcement, role-based access control (RBAC), and session lifecycle governance. | `FEAT-ADM-001`<br>`FR-SEC-001`, `FR-SEC-002`<br>`BR-ADM-001`, `BR-ADM-002` | `DEP-006` (Key vault).<br>Evaluate whether administrative IAM shares the identity provider with retail customers or remains an isolated internal service. | Investigate separating internal staff IAM from customer authentication to isolate administrative credential blast radius. |
 | **02. Customer Accounts** | Retail customer profile registration, mobile phone OTP verification, multi-address management, and account deactivation. | `FEAT-CUST-001`, `002`<br>`FR-CUST-001`, `FR-CUST-002`<br>`BR-CUST-001`, `BR-CUST-002` | `OQ-010` (Mobile OTP policy).<br>`DEP-003` (SMS Gateway). | Investigate coupling customer profile storage with customer auth tokens vs maintaining a dedicated customer identity boundary. |
 | **03. Audit & Compliance** | Immutable, append-only Write-Once, Read-Many (WORM) logging of sensitive administrative mutations, hash-chain tamper detection. | `FEAT-ADM-002`<br>`FEAT-AUD-001`<br>`FR-AUD-001`, `FR-AUD-002`<br>`BR-AUD-001` | `OQ-020` (8-year retention policy). | Evaluate asynchronous message-driven audit capture vs synchronous transactional interception in shared libraries. |
 | **04. Product Catalog & Variants** | Multi-variant electronics modeling (color, RAM, storage), SKU definitions, high-resolution media management, and product lifecycle states. | `FEAT-CAT-001`, `002`<br>`FR-CAT-001`, `FR-CAT-003`<br>`BR-CAT-001`–`003` | `DEP-005` (Object Storage CDN). | Evaluate whether dynamic digital asset transcoding requires a dedicated background media worker or external CDN processing. |
@@ -164,8 +175,8 @@ graph TD
 | **20. Reviews & Ratings** | Verified-purchaser rating submission (1-5 stars), text reviews, administrative moderation queue, rating aggregation. | `FEAT-REV-001`<br>`FR-REV-001`<br>`BR-REV-001` | `OQ-012` (Customer reviews scope). | Evaluate read-model caching of approved review scores and review counts directly against catalog SKUs. |
 | **21. Reporting & Analytics** | Executive sales reporting (GMV, AOV, Net Revenue), GST tax reconciliation ledgers, stock turnover velocity, audit dashboards. | `FEAT-RPT-001`<br>`FR-RPT-001`<br>`BR-RPT-001`<br>`NFR-PERF-003` | `OQ-018` (Reporting scope). | Design read-replica query strategies or dedicated analytical datamart to eliminate operational DB table locking. |
 | **22. Bulk Data Exchange** | Asynchronous CSV/XLSX catalog, pricing, and inventory batch updates with atomic pre-validation and annotated error reports. | `FEAT-DAT-001`<br>`FR-DAT-001`<br>`BR-CAT-001`, `BR-PRC-001`<br>`NFR-PERF-003` | `OQ-019` (Greenfield catalog import). | Design asynchronous job worker with progress tracking and annotated error report generation. |
-| **23. External Integrations** | Outbound third-party API adapters, circuit-breaker isolation, webhook ingress authentication, signature verification, and dead-lettering. | `FEAT-INT-001`<br>`FR-INT-001`<br>`BR-INT-001`, `BR-INT-001`<br>`NFR-AVL-002` | `DEP-001`, `DEP-002`, `DEP-003` | Investigate whether integration adapters live inside their respective business domains or within a shared integration gateway cluster. |
-| **24. Platform Operations** | Distributed health checking (liveness/readiness), graceful degradation under downstream outages, circuit-breaker dashboards, and rate limits. | `FEAT-OPS-001`<br>`FR-OPS-001`, `FR-OPS-001`<br>`BR-OPS-001`, `BR-OPS-001`<br>`NFR-OBS-001`, `NFR-OBS-002` | Service mesh / API Gateway infrastructure. | Assess implementing operational controls via API gateway filters and middleware vs dedicated operational services. |
+| **23. External Integrations** | Outbound third-party API adapters, circuit-breaker isolation, webhook ingress authentication, signature verification, and dead-lettering. | `FEAT-INT-001`<br>`FR-INT-001`<br>`BR-INT-001`<br>`NFR-AVL-002` | `DEP-001`, `DEP-002`, `DEP-003` | Investigate whether integration adapters live inside their respective business domains or within a shared integration gateway cluster. |
+| **24. Platform Operations** | Distributed health checking (liveness/readiness), graceful degradation under downstream outages, circuit-breaker dashboards, and rate limits. | `FEAT-OPS-001`<br>`FR-OPS-001`<br>`BR-OPS-001`<br>`NFR-OBS-001`, `NFR-OBS-002` | Service mesh / API Gateway infrastructure. | Assess implementing operational controls via API gateway filters and middleware vs dedicated operational services. |
 
 ---
 
@@ -202,8 +213,8 @@ Because business transactions span multiple candidate domains, the following dis
 
 * **Transactional Outbox Pattern:** To ensure atomic local database updates and domain event publishing without two-phase commit (2PC) overhead, services will write events to a local `outbox` table within the same ACID transaction. A dedicated relay worker will tail the outbox table and publish events to the message broker.
 * **Saga Pattern (Orchestration vs Choreography):**
-  * *Orchestrated Saga:* Proposed for Checkout and Order Placement. A central Checkout Orchestrator coordinates Inventory hold, Coupon lock, Payment authorization, and Order generation, executing compensating transactions (e.g., release inventory hold) upon failure.
-  * *Choreographed Saga:* Proposed for post-order fulfillment (e.g., `order.paid` $\rightarrow$ triggers Logistics booking and Invoice generation independently).
+  * *Orchestrated Saga:* Evaluated for Checkout and Order Placement. A central Checkout Orchestrator coordinates Inventory hold, Coupon lock, Payment authorization, and Order generation, executing compensating transactions (e.g., release inventory hold) upon failure.
+  * *Choreographed Saga:* Evaluated for post-order fulfillment (e.g., `order.paid` $\rightarrow$ triggers Logistics booking and Invoice generation independently).
 * **Idempotency Standards:** Mandate client-supplied `Idempotency-Key` headers on all state-mutating HTTP POST/PUT endpoints (Checkout submission, Payment capture, Refund dispatch). The key will be tracked in a fast distributed store (e.g., Redis) with a 24-hour TTL.
 * **CQRS Read Models:** Separate read models for high-velocity browsing (Catalog Search, Customer Order History) updated asynchronously via domain events to eliminate operational database contention.
 
@@ -274,17 +285,17 @@ All asynchronous domain events published across services will adhere to the **Cl
 ## 10. Security, Authentication and Authorization Analysis Plan
 
 ### 10.1 Customer & Staff Authentication
-* **Customer Authentication:** Mobile phone + SMS OTP verification (`OQ-010`). Upon validation, issue short-lived cryptographically signed JSON Web Tokens (JWT - RS256, 15-minute expiry) with rotating refresh tokens stored securely.
-* **Administrative Staff Authentication:** Multi-factor authentication (MFA) mandated for all administrative roles (`FEAT-ADM-001`). Public-key cryptography (JWKS) utilized by API Gateway to verify tokens statelessly.
+* **Customer Authentication:** Mobile phone + SMS OTP verification ([`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010)). Upon validation, issue short-lived cryptographically signed JSON Web Tokens (JWT - RS256, 15-minute expiry) with rotating refresh tokens stored securely.
+* **Administrative Staff Authentication:** Multi-factor authentication (MFA) mandated for all administrative roles ([`FEAT-ADM-001`](../03-business-feature-inventory.md#feat-adm-001)). Public-key cryptography (JWKS) utilized by API Gateway to verify tokens statelessly.
 
 ### 10.2 Role-Based Access Control (RBAC)
-* **Granular Permission Model:** Map explicit permissions to predefined roles (`SUPER_ADMIN`, `CATALOG_MANAGER`, `WAREHOUSE_OPERATOR`, `FINANCE_EXECUTIVE`, `SUPPORT_AGENT`) per `BR-ADM-001` and `BR-ADM-002`.
+* **Granular Permission Model:** Map explicit permissions to predefined roles (`SUPER_ADMIN`, `CATALOG_MANAGER`, `WAREHOUSE_OPERATOR`, `FINANCE_EXECUTIVE`, `SUPPORT_AGENT`) per [`BR-ADM-001`](../05-business-rules.md#br-adm-001) and [`BR-ADM-002`](../05-business-rules.md#br-adm-002).
 * **Zero Trust Gateway Enforcement:** API Gateway validates JWT signatures and injects sanitized identity headers (`X-User-Id`, `X-User-Roles`, `X-Permissions`) into internal network calls.
 
 ### 10.3 Sensitive Data Protection & Compliance
-* **Zero Cardholder Storage:** No cardholder PAN, CVV, or banking credentials stored on Chellaa servers (`BR-SEC-001`, `NFR-SEC-001`). Payment entry handled via PCI DSS Level 1 certified gateway client SDKs / hosted fields.
-* **Password Hashing:** Passwords hashed using industry-standard bcrypt (work factor $ge 12$) or Argon2id with unique cryptographic salts (`FR-SEC-001`, `NFR-SEC-002`).
-* **PII Encryption & Log Redaction:** Customer personally identifiable information (PII) encrypted at rest using AES-256 (`NFR-SEC-003`). Interceptors in shared logging libraries automatically mask phone numbers, emails, and addresses from application logs.
+* **Zero Cardholder Storage:** No cardholder PAN, CVV, or banking credentials stored on Chellaa servers ([`BR-SEC-001`](../05-business-rules.md#br-sec-001), [`NFR-SEC-001`](../07-non-functional-requirements.md#nfr-sec-001)). Payment entry handled via PCI DSS Level 1 certified gateway client SDKs / hosted fields.
+* **Password Hashing:** Passwords hashed using industry-standard bcrypt (work factor $ge 12$) or Argon2id with unique cryptographic salts ([`FR-SEC-001`](../04-functional-requirements.md#fr-sec-001), [`NFR-SEC-002`](../07-non-functional-requirements.md#nfr-sec-002)).
+* **PII Encryption & Log Redaction:** Customer personally identifiable information (PII) encrypted at rest using AES-256 ([`NFR-SEC-003`](../07-non-functional-requirements.md#nfr-sec-003)). Interceptors in shared logging libraries automatically mask phone numbers, emails, and addresses from application logs.
 
 ---
 
@@ -295,7 +306,7 @@ All asynchronous domain events published across services will adhere to the **Cl
 * Distributed lock acquired in Redis; if a duplicate request arrives while processing, return HTTP 409 (Conflict); if completed, replay the cached response.
 
 ### 11.2 Circuit Breakers & Bulkhead Isolation
-* External third-party calls (Payment Gateways, Couriers, SMS Gateways) must be wrapped with circuit breakers (e.g., Resilience4j / Envoy) per `BR-INT-001` and `NFR-AVL-002`.
+* External third-party calls (Payment Gateways, Couriers, SMS Gateways) must be wrapped with circuit breakers (e.g., Resilience4j / Envoy) per [`BR-INT-001`](../05-business-rules.md#br-int-001) and [`NFR-AVL-002`](../07-non-functional-requirements.md#nfr-avl-002).
 * Trip threshold: $> 50%$ failure rate over 20 requests trips the breaker to `OPEN`, fast-failing subsequent calls without consuming server threads.
 * Separate thread pool bulkheads for critical customer paths vs background synchronization.
 
@@ -304,7 +315,7 @@ All asynchronous domain events published across services will adhere to the **Cl
 * Formula: $\text{WaitTime} = \min(\text{MaxWait}, \text{InitialWait} \times 2^{\text{attempt}}) + \text{Jitter}$, preventing retry storms and thundering herd effects.
 
 ### 11.4 Graceful Degradation
-* If Search or Pricing clusters experience transient latency, the API Gateway degrades gracefully by serving cached catalog snapshots (`FR-OPS-001`, `BR-OPS-001`).
+* If Search or Pricing clusters experience transient latency, the API Gateway degrades gracefully by serving cached catalog snapshots ([`FR-OPS-001`](../04-functional-requirements.md#fr-ops-001), [`BR-OPS-001`](../05-business-rules.md#br-ops-001)).
 * Core checkout remains functional even if notification delivery or product review aggregation is temporarily unavailable.
 
 ---
@@ -312,18 +323,18 @@ All asynchronous domain events published across services will adhere to the **Cl
 ## 12. Performance, Capacity and Disaster-Recovery Validation Plan
 
 ### 12.1 Sizing & Capacity Targets
-* **Baseline Throughput:** 100 orders/minute sustained.
-* **Peak Surge Capacity:** 1,000 orders/minute sustained during promotional events without error rate exceeding 0.1% (`NFR-SCL-001`, `OQ-016`).
-* **Catalog Capacity:** Sized to store, index, and query 100,000 SKUs with dynamic specifications (`NFR-SCL-002`).
+* **Baseline Throughput:** 100 orders/minute sustained ([`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001)).
+* **Peak Surge Capacity:** 1,000 orders/minute sustained during promotional events without error rate exceeding 0.1% ([`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001)).
+* **Catalog Capacity:** Sized to store, index, and query 100,000 SKUs with dynamic specifications ([`NFR-SCL-002`](../07-non-functional-requirements.md#nfr-scl-002)).
 
 ### 12.2 Storefront Latency Budgets
-* Search & Faceted Filtering: $p95 \le 200\text{ms}$ under 5,000 concurrent browsing sessions (`NFR-PERF-001`).
-* Checkout Submission: $p95 \le 1,000\text{ms}$ under peak load (`NFR-PERF-002`).
-* Heavy Batch Imports: Process 5,000 SKU bulk updates within 15 minutes asynchronously without degrading storefront latency (`NFR-PERF-003`).
+* Search & Faceted Filtering: $p95 \le 200\text{ms}$ under 5,000 concurrent browsing sessions ([`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001)).
+* Checkout Submission: $p95 \le 1,000\text{ms}$ under peak load ([`NFR-PERF-002`](../07-non-functional-requirements.md#nfr-perf-002)).
+* Heavy Batch Imports: Process 5,000 SKU bulk updates within 15 minutes asynchronously without degrading storefront latency ([`NFR-PERF-003`](../07-non-functional-requirements.md#nfr-perf-003)).
 
 ### 12.3 Disaster Recovery & Business Continuity
 * **Backup Strategy:** Automated daily full backups, continuous Write-Ahead Log (WAL) archiving, and Point-In-Time Recovery (PITR) for relational databases.
-* **RPO & RTO Targets:** Recovery Point Objective $\le 5\text{ minutes}$; Recovery Time Objective $\le 2\text{ hours}$ (`NFR-BCM-001`, `OQ-017`).
+* **RPO & RTO Targets:** Recovery Point Objective $\le 5\text{ minutes}$; Recovery Time Objective $\le 2\text{ hours}$ ([`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001)).
 * **Validation Methodology:** Automated DR failover drills and synthetic load testing (Gatling / k6) scheduled during pre-launch staging.
 
 ---
@@ -331,7 +342,7 @@ All asynchronous domain events published across services will adhere to the **Cl
 ## 13. Observability, Logging, Audit and Monitoring Plan
 
 ### 13.1 Distributed Tracing
-* **W3C TraceContext:** Mandate standard `traceparent` and `tracestate` header propagation across all HTTP requests and messaging broker envelopes (`NFR-OBS-001`, `BR-OPS-001`).
+* **W3C TraceContext:** Mandate standard `traceparent` and `tracestate` header propagation across all HTTP requests and messaging broker envelopes ([`NFR-OBS-001`](../07-non-functional-requirements.md#nfr-obs-001), [`BR-OPS-001`](../05-business-rules.md#br-ops-001)).
 * **Trace Propagation:** 100% of customer requests assigned an immutable Trace ID at the API Gateway, propagated through inter-service calls, database operations, and asynchronous event consumers.
 
 ### 13.2 Structured Logging & Privacy
@@ -339,13 +350,13 @@ All asynchronous domain events published across services will adhere to the **Cl
 * **Automated Log Scrubbing:** Regular expressions in log appenders automatically redact PAN, CVV, passwords, phone numbers, and email addresses.
 
 ### 13.3 Metrics, Dashboards & Alerting
-* **RED Metrics:** Scrape Prometheus-compatible `/metrics` endpoints for Rate (requests/sec), Errors (failed requests/sec), and Duration (latencies $p50, p95, p99$) per service (`NFR-OBS-002`).
+* **RED Metrics:** Scrape Prometheus-compatible `/metrics` endpoints for Rate (requests/sec), Errors (failed requests/sec), and Duration (latencies $p50, p95, p99$) per service ([`NFR-OBS-002`](../07-non-functional-requirements.md#nfr-obs-002)).
 * **Health Probes:** Separate `/health/live` (liveness) and `/health/ready` (readiness) HTTP endpoints for container orchestrator management.
 * **Alerting Thresholds:** Automated alerts (PagerDuty / Slack) triggered when error rate exceeds $2\%$ for 3 consecutive minutes or when circuit breakers trip to `OPEN`.
 
 ### 13.4 Privileged Mutation Audit Trail
-* **WORM Audit Ledger:** Dedicated append-only table or immutable logging stream recording operator ID, client IP, timestamp, aggregate ID, action, before/after JSON delta, and justification reason (`FR-AUD-001`, `BR-AUD-001`).
-* **Cryptographic Tamper Detection:** Hash-chaining between consecutive audit records to detect unauthorized ledger modifications (`FR-AUD-002`).
+* **WORM Audit Ledger:** Dedicated append-only table or immutable logging stream recording operator ID, client IP, timestamp, aggregate ID, action, before/after JSON delta, and justification reason ([`FR-AUD-001`](../04-functional-requirements.md#fr-aud-001), [`BR-AUD-001`](../05-business-rules.md#br-aud-001)).
+* **Cryptographic Tamper Detection:** Hash-chaining between consecutive audit records to detect unauthorized ledger modifications ([`FR-AUD-002`](../04-functional-requirements.md#fr-aud-002)).
 
 ---
 
@@ -360,7 +371,7 @@ All asynchronous domain events published across services will adhere to the **Cl
 * **Secrets Governance:** Dedicated secrets manager (e.g., HashiCorp Vault / AWS Secrets Manager) with dynamic secret generation and automated credential rotation; zero plaintext credentials committed to Git.
 
 ### 14.3 CI/CD Quality Gates
-* **Automated Pipelines:** Continuous integration pipeline running linter checks, static code analysis (SonarQube), unit tests, and integration test suites on every pull request (`NFR-REL-001`, `OQ-021`).
+* **Automated Pipelines:** Continuous integration pipeline running linter checks, static code analysis (SonarQube), unit tests, and integration test suites on every pull request ([`NFR-REL-001`](../07-non-functional-requirements.md#nfr-rel-001), [`OQ-021`](../08-assumptions-dependencies-open-questions.md#oq-021)).
 * **Zero-Downtime Releases:** Rolling deployment strategies or Blue/Green environments with automated rollback triggered upon health check probe failure.
 
 ---
@@ -371,81 +382,215 @@ The platform requires resilient integration with external service providers:
 
 | Integration Domain | Dependency ID | Business Responsibility | Evaluated Candidate Providers | Failure Mitigation Strategy |
 | :--- | :--- | :--- | :--- | :--- |
-| **Payment Gateways** | `DEP-001` | Card, UPI, Net Banking, and Wallet payment intent generation and webhook capture. | Razorpay, PayU, Cashfree (`OQ-004`). | Adapter Pattern; automated multi-gateway failover; cryptographic webhook verification (`BR-PAY-002`). |
-| **Courier & Logistics** | `DEP-002` | Automated AWB generation, shipping label PDF rendering, live tracking ingestion. | Shiprocket, Delhivery, Blue Dart (`OQ-005`). | Circuit breaker; asynchronous dispatch queue; tracking poll fallback. |
-| **Messaging Services** | `DEP-003` | Transactional SMS OTP, dispatch updates, WhatsApp alerts, transactional email. | Twilio, Gupshup, AWS SNS / SES (`OQ-015`). | Asynchronous event relay; fallback to email if SMS delivery fails (`BR-NTF-001`). |
-| **Statutory Tax Framework** | `DEP-004` | HSN-based GST tax calculation, CGST/SGST/IGST inter-state vs intra-state determination. | Internal rule table seeded from official GST schedules. | In-memory cached tax schedules; offline calculation capability. |
-| **Media Asset Storage** | `DEP-005` | High-resolution product images, dimension charts, shipping labels, invoice PDFs. | Cloud Object Storage (S3-compatible) + Global CDN. | Pre-signed URL direct uploads; immutable versioned object keys. |
-| **Identity & Vault Infrastructure** | `DEP-006` | Staff multi-factor authentication, cryptographic key rotation, token signing. | Enterprise Identity Provider / Key Vault. | Local caching of public JWKS keys for stateless JWT verification. |
+| **Payment Gateways** | [`DEP-001`](../08-assumptions-dependencies-open-questions.md#dep-001) | Card, UPI, Net Banking, and Wallet payment intent generation and webhook capture. | Razorpay, PayU, Cashfree ([`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004)). | Adapter Pattern; automated multi-gateway failover; cryptographic webhook verification ([`BR-PAY-002`](../05-business-rules.md#br-pay-002)). |
+| **Courier & Logistics** | [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) | Automated AWB generation, shipping label PDF rendering, live tracking ingestion. | Shiprocket, Delhivery, Blue Dart ([`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005)). | Circuit breaker; asynchronous dispatch queue; tracking poll fallback. |
+| **Messaging Services** | [`DEP-003`](../08-assumptions-dependencies-open-questions.md#dep-003) | Transactional SMS OTP, dispatch updates, WhatsApp alerts, transactional email. | Twilio, Gupshup, AWS SNS / SES ([`OQ-015`](../08-assumptions-dependencies-open-questions.md#oq-015)). | Asynchronous event relay; fallback to email if SMS delivery fails ([`BR-NTF-001`](../05-business-rules.md#br-ntf-001)). |
+| **Statutory Tax Framework** | [`DEP-004`](../08-assumptions-dependencies-open-questions.md#dep-004) | HSN-based GST tax calculation, CGST/SGST/IGST inter-state vs intra-state determination. | Internal rule table seeded from official GST schedules. | In-memory cached tax schedules; offline calculation capability. |
+| **Media Asset Storage** | [`DEP-005`](../08-assumptions-dependencies-open-questions.md#dep-005) | High-resolution product images, dimension charts, shipping labels, invoice PDFs. | Cloud Object Storage (S3-compatible) + Global CDN. | Pre-signed URL direct uploads; immutable versioned object keys. |
+| **Identity & Vault Infrastructure** | [`DEP-006`](../08-assumptions-dependencies-open-questions.md#dep-006) | Staff multi-factor authentication, cryptographic key rotation, token signing. | Enterprise Identity Provider / Key Vault. | Local caching of public JWKS keys for stateless JWT verification. |
 
 ---
 
-## 16. Architecture Risks, Trade-Offs and Architectural Alternatives Analysis
+## 16. Technical Proposals & Comparative Architectural Alternatives Analysis
 
-The following design alternatives and technical risks must be rigorously evaluated in Phase 2 ADRs. All options are currently marked **`PROPOSED`** pending technical evaluation:
+The following 9 core technical design areas represent critical architectural trade-offs that must be evaluated via formal Architecture Decision Records (ADRs) in Phase 2. All alternatives are strictly designated as **`PROPOSED for Evaluation`** without premature selection:
 
-### 16.1 Architecture Style: Modular Monolith vs Coarse-Grained Services vs Fine-Grained Microservices
+---
 
-| Attribute | Option A: Modular Monolith | Option B: Coarse-Grained Services (Recommended Evaluation) | Option C: Fine-Grained Microservices |
-| :--- | :--- | :--- | :--- |
-| **Description** | Single deployable application with strictly enforced internal module boundaries (packages/namespaces) and isolated logical DB schemas. | 4 to 6 independently deployable service clusters grouped by core business lifecycle (Catalog, Commerce, Fulfillment, Finance, Operations). | 15 to 24 independent deployable microservices corresponding 1-to-1 with every candidate business domain. |
-| **Transactional Simplicity** | **Very High:** Native ACID transactions across modules. Zero distributed Sagass required for checkout. | **High:** Local ACID transactions within clusters; Sagass limited to cross-cluster milestones (e.g., Payment to Order). | **Low:** Heavy reliance on distributed Sagass, two-phase commits, and compensating transactions for basic flows. |
-| **Operational Overhead** | **Lowest:** Single CI/CD pipeline, single monitoring target, simplified local developer setup. | **Moderate:** Manageable Kubernetes deployments, distinct CI/CD pipelines for independent scaling. | **Highest:** Complex service mesh, distributed tracing overhead, network latency, multiple container registries. |
-| **Flash Sale Scalability** | **Moderate:** Entire monolith must scale horizontally to handle traffic surges on checkout. | **High:** Checkout and Inventory clusters can scale independently to handle 1,000 OPM without scaling back-office. | **Highest:** Individual endpoints scale independently. |
-| **Recommendation** | `PROPOSED for MVP evaluation` | `PROPOSED as Primary Baseline Candidate` | `NOT_RECOMMENDED for Initial Launch` |
+### 16.1 Candidate Business Domains vs Deployable Microservices
 
-### 16.2 Inter-Service Communication: Synchronous REST/gRPC vs Asynchronous Messaging
+* **Problem Being Addressed:** How to balance domain autonomy with operational overhead, network latency, and distributed transaction complexity across the 24 candidate domains for an initial single-retailer engineering team.
+* **Options Considered:**
+  1. *Option A — Modular Monolith:* Single deployable application with strictly enforced module boundaries (packages/namespaces) and logically isolated database schemas.
+  2. *Option B — Coarse-Grained Service Clusters:* 4 to 6 deployable service clusters grouped by business lifecycle (*Catalog & Merchandising*, *Commerce & Checkout*, *Fulfillment & Logistics*, *Finance & Invoicing*, *Operations & Telemetry*).
+  3. *Option C — Fine-Grained Microservices:* 15 to 24 independent deployable microservices corresponding 1-to-1 with every candidate domain.
+* **Benefits & Drawbacks:**
+  * *Option A:* Simplest CI/CD and zero network latency for inter-module calls, but requires full application redeployment for any minor update.
+  * *Option B:* High balance of independent scalability (e.g., scaling Checkout during flash sales without scaling Back-Office) and manageable operational complexity (4–6 pipelines).
+  * *Option C:* Maximum team autonomy, but severely increases operational drag, distributed tracing overhead, network hops, and container infrastructure costs.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Consistency:* Option A preserves local ACID transactions. Option B restricts distributed transactions to cross-cluster milestones. Option C mandates complex distributed Sagass across almost all business workflows.
+  * *Reliability:* Options B and C prevent a crash in reporting from taking down checkout; Option A requires strict thread isolation.
+* **Relevant BRD References:** [`FEAT-001`](../03-business-feature-inventory.md) through [`FEAT-041`](../03-business-feature-inventory.md), all 56 FRs, [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak throughput), initial team size assumption.
+* **Evidence / Testing Needed Before Selection:** Comparative prototyping evaluating inter-service latency, developer onboarding speed, and CI/CD build times.
+* **Evaluation Status:** `PROPOSED for Evaluation` (All options remain under objective consideration).
 
-| Interaction Pattern | Evaluated Use Cases | Candidate Technologies | Evaluation Criteria | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **Synchronous Request/Response** | Client-to-Backend queries, cart calculations, address serviceability checks, payment session initialization. | REST over HTTP/2 with JSON, gRPC over HTTP/2 with Protobuf. | Low latency ($< 50\text{ms}$ inter-service), contract type-safety, client simplicity. | `PROPOSED` |
-| **Asynchronous Event-Driven** | Post-order fulfillment, payment webhook fanout, inventory restock alerts, audit logging, notifications. | Apache Kafka, RabbitMQ, AWS SQS/SNS. | High throughput, fault isolation, decoupling, backpressure buffering. | `PROPOSED` |
+---
 
-### 16.3 Data Architecture: Database-Per-Service vs Logical Schema Isolation
+### 16.2 Inventory Consistency and Overselling Prevention
 
-| Approach | Description | Advantages | Trade-Offs & Risks | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **Physical Database-per-Service** | Completely independent database instances for each service cluster. | Maximum blast radius isolation; independent DB scaling and tuning. | High infrastructure cost; complex local developer setup; requires distributed reporting datamart. | `PROPOSED` |
-| **Logical Schema Isolation (Shared Instance)** | Single managed database instance (e.g., PostgreSQL) with separate schemas and isolated database users per service. | Low infrastructure overhead; enforced logical boundaries; simplified backup and DR runbooks. | Shared connection pool and CPU/memory; risk of "noisy neighbor" contention during flash sales. | `PROPOSED (Primary for Launch)` |
+* **Problem Being Addressed:** Guaranteeing 100% overselling prevention during 1,000 orders/minute promotional surges on high-demand electronics SKUs without causing database connection starvation ([`BR-INV-001`](../05-business-rules.md#br-inv-001), [`BR-INV-002`](../05-business-rules.md#br-inv-002)).
+* **Options Considered:**
+  1. *Option A — Pessimistic Database Row Locking:* Direct SQL `SELECT stock_available FROM inventory WHERE sku = ? FOR UPDATE` within a local ACID transaction.
+  2. *Option B — In-Memory Distributed Atomic Hold:* High-speed Redis cluster using Lua scripts to atomically check and decrement available stock, accompanied by a 15-minute hold TTL ([`WF-005`](../06-business-workflows.md#wf-005)), followed by asynchronous DB ledger write.
+  3. *Option C — Optimistic Locking with Retry:* Checking version numbers on update; retrying on conflict.
+* **Benefits & Drawbacks:**
+  * *Option A:* Absolute ACID certainty; zero sync drift between cache and database; but heavy row contention and thread pool exhaustion at 1,000 OPM.
+  * *Option B:* Extremely high throughput ($>10,000\text{ ops/sec}$), sub-5ms latency, offloads relational DB; but requires robust cache-to-database synchronization and failover handling.
+  * *Option C:* Low locking overhead for low-contention items, but high retry failure rate during flash sales.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Consistency:* Option B requires automated reconciliation workers to handle expired reservation TTLs and restock inventory if customer abandons checkout ([`WF-005`](../06-business-workflows.md#wf-005)).
+  * *Reliability:* Redis must be deployed in a Multi-AZ cluster with automatic failover to prevent reservation blockage during cache node outages.
+* **Relevant BRD References:** [`FEAT-INV-001`](../03-business-feature-inventory.md#feat-inv-001), [`FEAT-INV-003`](../03-business-feature-inventory.md#feat-inv-003), [`FR-INV-001`](../04-functional-requirements.md#fr-inv-001), [`FR-INV-003`](../04-functional-requirements.md#fr-inv-003), [`BR-INV-001`](../05-business-rules.md#br-inv-001), [`BR-INV-002`](../05-business-rules.md#br-inv-002), [`WF-005`](../06-business-workflows.md#wf-005).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak load confirmation), [`ASM-007`](../08-assumptions-dependencies-open-questions.md#asm-007) (Single central warehouse).
+* **Evidence / Testing Needed Before Selection:** Distributed load testing (k6/Gatling) simulating 1,000 concurrent checkout hold requests against a SKU with only 10 available units; verify 10 successes, 990 immediate 409 rejections, and zero overselling.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
 
-### 16.4 Messaging Technology & Delivery Guarantees
+---
 
-| Technology Option | Delivery Guarantees | Strengths | Trade-Offs & Complexity | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **Apache Kafka** | At-least-once (with idempotent consumers); partition-based strict ordering. | Extreme throughput; distributed commit log; event replay capability. | High operational complexity (Zookeeper/KRaft, broker tuning, partition rebalancing). | `PROPOSED` |
-| **RabbitMQ** | At-least-once; flexible routing keys; AMQP standard. | Mature routing exchanges; lightweight; simpler cluster operations. | Lower throughput than Kafka; message replay requires custom dead-letter storage. | `PROPOSED` |
-| **Cloud-Native Managed Queues (AWS SQS/SNS)** | At-least-once; FIFO queues support strict ordering. | Zero operational overhead; fully managed auto-scaling; pay-per-use. | Vendor lock-in; FIFO throughput capped at 3,000 msgs/sec without batching. | `PROPOSED` |
+### 16.3 Checkout Orchestration and Compensation
 
-### 16.5 Search & Reporting Read Models
+* **Problem Being Addressed:** Coordinating multi-domain business actions across Inventory (Hold), Promotions (Lock Coupon), Payments (Intent), and Orders (Create) while ensuring clean rollback if any step fails.
+* **Options Considered:**
+  1. *Option A — Orchestrated Saga (State Machine):* A dedicated Checkout Orchestrator executes forward steps sequentially and issues explicit compensating actions (e.g., `release_inventory_hold`, `unlock_coupon`) on failure.
+  2. *Option B — Choreographed Saga (Event-Driven):* Each service listens to domain events and reacts independently (e.g., Payment listens to `InventoryReserved`, Order listens to `PaymentCaptured`).
+  3. *Option C — Distributed Two-Phase Commit (2PC / XA):* Synchronous blocking transaction across databases.
+* **Benefits & Drawbacks:**
+  * *Option A:* High workflow visibility; centralized error recovery; easy debugging; but introduces an orchestrator component.
+  * *Option B:* High loose coupling; but difficult to trace workflow state and complex to coordinate multi-service compensation cascades.
+  * *Option C:* Absolute ACID, but blocking, fragile over networks, and severely impairs checkout availability.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Reliability:* Compensating actions in Sagas must be strictly idempotent to handle network retry duplicates.
+  * *Operational:* Orchestrator must persist execution logs to prevent orphan transactions if the orchestrator restarts mid-flow.
+* **Relevant BRD References:** [`FEAT-CHK-001`](../03-business-feature-inventory.md#feat-chk-001), [`FEAT-ORD-001`](../03-business-feature-inventory.md#feat-ord-001), [`FR-CHK-001`](../04-functional-requirements.md#fr-chk-001), [`FR-ORD-001`](../04-functional-requirements.md#fr-ord-001), [`BR-CHK-001`](../05-business-rules.md#br-chk-001), [`BR-ORD-001`](../05-business-rules.md#br-ord-001), [`WF-005`](../06-business-workflows.md#wf-005).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006) (COD flow rules), [`OQ-011`](../08-assumptions-dependencies-open-questions.md#oq-011) (Guest checkout).
+* **Evidence / Testing Needed Before Selection:** Chaos engineering test simulating gateway timeout and kill-signal during payment authorization; verify 100% automated release of reserved inventory within 60 seconds.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
 
-| Architecture Pattern | Description | Advantages | Trade-Offs & Risks | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **Dedicated Search Engine (Elasticsearch / OpenSearch)** | Asynchronously indexed search cluster populated via change events. | Rich typo-tolerance, faceted search, sub-50ms query times at 100k SKUs. | Secondary data store to keep in sync; eventual consistency lag. | `PROPOSED` |
-| **PostgreSQL Read Replicas + Full-Text Search (FTS)** | Read-only replica using Postgres `tsvector` and trigram indexing. | Zero additional infrastructure; immediate consistency; simplified operations. | Higher query latency on complex multi-faceted filters at high scale. | `PROPOSED (MVP Candidate)` |
-| **Dedicated Analytical Datamart (ClickHouse / TimescaleDB)** | Analytical columnar database populated via CDC / outbox events for executive reports. | Lightning-fast aggregations on millions of sales rows; zero operational DB locking. | Additional data engineering pipeline to maintain. | `PROPOSED (Phase 3+)` |
+---
 
-### 16.6 Authentication & Authorization Approaches
+### 16.4 Payment Idempotency and Delayed Webhooks
 
-| Approach | Description | Advantages | Trade-Offs & Risks | Status |
-| :--- | :--- | :--- | :--- | :---: |
-| **API Gateway Token Verification + Stateless Internal Services** | Gateway verifies JWT via JWKS, checks RBAC, and injects validated user headers downstream. | Services remain simple and decoupled from auth providers; high throughput. | Internal network must be secured to prevent header spoofing. | `PROPOSED (Recommended)` |
-| **Decentralized Token Verification (Every Service Verifies JWT)** | Every service validates JWT signature using cached public JWKS keys. | Zero reliance on gateway for internal security; end-to-end cryptographic trust. | Repeated cryptographic verification CPU cost; library version management across services. | `PROPOSED` |
+* **Problem Being Addressed:** Preventing duplicate charges on payment retries and resolving out-of-order, delayed, or missing gateway webhooks ([`BR-PAY-002`](../05-business-rules.md#br-pay-002), [`BR-PAY-003`](../05-business-rules.md#br-pay-003), [`WF-007`](../06-business-workflows.md#wf-007)).
+* **Options Considered:**
+  1. *Option A — Dual Idempotency Keys + Cryptographic Webhook State Machine:* Client submits `Idempotency-Key`; Gateway payment transaction ID stored in database with unique constraint; Webhook verified via HMAC-SHA256 signature; State machine allows transitions only from `PENDING` $\rightarrow$ `PAID`.
+  2. *Option B — Polling-Only Gateway Status Reconciliation:* Storefront repeatedly polls backend, which polls gateway API until payment status is confirmed, discarding incoming webhooks.
+  3. *Option C — Optimistic Webhook Acceptance with Background Sweep:* Webhook processed immediately without strict state checks; nightly reconciliation sweeps anomalies.
+* **Benefits & Drawbacks:**
+  * *Option A:* Real-time confirmation; 100% duplicate protection; highly resilient to network drops; but requires webhook ingress endpoint and secret rotation tooling.
+  * *Option B:* Eliminates webhook firewall ingress requirements, but creates heavy polling traffic and gateway API rate-limiting during flash sales.
+  * *Option C:* Simplest code, but risks race conditions and late duplicate order fulfillment.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Security:* Webhook signature verification is mandatory to prevent fraudulent payment confirmation injections.
+  * *Consistency:* Out-of-order resolution ensures that if a customer completes payment redirect before the webhook arrives, the order state is updated cleanly without double capture.
+* **Relevant BRD References:** [`FEAT-PAY-001`](../03-business-feature-inventory.md#feat-pay-001), [`FEAT-PAY-002`](../03-business-feature-inventory.md#feat-pay-002), [`FR-PAY-001`](../04-functional-requirements.md#fr-pay-001) through [`FR-PAY-003`](../04-functional-requirements.md#fr-pay-003), [`BR-PAY-001`](../05-business-rules.md#br-pay-001) through [`BR-PAY-003`](../05-business-rules.md#br-pay-003), [`WF-007`](../06-business-workflows.md#wf-007).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) (Payment methods), [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) (Shortlisted gateway partners).
+* **Evidence / Testing Needed Before Selection:** Synthetic webhook replay tests delivering duplicate webhook payloads simultaneously across multiple threads; verify exactly one `order.paid` event published.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
 
-### 16.7 Deployment & Observability Options
+---
 
-| Option Category | Candidate Alternatives | Trade-Off Analysis | Status |
-| :--- | :--- | :--- | :---: |
-| **Container Orchestration** | Managed Kubernetes (EKS/GKE) vs Managed Container PaaS (AWS ECS / Cloud Run). | Kubernetes offers maximum portability but high management overhead; ECS/Cloud Run provides rapid setup with minimal maintenance for a small team. | `PROPOSED` |
-| **Observability Toolchain** | OpenTelemetry + Prometheus/Grafana vs SaaS (Datadog / New Relic). | OpenTelemetry prevents vendor lock-in and open-source stacks reduce cost; SaaS eliminates self-hosting overhead but incurs unpredictable log ingestion fees. | `PROPOSED` |
+### 16.5 Transactional Event Publishing and Message Replay
 
-### 16.8 Architectural Risk Matrix
+* **Problem Being Addressed:** Ensuring that database updates and asynchronous domain event publications occur atomically, avoiding dual-write discrepancies (e.g., order created in DB but event lost, or event published but DB transaction aborted).
+* **Options Considered:**
+  1. *Option A — Transactional Outbox Pattern with Log-Tailing CDC (Debezium):* Events written to an `outbox` table in the local ACID transaction; Debezium captures Postgres Write-Ahead Logs (WAL) and streams events to Kafka.
+  2. *Option B — Transactional Outbox Pattern with Scheduled Polling Worker:* Relational `outbox` table polled by a background worker every 500ms; published events marked as sent.
+  3. *Option C — Direct Dual-Write in Application Layer:* Service updates database and immediately calls `kafkaProducer.send()` within the application request thread.
+* **Benefits & Drawbacks:**
+  * *Option A:* Zero message loss; sub-second latency; zero polling queries against application DB; but requires Debezium/Kafka Connect operational infrastructure.
+  * *Option B:* Minimal external dependencies (no CDC toolchain needed); but adds polling overhead and table bloat on the operational database.
+  * *Option C:* Lowest implementation effort; but fundamentally unsafe (vulnerable to dual-write failure on network drop or crash).
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Consistency:* Options A and B guarantee At-Least-Once delivery. Consumers must implement deduplication via unique event ID.
+  * *Operational:* Message replay from broker commit log enables rebuilding corrupted read models or re-running downstream jobs.
+* **Relevant BRD References:** [`FEAT-OPS-001`](../03-business-feature-inventory.md#feat-ops-001), [`FEAT-INT-001`](../03-business-feature-inventory.md#feat-int-001), [`FR-OPS-001`](../04-functional-requirements.md#fr-ops-001), [`BR-OPS-001`](../05-business-rules.md#br-ops-001), [`BR-INT-001`](../05-business-rules.md#br-int-001).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Event throughput sizing).
+* **Evidence / Testing Needed Before Selection:** Kill-9 container crash test immediately following DB transaction commit; verify outbox event is picked up and published upon container reboot.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
 
-| Risk ID | Description & Impact | Severity | Mitigation Strategy |
+---
+
+### 16.6 Database-Per-Service vs Shared Database / Schema Isolation
+
+* **Problem Being Addressed:** Establishing data boundary enforcement without introducing excessive infrastructure cost, complex connection pool limits, or distributed backup failure modes.
+* **Options Considered:**
+  1. *Option A — Physical Database-Per-Service:* Independent managed database server instances for each service cluster.
+  2. *Option B — Logical Schema Isolation on Managed PostgreSQL:* A single managed PostgreSQL instance (e.g., AWS RDS Multi-AZ) with separate schemas per service, distinct database user credentials, and zero cross-schema foreign keys.
+  3. *Option C — Shared Database with Shared Tables:* Services query and join shared tables directly.
+* **Benefits & Drawbacks:**
+  * *Option A:* Maximum blast radius containment and independent database scaling; but high cost, complex local development, and fragmented backups.
+  * *Option B:* Enforces logical domain boundaries via user grants; simplifies backups and PITR; reduces initial cost; but carries potential connection pool contention under extreme load.
+  * *Option C:* Simple queries; but severely couples services, violates DDD principles, and creates shared schema migration nightmares.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Operational:* Option B allows automated CI schema linting to reject any PR containing cross-schema `REFERENCES` constraints.
+  * *Disaster Recovery:* Option B allows a single point-in-time recovery restore to bring back the entire consistent platform state.
+* **Relevant BRD References:** [`FEAT-FIN-001`](../03-business-feature-inventory.md#feat-fin-001), [`FEAT-ORD-001`](../03-business-feature-inventory.md#feat-ord-001), [`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001), [`BR-FIN-001`](../05-business-rules.md#br-fin-001), [`BR-ORD-001`](../05-business-rules.md#br-ord-001).
+* **Unresolved Business Decisions & Assumptions:** Infrastructure budget and operational team capacity.
+* **Evidence / Testing Needed Before Selection:** Stress testing PostgreSQL connection pool under 1,000 OPM synthetic load to evaluate noisy neighbor impact across isolated schemas.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
+
+---
+
+### 16.7 API Gateway Authentication and Trusted Internal Identity Propagation
+
+* **Problem Being Addressed:** Validating customer and staff credentials securely at the perimeter and propagating identity context downstream without forcing every backend service to perform redundant auth queries.
+* **Options Considered:**
+  1. *Option A — Perimeter Gateway Verification with Sanitized Header Injection:* Gateway validates JWT via public JWKS, verifies RBAC, strips any client-supplied `X-User-*` headers, and injects verified identity headers (`X-User-Id`, `X-User-Roles`, `X-Permissions`) into internal requests.
+  2. *Option B — Decentralized JWT Verification in Every Service:* Every internal service receives the raw Bearer JWT and independently verifies cryptographic signatures using cached public keys.
+  3. *Option C — Full Service Mesh mTLS with SPIFFE/SPIRE:* Workload-to-workload cryptographic identity verification using ephemeral X.509 certificates.
+* **Benefits & Drawbacks:**
+  * *Option A:* Backend services remain lightweight and decoupled from auth providers; lowest CPU overhead; but requires internal network security to prevent header spoofing.
+  * *Option B:* Zero trust within the internal network; but repeated signature verification consumes CPU and requires sharing auth libraries across services.
+  * *Option C:* Industry gold standard for zero trust, but introduces significant operational complexity (Envoy sidecars, certificate rotators).
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Security:* Option A requires internal VPC firewall rules or a shared gateway signature token (`X-Gateway-Signature`) to prevent attackers from bypassing the gateway.
+* **Relevant BRD References:** [`FEAT-ADM-001`](../03-business-feature-inventory.md#feat-adm-001), [`FEAT-CUST-001`](../03-business-feature-inventory.md#feat-cust-001), [`FR-SEC-001`](../04-functional-requirements.md#fr-sec-001), [`BR-ADM-001`](../05-business-rules.md#br-adm-001), [`BR-ADM-002`](../05-business-rules.md#br-adm-002), [`NFR-SEC-002`](../07-non-functional-requirements.md#nfr-sec-002).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) (Customer identity primary key).
+* **Evidence / Testing Needed Before Selection:** Penetration testing verifying that direct HTTP calls to internal service ports with forged `X-User-Id: admin` headers are rejected with 401/403.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
+
+---
+
+### 16.8 Search and Reporting Scalability
+
+* **Problem Being Addressed:** Meeting the sub-200ms storefront search latency across 100,000 SKUs ([`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001), [`NFR-SCL-002`](../07-non-functional-requirements.md#nfr-scl-002)) and running executive sales/tax reports ([`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001)) without locking production database tables.
+* **Options Considered:**
+  1. *Option A — Dedicated Search Engine (Elasticsearch/OpenSearch) + Columnar Datamart (ClickHouse):* Search index and analytical datamart populated asynchronously via domain change events.
+  2. *Option B — PostgreSQL Read Replicas with Full-Text Search (tsvector/pg_trgm):* Storefront search queries run against read replicas using PostgreSQL full-text search; reporting runs on a dedicated analytical read replica.
+  3. *Option C — Direct Queries on Primary Relational Database:* Searching and reporting executed directly against the primary OLTP database.
+* **Benefits & Drawbacks:**
+  * *Option A:* Industry-leading typo tolerance, faceted aggregation speeds, sub-50ms search latency, and instantaneous aggregations over millions of sales rows; but adds two stateful distributed clusters to operate.
+  * *Option B:* Zero additional infrastructure components; mature SQL tooling; simpler operations; but lower query speed on complex multi-facet filtering at high catalog scale.
+  * *Option C:* Zero effort; but catastrophic risk of table locks and checkout latency degradation during report generation.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Consistency:* Option A and B are eventually consistent; catalog update event propagation lag must remain under 1 second.
+* **Relevant BRD References:** [`FEAT-SRCH-001`](../03-business-feature-inventory.md#feat-srch-001), [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`FR-SRCH-001`](../04-functional-requirements.md#fr-srch-001), [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001), [`BR-SRCH-001`](../05-business-rules.md#br-srch-001), [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001), [`NFR-SCL-002`](../07-non-functional-requirements.md#nfr-scl-002).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-018`](../08-assumptions-dependencies-open-questions.md#oq-018) (Reporting metrics and generation frequency).
+* **Evidence / Testing Needed Before Selection:** Benchmark query latency comparing PostgreSQL `tsvector` vs OpenSearch with 100,000 SKUs under 5,000 concurrent search queries.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
+
+---
+
+### 16.9 Availability, Disaster Recovery, Latency, and Throughput Targets
+
+* **Problem Being Addressed:** Designing high-availability infrastructure that reliably satisfies 99.9% uptime, RPO $le 5$ min, RTO $le 2$ hours, and sub-second checkout under 1,000 OPM festive bursts ([`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017)).
+* **Options Considered:**
+  1. *Option A — Single-Region Multi-Availability-Zone (Multi-AZ) Active-Active Architecture:* Containerized services deployed across 3 AZs; managed PostgreSQL deployed with synchronous standby replication in a second AZ; automated health-check failover.
+  2. *Option B — Multi-Region Active-Passive Architecture:* Primary region serves traffic; hot standby region receives replicated data; manual or automated DNS failover on regional disaster.
+  3. *Option C — Single-AZ Deployment with Automated Daily Backups:* Minimal cost single-AZ deployment relying on snapshot restoration.
+* **Benefits & Drawbacks:**
+  * *Option A:* Fully satisfies 99.9% uptime (allows 8.76 hours downtime/year), RPO $< 1\text{m}$, and RTO $< 15\text{m}$ at reasonable cost and low operational complexity.
+  * *Option B:* Protects against total cloud provider regional outages, but incurs significant cross-region data transfer costs, data lag risks, and complex DNS routing.
+  * *Option C:* Lowest cost, but vulnerable to local datacenter outages and cannot guarantee 99.9% uptime or RTO $le 2$ hours.
+* **Security, Consistency, Reliability & Operational Implications:**
+  * *Disaster Recovery:* Automated continuous WAL streaming to cloud object storage (S3) ensures Point-In-Time Recovery with RPO $< 5\text{ minutes}$.
+* **Relevant BRD References:** [`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001), [`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001), [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001), [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001), [`NFR-PERF-002`](../07-non-functional-requirements.md#nfr-perf-002).
+* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) (Formal sign-off on SLA/DR parameters).
+* **Evidence / Testing Needed Before Selection:** Staging failover drill: terminate primary database instance under load and measure exact cutover time to standby replica and data integrity.
+* **Evaluation Status:** `PROPOSED for Evaluation`.
+
+---
+
+### 16.10 Architectural Risk Matrix
+
+| Risk ID | Description & Impact | Severity | Mitigation Strategy to Evaluate in Phase 2 |
 | :--- | :--- | :---: | :--- |
-| **RISK-01** | **Premature Fine-Grained Microservices:** Splitting into 15–20 services before team scale causes severe latency, operational drag, and distributed transaction bugs. | **HIGH** | Evaluate Coarse-Grained Clusters or Modular Monolith in Phase 2 architecture design. |
+| **RISK-01** | **Premature Fine-Grained Microservices:** Splitting into 15–20 services before team scale causes severe latency, operational drag, and distributed transaction bugs. | **HIGH** | Evaluate Coarse-Grained Clusters or Modular Monolith in Phase 2 ADRs. |
 | **RISK-02** | **Third-Party Payment / Courier Outages:** Payment gateway or courier API downtime blocks checkout or fulfillment. | **HIGH** | Implement Adapter Pattern, multi-gateway automated failover, and Resilience4j circuit breakers. |
 | **RISK-03** | **Inventory Concurrency Contention:** High-concurrency flash sales (1,000 OPM) cause race conditions or overselling. | **CRITICAL** | Redis distributed holds or atomic Postgres `FOR UPDATE SKIP LOCKED` with strict timeout budgets. |
-| **RISK-04** | **Unresolved Commercial Policies:** Unresolved open questions (`OQ-001` through `OQ-022`) force architecture rework. | **MEDIUM** | Explicitly map open decisions to architecture modules; design configurable strategy adapters. |
+| **RISK-04** | **Unresolved Commercial Policies:** Unresolved open questions ([`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001) through [`OQ-022`](../08-assumptions-dependencies-open-questions.md#oq-022)) force architecture rework. | **MEDIUM** | Explicitly map open decisions to architecture modules; design configurable strategy adapters. |
 
 ---
 
@@ -472,15 +617,15 @@ When formal Phase 2 Technical Architecture is authorized, the following 12 deliv
 | ID | Title & Purpose | Required Inputs | Expected Outputs | Related BRD IDs | Dependencies & Open Decisions | Acceptance Criteria | Reviewer / Decision Owner | Approval Required |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
 | **`ARCH-01`** | **Architecture Overview & System Context**<br>Define overall system boundaries, external utilities, and single-retailer constraints. | BRD Docs 00, 01, 02; approved charter. | C4 Level 1 (System Context) diagram; system responsibility boundary statement. | `OBJ-001`–`010`<br>`ACT-001`–`014` | Scope baseline;<br>Single-retailer invariant. | 100% single-retailer; zero marketplace concepts; all 14 actors mapped. | Principal Software Architect | **YES** |
-| **`ARCH-02`** | **Domain Decomposition & Bounded Contexts**<br>Establish formal DDD bounded contexts, ubiquitous language dictionary, and domain models. | BRD Docs 03, 04, 10; Candidate Domains. | C4 Level 2 (Container) diagram; Bounded Context Map; Ubiquitous Language dictionary. | `FEAT-001`–`041`<br>All 56 FRs | Candidate Domains analysis;<br>Granularity choice. | Clean separation of concerns; zero circular domain dependencies; explicit context relationships. | DDD Specialist | **YES** |
-| **`ARCH-03`** | **Service Decomposition & Responsibility Matrix**<br>Define physical deployable units (clusters or services) and component ownership. | `ARCH-02`, Candidate Alternatives analysis. | Service catalog; component responsibility matrix; service grouping rationale. | `FEAT-001`–`041`<br>`NFR-SCL-001` | `OQ-016` (Peak throughput);<br>Team topology. | Every feature in Doc 03 mapped to exactly one owning service; rationale for granularity documented. | Principal Software Architect | **YES** |
+| **`ARCH-02`** | **Domain Decomposition & Bounded Contexts**<br>Establish formal DDD bounded contexts, ubiquitous language dictionary, and domain models. | BRD Docs 03, 04, 05, 06, 10; Candidate Domains. | C4 Level 2 (Container) diagram; Bounded Context Map; Ubiquitous Language dictionary. | `FEAT-001`–`041`<br>All 56 FRs | Candidate Domains analysis;<br>Granularity choice. | Clean separation of concerns; zero circular domain dependencies; explicit context relationships. | DDD Specialist | **YES** |
+| **`ARCH-03`** | **Service Decomposition & Responsibility Matrix**<br>Define physical deployable units (clusters or services) and component ownership. | `ARCH-02`, Candidate Alternatives analysis. | Service catalog; component responsibility matrix; service grouping rationale. | `FEAT-001`–`041`<br>`NFR-SCL-001` | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak throughput);<br>Team topology. | Every feature in Doc 03 mapped to exactly one owning service; rationale for granularity documented. | Principal Software Architect | **YES** |
 | **`ARCH-04`** | **Service Interaction & Dependency Diagrams**<br>Document inter-service sync and async interaction chains for primary business flows. | BRD Doc 06 (Workflows `WF-001` to `016`). | Sequence diagrams for Order Placement, Payment Webhook, Return Inspection, and Inventory Release. | `WF-001`–`016`<br>`BR-001`–`055` | `ARCH-03`;<br>Messaging tech selection. | All 16 workflows modeled; error paths, timeouts, and fallbacks explicitly diagrammed. | Distributed Systems Engineer | **YES** |
 | **`ARCH-05`** | **Data Ownership & Distributed Consistency**<br>Formalize database ownership, entities per service, and Saga transaction coordination. | BRD Docs 04, 05; entity models. | Data ownership matrix; Saga flowcharts for Checkout and Refund; Outbox pattern specifications. | `FR-INV-001`<br>`FR-CHK-001`<br>`FR-PAY-001` | `ARCH-03`;<br>Database isolation choice. | Zero cross-service direct DB access; Saga compensating actions defined for every failure step. | Data Architect | **YES** |
 | **`ARCH-06`** | **API & Event Contracts Architecture**<br>Define inter-service REST/gRPC conventions, OpenAPI specs, and domain event schemas. | BRD Docs 04, 06; domain events. | API design guide; event naming conventions; CloudEvents JSON schemas for core events. | All 56 FRs<br>`BR-INT-001` | `ARCH-03`;<br>Schema registry choice. | Adherence to RFC 7807 error format; backward compatibility strategy defined; idempotency mandated. | Integration Lead | **YES** |
-| **`ARCH-07`** | **Security & Access Architecture**<br>Define identity tokens, RBAC enforcement, credential protection, and PII masking. | BRD Docs 01, 04, 07; `NFR-SEC-001`–`003`. | Security architecture document; JWT claims schema; RBAC permission matrix; PII redaction rules. | `FEAT-ADM-001`<br>`FR-SEC-001`<br>`BR-SEC-001` | `DEP-006` (Key vault);<br>`OQ-010` (Mobile OTP). | Zero PAN storage; bcrypt/Argon2id hashing; least-privilege RBAC mapped to internal roles. | Security Architect | **YES** |
-| **`ARCH-08`** | **Resilience & Fault Isolation Strategy**<br>Define circuit breakers, retries, rate limits, and third-party outage isolation. | BRD Docs 04, 07; `NFR-AVL-002`, `FEAT-INT-001`. | Fault-tolerance specification; rate limiting policy; bulkhead and circuit breaker configuration parameters. | `BR-INT-001`<br>`NFR-AVL-002`<br>`FR-OPS-001` | `DEP-001`–`003` (Gateways);<br>Resilience framework. | Zero core checkout blockage on peripheral service outage; exponential backoff + jitter modeled. | Distributed Systems Engineer | **YES** |
-| **`ARCH-09`** | **Observability & Operational Architecture**<br>Formalize distributed tracing, structured logging standards, metrics scraping, and alert rules. | BRD Docs 04, 07; `NFR-OBS-001`, `002`. | Observability architecture; W3C TraceContext guide; Prometheus metric catalog; WORM audit design. | `FR-AUD-001`<br>`BR-AUD-001`<br>`BR-OPS-001` | Toolchain selection;<br>`OQ-020` (Audit retention). | 100% transactions carry Trace ID; audit logs immutable; alerts defined for $>2%$ error rate. | SRE / DevOps Lead | **YES** |
-| **`ARCH-10`** | **Deployment Topology & Infrastructure**<br>Document containerization, cloud deployment models, and backup/DR configurations. | BRD Doc 07; `NFR-SCL-001`, `NFR-BCM-001`. | Cloud infrastructure topology diagram; Kubernetes/ECS deployment strategy; backup runbook. | `NFR-SCL-001`<br>`NFR-BCM-001` | Cloud provider selection;<br>`OQ-016`, `OQ-017`. | Sized for 1,000 OPM peak; RPO $le 5$m; RTO $le 2$h supported by architecture. | Cloud Architect | **YES** |
+| **`ARCH-07`** | **Security & Access Architecture**<br>Define identity tokens, RBAC enforcement, credential protection, and PII masking. | BRD Docs 02, 03, 04, 05, 07; `NFR-SEC-001`–`003`. | Security architecture document; JWT claims schema; RBAC permission matrix; PII redaction rules. | `FEAT-ADM-001`<br>`FR-SEC-001`<br>`BR-SEC-001` | [`DEP-006`](../08-assumptions-dependencies-open-questions.md#dep-006) (Key vault);<br>[`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) (Mobile OTP). | Zero PAN storage; bcrypt/Argon2id hashing; least-privilege RBAC mapped to internal roles. | Security Architect | **YES** |
+| **`ARCH-08`** | **Resilience & Fault Isolation Strategy**<br>Define circuit breakers, retries, rate limits, and third-party outage isolation. | BRD Docs 03, 04, 05, 07; `NFR-AVL-002`, `FEAT-INT-001`. | Fault-tolerance specification; rate limiting policy; bulkhead and circuit breaker configuration parameters. | `BR-INT-001`<br>`NFR-AVL-002`<br>`FR-OPS-001` | [`DEP-001`](../08-assumptions-dependencies-open-questions.md#dep-001)–[`003`](../08-assumptions-dependencies-open-questions.md#dep-003) (Gateways);<br>Resilience framework. | Zero core checkout blockage on peripheral service outage; exponential backoff + jitter modeled. | Distributed Systems Engineer | **YES** |
+| **`ARCH-09`** | **Observability & Operational Architecture**<br>Formalize distributed tracing, structured logging standards, metrics scraping, and alert rules. | BRD Docs 03, 04, 05, 07; `NFR-OBS-001`, `002`. | Observability architecture; W3C TraceContext guide; Prometheus metric catalog; WORM audit design. | `FR-AUD-001`<br>`BR-AUD-001`<br>`BR-OPS-001` | Toolchain selection;<br>[`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020) (Audit retention). | 100% transactions carry Trace ID; audit logs immutable; alerts defined for $>2%$ error rate. | SRE / DevOps Lead | **YES** |
+| **`ARCH-10`** | **Deployment Topology & Infrastructure**<br>Document containerization, cloud deployment models, and backup/DR configurations. | BRD Docs 07, 08; `NFR-SCL-001`, `NFR-BCM-001`. | Cloud infrastructure topology diagram; Kubernetes/ECS deployment strategy; backup runbook. | `NFR-SCL-001`<br>`NFR-BCM-001` | Cloud provider selection;<br>[`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017). | Sized for 1,000 OPM peak; RPO $le 5$m; RTO $le 2$h supported by architecture. | Cloud Architect | **YES** |
 | **`ARCH-11`** | **Architecture Decision Records (ADRs)**<br>Document formal technical choices, trade-offs, evaluated alternatives, and consequences. | All architecture trade-off analyses. | Versioned ADR files (`ADR-001` onwards) following Michael Nygard format. | All BRD requirements | Comparative alternatives analysis. | Every ADR includes Context, Drivers, Options Considered, Decision, and Consequences. | Principal Software Architect | **YES** |
 | **`ARCH-12`** | **Requirements-to-Architecture Traceability**<br>Map every approved BRD requirement directly to its implementing architectural component. | BRD Doc 09; all Phase 2 deliverables. | Master Architecture Traceability Matrix (Excel / Markdown). | All 56 FRs, 55 BRs, 18 NFRs | Completion of `ARCH-01` through `ARCH-11`. | 100% of 56 FRs, 55 BRs, and 18 NFRs mapped to services, APIs, or infrastructure controls. | Traceability Lead | **YES** |
 
@@ -503,7 +648,7 @@ Moving from this **Non-Binding Planning Stage** to **Formal Phase 2 Technical Ar
          - OQ-010 (Mobile phone + SMS OTP identity primary key)
          - OQ-016 (1,000 OPM peak throughput sizing)
          - OQ-017 (99.9% uptime, RTO <= 2h, RPO <= 5m DR targets)
-         OR explicit authorization granted to adopt provisional parameters as documented constraints.
+         OR explicit authorization granted to adopt provisional parameters as documented architecture constraints.
 - [ ] 4. Formal authorization granted by the project sponsor to establish the docs/01-architecture/ directory.
 ```
 
