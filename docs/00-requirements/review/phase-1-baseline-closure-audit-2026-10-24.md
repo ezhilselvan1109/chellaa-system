@@ -2,7 +2,7 @@
 
 > **Status: WORKING AUDIT — NOT AN APPROVAL RECORD.**
 >
-> This document records the findings and closure work required before Phase 1 can be approved. It does not approve the BRD, authorize architecture, close operational dependencies, or claim that performance/security tests have run. It is based on the repository contents inspected on branch `dev` on 2026-10-24 and the business-owner selections explicitly recorded in the current conversation history.
+> This document records the findings and closure work required before Phase 1 can be approved. It does not approve the BRD, authorize architecture, close operational dependencies, or claim that performance/security tests have run. It is maintained on branch `docs/phase1-baseline-closure` and records the four option selections explicitly supplied in the current conversation on 2026-10-24. This is a targeted closure update, not a full-package audit or approval record.
 
 ## 1. Governance state
 
@@ -65,6 +65,7 @@ The four selections above are business-scope decisions recorded in the current w
 
 - `FEAT-CUST-003` is `PROPOSED` and cites OQ-020 even though OQ-020 is `CONFIRMED`; verify whether the feature remains proposed for another reason and remove/update the unrelated dependency if appropriate.
 - `FEAT-NTF-001`, `FEAT-REV-001` and `FEAT-RPT-001` now reflect the selected scope in the Feature Inventory and RTM. Their detailed requirements still contain explicitly open policy/specification items; do not treat those details as settled.
+- Added `WF-017` for verified-buyer review submission and mandatory moderation; updated `FR-REV-001`, the RTM and Document 11's workflow count to reference 17 workflows. A complete cross-document link/identifier audit remains outstanding.
 - OQ-015's selected channel set does not define the event-to-channel matrix, retry/fallback behavior or provider readiness. `DEP-003` remains open.
 - OQ-018's selected advanced reporting scope does not define KPI formulas, freshness, permissions, exports, predictive methodology or validation evidence.
 - OQ-012's selected verified-buyer/moderation scope does not decide photo reviews, appeals, retention, abuse escalation or edit/delete policy.
