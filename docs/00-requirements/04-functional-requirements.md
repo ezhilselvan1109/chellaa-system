@@ -1184,7 +1184,7 @@ Every functional requirement specifies:
   * **Given** a verified successful delivery, **when** the delivery event is accepted, **then** the order/shipment becomes `DELIVERED`, a confirmation notification is queued, and the 7-day return timer starts from the verified timestamp.
   * **Given** three failed attempts on consecutive calendar days, **when** the third failure is recorded, **then** a return-to-warehouse task is created and the Operations Lead is notified.
 * **Priority:** `P0`
-* **Requirement Status:** `CONFIRMED`
+* **Requirement Status:** `PROPOSED` (revised to in-house delivery model; requires domain-owner review).
 * **Open Questions:** DEP-002 readiness checklist; any direct carrier integration requires a separate decision.
 * **Related Workflow IDs:** `WF-008`.
 
