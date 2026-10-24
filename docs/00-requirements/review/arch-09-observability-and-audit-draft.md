@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | W3C distributed tracing, structured JSON logging, PII scrubbing, Prometheus RED metrics, and 8-year WORM audit chaining are fully articulated. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, SRE Lead, and Observability Architect. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of 8 Financial Years statutory audit retention architecture ([`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -194,7 +194,7 @@ The checklist below governs the quality gate audit for `ARCH-09`:
 - [x] 4. **WORM Audit Chaining:** SHA-256 cryptographic hash formula and daily Merkle root anchoring specified.
 - [x] 5. **8-Year Statutory Retention:** S3 Object Lock compliance configuration and Glacier tiering documented.
 - [x] 6. **Single-Retailer Anti-Scope Preserved:** Zero multi-tenant or third-party seller logging scopes present.
-- [x] 7. **100% Traceability:** Mapped to declared BRD requirement identifiers.
+- [ ] 7. **Traceability verification pending:** Mapped to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
 
 
