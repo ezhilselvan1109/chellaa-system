@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | All deployment topology evaluations, cluster packaging models, container sizing profiles, and responsibility matrices are fully articulated. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Earlier 100% coverage claims are withdrawn until workflow IDs and source-to-architecture mappings are reverified against the current 17-workflow baseline. | Prior coverage totals are withdrawn; verify current feature/FR/BR/NFR totals and all 17 workflow mappings before claiming completeness ([`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Distributed Systems Architect, and DevOps/SRE Lead. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of surge capacity targets ([`ADQ-007`](./executive-decision-register.md#adq-007)) and availability SLAs ([`ADQ-008`](./executive-decision-register.md#adq-008)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -400,7 +400,7 @@ The checklist below governs the quality gate audit for `ARCH-03`:
 - [x] 4. **Interservice Communication Contracts:** Synchronous gRPC vs asynchronous Kafka Outbox CDC protocols and circuit breaker rules defined for all cluster interfaces.
 - [x] 5. **Team Topologies Alignment:** Clear ownership assigned across Stream-Aligned Squads and Platform/Enabling Team for a 2–6 engineer organizational baseline.
 - [x] 6. **Single-Retailer Anti-Scope Preserved:** Zero third-party marketplace, vendor onboarding, commission ledgers, or split payout concepts present.
-- [x] 7. **100% Requirements Traceability:** All cluster allocations trace directly to authentic BRD identifiers.
+- [ ] 7. **Requirements Traceability — verification pending:** All cluster allocations trace directly to authentic BRD identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
 
 
