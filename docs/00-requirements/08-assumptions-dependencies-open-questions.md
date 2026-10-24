@@ -216,12 +216,12 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Why the Decision Matters:** Defines ownership of shipment lifecycle workflows, delivery operations, tracking, reverse logistics, COD reconciliation, and any future direct-carrier integrations.
 * **Affected Domains:** Shipping & Logistics, Returns, Reverse Logistics.
 * **Affected Requirement IDs:** `FEAT-SHP-001`, `FR-SHP-001`.
-* **Possible Options:**
-  * *Option A:* Build Chellaa's own Shipping Management System; use the business's own delivery team or consider direct carrier integrations only after a separate decision.
-  * *Option B:* Use a multi-carrier shipping aggregator.
-  * *Option C:* Integrate directly with two or more named national carriers.
-* **Business Owner Decision:** The original Option A shipping-model selection is superseded for the delivery-provider mix by `ADQ-014` (2026-10-24): Chellaa will use its own Shipping Management System and may use its own delivery team, direct courier partners, and a shipping aggregator. The internal system remains Chellaa-owned; provider names, contracts, API credentials, rates, and integration rollout remain separate readiness tasks.
-* **Implementation Constraints:** Define shipment creation and lifecycle, internal tracking events, delivery assignment/attempts, proof of delivery, cancellation, reverse logistics, COD collection/reconciliation, and operational exception handling. Direct carrier API requirements and partner selection are out of scope until separately decided.
+* **Possible Options (delivery-provider mix):**
+  * *Option A:* Chellaa's own delivery team only, using Chellaa's own Shipping Management System.
+  * *Option B:* Chellaa's own delivery team plus directly integrated courier partners; no aggregator.
+  * *Option C:* Chellaa's own delivery team, directly integrated courier partners, and a shipping aggregator.
+* **Business Owner Decision:** **Option C — Chellaa's own delivery team, directly integrated courier partners, and a shipping aggregator are all permitted**, while Chellaa retains ownership of its Shipping Management System and canonical internal shipment lifecycle. This decision (`ADQ-014`, 2026-10-24) supersedes the earlier Option A restriction on the provider mix. Provider names, contracts, API credentials, rates, and integration rollout remain separate readiness tasks.
+* **Implementation Constraints:** Define shipment creation and lifecycle, internal tracking events, delivery assignment/attempts, proof of delivery, cancellation, reverse logistics, COD collection/remittance/reconciliation, and operational exception handling. Implement provider-neutral adapters and state mapping for approved direct courier and aggregator integrations; retain internal Shipment ID as canonical. Select named providers, agree contracts/rates/SLAs, obtain credentials, and validate each provider lane before enabling it.
 * **Impact of Delaying:** Delays shipping workflow implementation and launch operations readiness; no external courier contract or provider-specific API is selected by this decision.
 * **Priority:** `P1`
 * **Decision Owner:** EZHIL SELVAN P. — Founder; Operations and Technical review remain required.
