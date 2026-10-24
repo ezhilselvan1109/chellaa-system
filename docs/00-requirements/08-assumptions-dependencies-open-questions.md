@@ -249,8 +249,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Recommended Option:** **Option B (Streamlined Guest Checkout with seamless automatic account creation via phone OTP).** Gives the customer a frictionless guest experience while provisioning an account in the background.
 * **Impact of Delaying:** Affects checkout state machine and user session boundary designs.
 * **Priority:** `P1`
-* **Decision Owner:** Product Lead / Marketing Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Business Owner Decision:** **Option B — Guest checkout permitted, with automated account creation using the checkout mobile number and phone OTP verification.**
+* **Decision Owner:** EZHIL SELVAN P. — Founder (Business Owner selection recorded 2026-10-24).
+* **Status:** `CONFIRMED` (Business Owner selected Option B; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -459,7 +460,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | **OQ-008** | Returns & Inspection Policy | `P0` | `UNDER_REVIEW` | 7-day window; defect verification |
 | **OQ-009** | Tax Structure & Display Prices | `P0` | `UNDER_REVIEW` | Indian GST; 100% Tax-Inclusive display |
 | **OQ-010** | Customer Verification Method | `P0` | `UNDER_REVIEW` | Mobile number + SMS OTP primary |
-| **OQ-011** | Guest Checkout Support | `P1` | `UNDER_REVIEW` | Streamlined guest with auto-account |
+| **OQ-011** | Guest Checkout Support | `P1` | `CONFIRMED` | Owner-selected Option B: guest checkout with phone-OTP auto-account |
 | **OQ-012** | Customer Reviews & Ratings | `P2` | `UNDER_REVIEW` | Deferred to Phase 2 (Frontend) |
 | **OQ-013** | Loyalty & Store Credit | `P2` | `CONFIRMED` | Out of scope for Phase 1 baseline |
 | **OQ-014** | Pre-orders & Backorders | `P1` | `CONFIRMED` | Out of scope (Strict non-negative stock) |
