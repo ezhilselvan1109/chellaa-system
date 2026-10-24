@@ -338,39 +338,6 @@ sequenceDiagram
 
 ---
 
-### 3.11 WF-011: Promotions & Coupon Redemption
-
-* **Scope:** Validate promotion eligibility and coupon rules, calculate discounts, enforce redemption limits, and bind the accepted discount to the order without treating administrative price maintenance as this workflow ([`FEAT-PRM-001`](../03-business-feature-inventory.md#feat-prm-001), [`FR-PRM-001`](../04-functional-requirements.md#fr-prm-001), [`FR-PRM-002`](../04-functional-requirements.md#fr-prm-002), [`BR-PRM-001`](../05-business-rules.md#br-prm-001), [`BR-PRM-002`](../05-business-rules.md#br-prm-002)).
-
-```mermaid
-sequenceDiagram
-  autonumber
-  actor Customer as Customer
-  participant Checkout as Checkout / Commerce
-  participant Promo as Promotion and Coupon Domain
-  participant Inventory as Inventory Domain
-  participant Orders as Order Domain
-
-  Customer->>Checkout: Apply coupon / request order quote
-  Checkout->>Promo: Validate code, window, eligibility and redemption limits
-  alt Coupon invalid or ineligible
-    Promo-->>Checkout: Rejection reason
-    Checkout-->>Customer: Show validation result; retain no discount
-  else Coupon eligible
-    Promo-->>Checkout: Discount calculation and rule version
-    Checkout->>Inventory: Revalidate availability and price
-    Inventory-->>Checkout: Current stock and price result
-    Checkout->>Orders: Create order with immutable discount snapshot
-    Orders->>Promo: Record/commit redemption idempotently
-    Promo-->>Orders: Redemption result
-    Orders-->>Customer: Order confirmation and price breakdown
-  end
-```
-
-* **Boundary:** Administrative product-price maintenance remains a supporting operation governed by `FR-PRC-001` and `BR-PRC-001`/`BR-PRC-002`; it is not misidentified as `WF-011`.
-
----
-
 ### 3.11 WF-002: Product Catalog Management & Publishing
 
 * **Scope:** Create and validate product records, category/brand associations, variant/SKU attributes, media references, and publish/unpublish state; the public search flow is mapped separately to WF-004 ([`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001), [`FEAT-CAT-002`](../03-business-feature-inventory.md#feat-cat-002), [`FR-CAT-001`](../04-functional-requirements.md#fr-cat-001), [`FR-CAT-003`](../04-functional-requirements.md#fr-cat-003), [`BR-CAT-001`](../05-business-rules.md#br-cat-001)).
