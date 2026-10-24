@@ -631,7 +631,7 @@ $$\text{Line Discount}_i = \text{Total Discount} \times \left( \frac{\text{Line 
 * **Exceptions:** None.
 * **Related Requirements:** [FR-REV-001](./04-functional-requirements.md#fr-rev-001).
 * **Severity / Strictness:** Medium.
-* **Status:** `PROPOSED` (Subject to [OQ-012](./08-assumptions-dependencies-open-questions.md#oq-012))
+* **Status:** `CONFIRMED` (OQ-012 Option B selected; detailed moderation, appeals and photo-review policy remain open).
 * **Decision Owner:** Product Lead.
 
 #### BR-SUP-001: Support Ticket Response SLA (2 Hours for Critical Complaints)
