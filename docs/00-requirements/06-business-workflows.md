@@ -383,55 +383,75 @@ flowchart TD
 
 ### WF-008: Order Fulfillment, Packing and Dispatch
 * **Workflow ID:** `WF-008`
-* **Workflow Name:** Warehouse Order Picking, Packing, Label Generation & Carrier Dispatch
+* **Workflow Name:** In-House Order Fulfillment, Shipment Assignment, Delivery and Proof of Delivery
 * **Business Objective:** `OBJ-004`, `OBJ-006`
-* **Trigger:** Order status becomes `CONFIRMED`.
-* **Participating Actors:** `ACT-005` (Fulfillment Specialist), `ACT-012` (Courier Partner), System.
-* **Preconditions:** Order is `CONFIRMED`; inventory is physically allocated.
+* **Trigger:** Order status becomes `CONFIRMED` and the order is released for fulfillment.
+* **Participating Actors:** `ACT-005` (Fulfillment Specialist), Customer, Shipping Operations Lead, Dispatcher / Route Coordinator, Delivery Associate, Customer Support Agent, COD / Finance Reconciler, System.
+* **Preconditions:** Order is `CONFIRMED`; inventory is allocated; destination is in Chellaa's approved internal service area; applicable COD policy is satisfied.
 * **Main Success Path:**
-  1. Fulfillment Specialist views fulfillment dashboard and selects batch of confirmed orders.
-  2. System generates consolidated Warehouse Picklist organized by bin location.
-  3. Order status transitions to `PROCESSING`.
-  4. Specialist physically collects items from warehouse bins and brings them to packing station.
-  5. Specialist scans SKU barcodes on physical boxes; system verifies item match against order packing slip.
-  6. System calls Courier Logistics Partner API (`ACT-012`) with package weight and destination PIN code.
-  7. Courier API returns Air Waybill (AWB) number and printable shipping label PDF (`BR-SHP-001`).
-  8. Specialist packs box, inserts packing slip, seals carton, and affixes shipping label with scannable AWB barcode.
-  9. Order status transitions to `PACKED`.
-  10. Courier pickup vehicle arrives; specialist scans courier manifest handover; order transitions to `DISPATCHED`.
-  11. System dispatches shipping confirmation notification with live AWB tracking link to customer.
+  1. System creates an internal Shipment ID linked to the order, immutable delivery address snapshot, package items, declared value, and COD due if applicable. The operation is idempotent.
+  2. Fulfillment Specialist views the fulfillment dashboard and selects confirmed orders.
+  3. System generates a picklist by warehouse bin and moves the order to `PROCESSING`.
+  4. Specialist picks items, scans each SKU/variant, and verifies quantity and serial/IMEI where applicable.
+  5. Specialist records package weight/dimensions, packs and seals the parcel, and records the packing operator and timestamp. Barcode/serial mismatch or damage blocks progression and creates an exception.
+  6. System moves the shipment to `READY_FOR_DISPATCH` after packing checks pass; no external AWB or aggregator booking is required.
+  7. Dispatcher groups ready shipments by approved service area and delivery capacity, assigns a delivery run and Delivery Associate, and records the manifest.
+  8. Warehouse staff and Delivery Associate acknowledge the parcel handover; system records Shipment IDs, count, actor, and timestamp, then sets shipment to `ASSIGNED`.
+  9. Delivery Associate starts the assigned run; shipment moves to `OUT_FOR_DELIVERY`. System sends the customer a status notification and internal tracking link.
+  10. Associate records the delivery attempt. For successful delivery, the system validates the required delivery OTP, records recipient confirmation and timestamp, and changes shipment/order to `DELIVERED` only after evidence is complete.
+  11. System sends delivery confirmation and starts the 7-calendar-day return eligibility window from the verified delivery timestamp.
+  12. For COD, associate records collection amount and receipt/reference; at shift end, cash/collection evidence is handed over and Finance reconciles it against the COD due.
 * **Alternative Paths:**
-  * **Courier API Transient Failure:** System retries courier booking asynchronously; parcel remains staged in `PACKED` until AWB is acquired.
+  * **Customer unavailable / address issue / reschedule:** Record a standardized failed-attempt reason, notify Customer Support and customer, and assign a retry within the existing maximum of three consecutive calendar-day attempts.
+  * **Third failed attempt:** Escalate to Shipping Operations Lead, return the parcel to warehouse custody, record the return handover, and move shipment to the approved internal return-to-warehouse/RTO state.
+  * **Customer refuses or return is authorized:** Follow existing order cancellation/returns rules; scan the parcel into warehouse custody and link the event to the return/order record.
 * **Failure Paths:**
-  * **Barcode Mismatch at Packing:** Specialist scans wrong item (e.g., scanned 128GB phone instead of 256GB phone); system sounds error tone and blocks packing slip generation until correct item is scanned.
-  * **Physical Stock Damage Discovered at Bin:** Item found cracked in bin; specialist triggers "Item Damaged" exception; order is reassigned to alternative warehouse stock or escalated to support.
-* **Business Rules Applied:** `BR-ORD-001`, `BR-SHP-001`, `BR-ORD-002`.
-* **Expected Final Business State:** Order is `DISPATCHED`; Parcel is in carrier transit; Live tracking active.
-* **Dependencies:** `FEAT-ORD-001`, `FEAT-SHP-001`, `FEAT-NTF-001`.
-* **Related Functional Requirements:** `FR-ORD-001`, `FR-SHP-001`.
-* **Unresolved Decisions:** None.
+  * **Barcode / serial mismatch:** Block packing and dispatch until corrected or formally resolved by an authorized supervisor.
+  * **Damaged item or parcel:** Quarantine the item/parcel, create an exception, and do not dispatch until disposition is recorded.
+  * **No associate / missed run / device or network outage:** Keep the shipment in a non-delivered state, retain the assignment/exception audit, and escalate to the Operations Lead for re-planning.
+  * **Delivery OTP failure or disputed delivery:** Do not mark delivered; create an exception and route to supervisor/Support review.
+  * **COD variance:** Preserve shipment/order completion separately from financial reconciliation; create a finance incident with variance amount, custodian, evidence, and resolution.
+* **Business Rules Applied:** `BR-ORD-001`, `BR-SHP-001`, `BR-SHP-002`, `BR-ORD-002`, and OQ-006 COD policy.
+* **Expected Final Business State:** Shipment is `DELIVERED` with auditable proof of delivery, or enters an explicit failed-attempt / return-to-warehouse exception path. COD reconciliation is separately tracked.
+* **Dependencies:** `FEAT-ORD-001`, `FEAT-SHP-001`, `FEAT-NTF-001`, `DEP-002`, and `DEP-006`.
+* **Related Functional Requirements:** `FR-ORD-001`, `FR-SHP-001`, `FR-SHP-002`.
+* **Open Operational Decisions:** Launch service area, delivery hours, staffing/capacity, vehicle model, and proof-of-delivery media/retention remain to be approved under `DEP-002`. No carrier or aggregator is selected.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Operator as ACT-005: Fulfillment Specialist
-    participant WMS as Chellaa Order & WMS Core
-    participant Courier as ACT-012: Courier Partner API
-    actor Customer as ACT-009: Customer
+    actor Warehouse as Fulfillment Specialist
+    participant SMS as Chellaa Shipping Management System
+    actor Dispatcher as Dispatcher / Route Coordinator
+    actor Associate as Delivery Associate
+    actor Customer as Customer
+    participant Finance as COD / Finance Reconciliation
 
-    Operator->>WMS: Generate Picklist for Confirmed Orders
-    WMS->>WMS: Set Status: PROCESSING
-    Operator->>WMS: Scan SKU Barcode at Packing Bench
-    alt Barcode Matches Order Item
-        WMS->>Courier: Book Consignment (Weight, Dimensions, PIN)
-        Courier-->>WMS: Issue AWB Number + Shipping Label PDF
-        WMS->>WMS: Set Status: PACKED & Print Label
-        Operator->>Operator: Affix Label to Carton
-        Operator->>WMS: Handover to Driver & Confirm Dispatch
-        WMS->>WMS: Set Status: DISPATCHED
-        WMS->>Customer: Send Tracking SMS/WhatsApp with AWB Link
-    else Barcode Mismatch
-        WMS-->>Operator: ERROR: Wrong SKU Scanned (Halt Packing)
+    Warehouse->>SMS: Pick, scan SKU/serial, pack and seal
+    SMS->>SMS: Create Shipment ID; set READY_FOR_DISPATCH
+    Dispatcher->>SMS: Assign run and Delivery Associate
+    Warehouse->>Associate: Handover parcel and manifest
+    Associate->>SMS: Acknowledge custody; start delivery run
+    SMS->>Customer: Send out-for-delivery notification
+    Associate->>Customer: Attempt delivery
+    alt Delivery succeeds
+        Associate->>SMS: Submit delivery OTP and proof metadata
+        SMS->>SMS: Validate evidence; set DELIVERED
+        SMS->>Customer: Send delivery confirmation
+        opt COD order
+            Associate->>SMS: Record collected amount and receipt
+            Associate->>Finance: Handover cash / collection evidence
+            Finance->>SMS: Record reconciliation result or variance
+        end
+    else Delivery fails
+        Associate->>SMS: Record attempt reason and timestamp
+        SMS->>Customer: Send failed-attempt notice
+        alt Attempts remain
+            Dispatcher->>SMS: Schedule permitted retry
+        else Retry limit reached
+            Associate->>Warehouse: Return parcel and handover custody
+            SMS->>SMS: Record RETURN_TO_WAREHOUSE / RTO state
+        end
     end
 ```
 
