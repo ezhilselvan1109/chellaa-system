@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | All 11 required sections, 20 candidate domains, entity ownership matrices, and domain event catalogs are fully specified. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Earlier 100% coverage claims are withdrawn until workflow IDs and source-to-architecture mappings are reverified against the current 17-workflow baseline. | Prior coverage totals are withdrawn; verify current feature/FR/BR/NFR totals and all 17 workflow mappings before claiming completeness. |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Security Architect, and Domain Engineering Leads. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of business invariants, return policies, and commercial decisions ([`ADQ-001`](./executive-decision-register.md#adq-001) through [`ADQ-008`](./executive-decision-register.md#adq-008)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -1335,7 +1335,7 @@ The checklist below governs the quality gate audit for `ARCH-02`:
 - [x] 5. **Domain Event Catalog:** Complete taxonomy of domain events with past-tense naming syntax, owning domains, triggers, minimum payloads, aggregate IDs, consumers, and security restrictions.
 - [x] 6. **Domain Consistency & Failure Matrix:** All 7 critical cross-domain workflows analyzed for transaction boundaries, invariants, sync vs async profiles, consistency models, retry handling, and compensations.
 - [x] 7. **Candidate Context Groupings:** 6 logical clusters evaluated for cohesion, coupling, communication overhead, and failure isolation.
-- [x] 8. **100% Requirements Traceability:** All 41 Features, 56 FRs, 55 BRs, 16 Workflows, and 18 NFRs verified against baseline BRD identifiers.
+- [ ] 8. **Requirements Traceability — verification pending:** All 41 Features, 56 FRs, 55 BRs, 16 Workflows, and 18 NFRs verified against baseline BRD identifiers.
 - [x] 9. **Open Decision & Risk Tracking:** Complete tracking of `ADQ-001` through `ADQ-008`, `AD-001` through `AD-012`, and `OQ-011` with explicit `OPEN` status.
 - [x] 10. **Syntax & Link Cleanliness:** Valid Mermaid diagrams with balanced delimiters, zero broken relative markdown links, and prominent non-binding governance warnings.
 
