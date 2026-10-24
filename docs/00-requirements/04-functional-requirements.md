@@ -1117,64 +1117,75 @@ Every functional requirement specifies:
 
 ## 11. Shipping, Logistics & Delivery Tracking
 
-### <a id="fr-shp-001"></a>FR-SHP-001: Courier Consignment Booking & AWB Tracking Integration
+### <a id="fr-shp-001"></a>FR-SHP-001: In-House Shipment Creation, Dispatch Assignment & Shipping Label
 * **Requirement ID:** `FR-SHP-001`
-* **Requirement Title:** Automated Third-Party Courier Consignment Booking and Shipping Label PDF
+* **Requirement Title:** Internal Shipment Lifecycle, Shipment ID and Dispatch Manifest
 * **Feature ID:** `FEAT-SHP-001`
 * **Business Objective:** `OBJ-006`
-* **Requirement Statement:** The system must automatically book consignments with integrated courier logistics partners (e.g., Delhivery, Blue Dart, Shiprocket) upon order packing, generating a compliant Air Waybill (AWB) number and printable thermal shipping label PDF.
-* **Description:** Eliminates manual waybill data entry and automates the logistics dispatch lifecycle.
-* **Primary Actor:** System (Automated), `ACT-012` (Courier Logistics Partner)
-* **Preconditions:** Order is packed and package dimensions/weight are captured.
-* **Trigger:** Order transitions to `PACKED`.
+* **Requirement Statement:** The system must create a unique internal Shipment ID for each eligible confirmed order, preserve a snapshot of the delivery address and package contents, support packing checks, generate an internal shipment/packing label with a scannable Shipment ID, assign the shipment to a delivery run and internal Delivery Associate, and audit every custody handover. The initial design must not depend on a third-party shipping aggregator or courier API.
+* **Description:** Provides shipment traceability and dispatch control for Chellaa's own delivery operations. External carrier booking/AWB generation is excluded unless approved through a separate decision.
+* **Primary Actor:** System, Fulfillment Specialist, Dispatcher / Route Coordinator, Delivery Associate.
+* **Preconditions:** Order is confirmed and released for fulfillment; inventory is allocated; destination is within the approved internal service area.
+* **Trigger:** Order is released for fulfillment or shipment is ready for dispatch.
 * **Main Success Scenario:**
-  1. System transmits consignment booking payload to courier partner API (recipient address, weight, dimensions, declared value, invoice number).
-  2. Courier API allocates unique AWB tracking number and returns label stream.
-  3. System renders printable shipping label PDF with scannable AWB barcode.
-  4. System binds AWB to order record and sets up tracking webhook listener.
+  1. System creates an idempotent Shipment ID and links it to the order, immutable address snapshot, package items, declared value, and COD due where applicable.
+  2. Warehouse user scans order items and records package checks, weight/dimensions, packing operator, and timestamps.
+  3. System generates an internal label/manifest reference with a scannable Shipment ID; this is not represented as an external AWB.
+  4. Dispatcher assigns the shipment to a delivery run and authenticated Delivery Associate.
+  5. Warehouse and Delivery Associate acknowledge parcel custody; the system records both sides of the handover and the shipment state transition.
 * **Alternative Scenarios:**
-  * Primary courier API down: System automatically fails over to secondary configured courier partner API.
+  * Shipment creation request is retried: return the existing active Shipment ID rather than creating a duplicate.
+  * Direct carrier integration is later approved: add a separately scoped adapter and carrier-specific identifiers without replacing the internal Shipment ID.
 * **Exception and Failure Scenarios:**
-  * Courier reports PIN code unserviceable for COD: System flags consignment exception and alerts operations lead.
-* **Business Rules:** `BR-SHP-001`, `BR-INT-001`.
-* **Inputs and Business Information Required:** Order ID, recipient address, contact phone, weight (kg), dimensions (LxWxH cm), declared value (₹).
-* **Expected Business Outcomes:** Rapid, automated dispatch and immediate shipment trackability.
-* **Dependencies:** `FEAT-ORD-001`, `DEP-002`.
+  * Item/serial mismatch, package damage, missing delivery address, out-of-area PIN code, or missing assignment blocks dispatch and creates a tracked exception.
+* **Business Rules:** `BR-SHP-001`, `BR-ORD-001`, `BR-ORD-002`.
+* **Inputs and Business Information Required:** Order ID, destination/address snapshot, contact phone, item/SKU and serial/IMEI where applicable, package weight/dimensions, declared value, COD due, actor/assignment, and timestamps.
+* **Expected Business Outcomes:** Each dispatched parcel has a unique internal identifier, traceable custody, assigned owner, and audit history without requiring a courier partner.
+* **Dependencies:** `FEAT-ORD-001`, `DEP-002`, `DEP-006`.
 * **Acceptance Criteria:**
-  * **Given** a packed order, **When** consignment booking executes, **Then** an AWB number is generated and linked to the order within 3 seconds.
+  * **Given** an eligible confirmed order, **when** shipment creation is requested once or retried with the same idempotency key, **then** exactly one active Shipment ID is linked to that order.
+  * **Given** a shipment ready for dispatch, **when** it is assigned and handed over, **then** the system records the delivery run, associate, manifest, both custody acknowledgements, and timestamps.
+  * **Given** an unapproved or unavailable carrier integration, **when** shipment creation occurs, **then** the workflow remains fully usable without calling an external carrier API.
 * **Priority:** `P0`
 * **Requirement Status:** `PROPOSED`
-* **Open Questions:** See [OQ-005](./08-assumptions-dependencies-open-questions.md#oq-005).
+* **Open Questions:** See [OQ-005](./08-assumptions-dependencies-open-questions.md#oq-005) and [DEP-002](./08-assumptions-dependencies-open-questions.md#dep-002).
 * **Related Workflow IDs:** `WF-008`.
 
-### <a id="fr-shp-002"></a>FR-SHP-002: Real-Time Courier Tracking Webhook Ingestion & Status Updates
+### <a id="fr-shp-002"></a>FR-SHP-002: Internal Delivery Tracking, Proof of Delivery & Customer Alerts
 * **Requirement ID:** `FR-SHP-002`
-* **Requirement Title:** Courier Tracking Webhook Ingestion, Transit Milestones and Customer Alerts
+* **Requirement Title:** Internal Shipment Milestones, Delivery Attempts and Proof of Delivery
 * **Feature ID:** `FEAT-SHP-001`
 * **Business Objective:** `OBJ-006`
-* **Requirement Statement:** The system must ingest real-time tracking webhooks from courier partners, update order tracking milestones (`In Transit`, `Reached Destination Hub`, `Out for Delivery`, `Delivered`, `Delivery Failed / NDR`), and dispatch automated SMS/WhatsApp alerts for critical delivery events.
-* **Description:** Keeps customers informed throughout parcel transit and enables proactive Non-Delivery Report (NDR) management.
-* **Primary Actor:** `ACT-012` (Courier Logistics Partner), System (Automated)
-* **Preconditions:** Order has active AWB number.
-* **Trigger:** Courier tracking scan event received via webhook or polling API.
+* **Requirement Statement:** The system must record authenticated internal shipment milestone events, delivery attempts, standardized failure reasons, rescheduling, proof of delivery, return-to-warehouse events, and customer alerts. It must not require third-party courier webhooks; direct carrier webhook/API ingestion is optional only after a separate decision.
+* **Description:** Gives customers and operations staff visibility of shipments handled by Chellaa's own delivery team and provides auditable delivery evidence and exception handling.
+* **Primary Actor:** Delivery Associate, Dispatcher / Route Coordinator, Shipping Operations Lead, Customer Support Agent, System.
+* **Preconditions:** Shipment has a valid internal Shipment ID and an assigned delivery run/associate.
+* **Trigger:** Internal staff scan/action records a shipment milestone or delivery attempt.
 * **Main Success Scenario:**
-  1. System ingests tracking event with timestamp, location, and status code.
-  2. System updates order delivery milestone timeline.
-  3. When status changes to `Out for Delivery`, system dispatches delivery notification with courier delivery agent contact.
-  4. When status changes to `Delivered`, system marks order `DELIVERED`, starts the return eligibility timer, and sends delivery confirmation.
+  1. System records shipment event with Shipment ID, actor, timestamp, state, and optional location/reason metadata.
+  2. System validates allowed state transitions and appends the event to the shipment timeline.
+  3. On out-for-delivery, system sends a customer notification with the customer-safe tracking link.
+  4. On successful delivery, system validates required delivery OTP and records recipient confirmation and proof metadata before marking the order/shipment delivered.
+  5. System sends delivery confirmation and starts the 7-calendar-day return eligibility window from the verified delivery timestamp.
 * **Alternative Scenarios:**
-  * Non-Delivery Report (NDR): Courier reports "Customer Not Available"; system triggers automated WhatsApp message to customer requesting preferred re-delivery slot.
+  * Failed attempt: record a standardized reason, notify customer and Support, and allow a permitted retry up to three consecutive calendar-day attempts.
+  * Third failed attempt: escalate to Shipping Operations Lead and record return-to-warehouse/RTO custody; no external carrier event is implied.
 * **Exception and Failure Scenarios:**
-  * Return to Origin (RTO) initiated: Courier flags parcel uncontactable after 3 attempts; system transitions order to `RTO_IN_TRANSIT` and queues warehouse inwarding.
-* **Business Rules:** `BR-SHP-002`, `BR-NTF-001`.
-* **Inputs and Business Information Required:** AWB number, tracking milestone code, location, timestamp, failure reason code (if NDR).
-* **Expected Business Outcomes:** Reduced RTO rates and transparent shipment visibility.
-* **Dependencies:** `FEAT-SHP-001`, `FEAT-NTF-001`.
+  * Missing/invalid OTP or insufficient delivery evidence: block `DELIVERED` and open a dispute/exception.
+  * Duplicate/out-of-order event: enforce idempotency and state-transition rules; preserve rejected event details for audit where appropriate.
+  * Device/network outage: queue authorized offline event capture with device/user/time metadata and synchronize with duplicate protection; final delivered state remains subject to required proof validation.
+* **Business Rules:** `BR-SHP-002`, `BR-NTF-001`, OQ-006 delivery OTP policy.
+* **Inputs and Business Information Required:** Shipment ID, event type, authenticated actor, timestamp, attempt number, standardized reason code, delivery OTP validation result, recipient confirmation, and permitted proof metadata.
+* **Expected Business Outcomes:** Internal tracking timeline, auditable delivery proof, proactive customer notifications, controlled failed-delivery retries, and visible return-to-warehouse status.
+* **Dependencies:** `FEAT-SHP-001`, `FEAT-NTF-001`, `DEP-002`, `DEP-003`.
 * **Acceptance Criteria:**
-  * **Given** a courier webhook reporting "Delivered", **When** processed, **Then** order status transitions to `DELIVERED`, customer receives delivery confirmation SMS within 1 minute, and the 7-day return eligibility countdown starts.
+  * **Given** an assigned shipment, **when** an associate records a valid milestone, **then** the event is stored with actor and timestamp and the customer-safe timeline is updated.
+  * **Given** a delivery attempt without valid required OTP/evidence, **when** the associate attempts to mark it delivered, **then** the transition is rejected and an exception is recorded.
+  * **Given** a verified successful delivery, **when** the delivery event is accepted, **then** the order/shipment becomes `DELIVERED`, a confirmation notification is queued, and the 7-day return timer starts from the verified timestamp.
+  * **Given** three failed attempts on consecutive calendar days, **when** the third failure is recorded, **then** a return-to-warehouse task is created and the Operations Lead is notified.
 * **Priority:** `P0`
 * **Requirement Status:** `CONFIRMED`
-* **Open Questions:** None.
+* **Open Questions:** DEP-002 readiness checklist; any direct carrier integration requires a separate decision.
 * **Related Workflow IDs:** `WF-008`.
 
 ---
