@@ -55,6 +55,15 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 
 **Decision boundary:** Chellaa owns the Shipping Management System and the internal shipment lifecycle. No shipping aggregator or courier partner is selected. Physical delivery is planned around Chellaa's own delivery team. A direct carrier integration may be added only through a separately recorded business decision and must not be assumed by the initial implementation.
 
+
+#### Decision record — nationwide in-house delivery coverage
+
+- **Business Owner decision:** Initial delivery scope is **India-wide**, using Chellaa's own delivery team and in-house Shipping Management System. This is a nationwide launch-scope decision; it does **not** mean every Indian PIN code is immediately serviceable or that operational readiness has been demonstrated.
+- **Status:** `OWNER_DECISION_RECORDED` (owner selection received 2026-10-24); operational readiness remains `OPEN` under DEP-002.
+- **Implementation boundary:** Maintain an internally approved serviceability registry of the PIN codes actually covered at each rollout stage. Checkout must accept deliveries only for enabled PIN codes and must use the approved fee, delivery estimate, and COD-eligibility rules. Do not claim nationwide coverage for a PIN code until local delivery capacity and the end-to-end process are verified.
+- **Open operational details:** Complete serviceable PIN-code list and rollout sequence; regional/warehouse topology; delivery hours and service targets; staffing, shifts and backup capacity; fleet/vehicle model; delivery-fee policy; proof-of-delivery and retention policy; reverse-logistics capacity; and contingency arrangements for remote/low-density areas.
+- **Related assumption to revisit:** `ASM-004` proposes a single primary central fulfillment warehouse. Nationwide in-house delivery may be incompatible with that assumption for cost, speed, or capacity reasons. Do not automatically change to multiple warehouses; assess and explicitly decide the launch warehouse topology before architecture approval.
+
 #### A. Proposed internal roles
 
 | Role | Core responsibility | Required control |
@@ -67,7 +76,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | COD / Finance Reconciler | Reconciles COD due, cash/approved payment evidence collected, receipts, handovers, shortages, and refunds. | Daily per-associate reconciliation with variance reason and supervisor review; no silent balance adjustments. |
 | Shipping Supervisor (may be the Operations Lead at launch) | Approves exceptions, reviews incidents, and signs off unresolved cash/parcel discrepancies. | Separation of duties is preferred; where one person holds multiple roles at launch, record the combined-role risk and compensating review. |
 
-These are proposed responsibilities, not a claim that staff have already been hired or assigned. Headcount, shifts, delivery radius, and launch PIN-code coverage remain to be defined using forecast order volume and actual geography.
+These are proposed responsibilities, not a claim that staff have already been hired or assigned. India-wide delivery scope has been selected, but serviceable PIN codes by rollout stage, headcount, shifts, and regional capacity must be defined using forecast order volume and actual geography.
 
 #### B. End-to-end operating workflows
 
@@ -103,7 +112,7 @@ DEP-002 remains OPEN until the Operations Lead records evidence for all applicab
 - [ ] Any direct carrier integration is either explicitly out of launch scope or separately approved with named partner, commercial/legal review, API/security validation, and failure handling.
 - [ ] Operations Lead confirms readiness with links to SOPs, test evidence, staffing/coverage plan, and unresolved risks.
 
-**Not yet decided:** launch city/area and PIN codes, delivery hours, delivery-fee schedule, staffing/headcount, vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, and whether/when to integrate directly with any carrier. These must not be invented in implementation.
+**Not yet decided:** exact serviceable PIN codes and rollout sequence across India, delivery hours/service targets, delivery-fee schedule, staffing/headcount and regional capacity, warehouse topology (revisit `ASM-004`), vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, reverse-logistics capacity, and whether/when to integrate directly with any carrier. These must not be invented in implementation.
 
 ---
 
