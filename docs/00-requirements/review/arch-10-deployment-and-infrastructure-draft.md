@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Multi-AZ cloud topology, VPC subnets, PITR backup strategy, CI/CD pipelines, and secrets governance are fully articulated. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Cloud Architect, and SRE Lead. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of RTO/RPO disaster recovery SLA targets ([`ADQ-008`](./executive-decision-register.md#adq-008)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -197,7 +197,7 @@ The checklist below governs the quality gate audit for `ARCH-10`:
 - [x] 4. **CI/CD GitOps Pipeline:** Automated vulnerability scanning, immutable ECR tags, and zero-downtime rolling updates documented.
 - [x] 5. **Secrets Governance:** AWS Secrets Manager integration eliminating plaintext credentials in code.
 - [x] 6. **Single-Retailer Anti-Scope Preserved:** Zero multi-tenant cloud isolation or third-party seller hosting concepts present.
-- [x] 7. **100% Traceability:** Mapped to declared BRD requirement identifiers.
+- [ ] 7. **Traceability verification pending:** Mapped to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
 
 
