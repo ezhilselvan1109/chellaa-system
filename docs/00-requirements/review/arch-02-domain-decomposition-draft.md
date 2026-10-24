@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | All 11 required sections, 20 candidate domains, entity ownership matrices, and domain event catalogs are fully specified. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% bidirectional traceability established to all 41 Business Features, 56 Functional Requirements, 55 Business Rules, and 16 Workflows. |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Earlier 100% coverage claims are withdrawn until workflow IDs and source-to-architecture mappings are reverified against the current 17-workflow baseline. | Prior coverage totals are withdrawn; verify current feature/FR/BR/NFR totals and all 17 workflow mappings before claiming completeness. |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Security Architect, and Domain Engineering Leads. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of business invariants, return policies, and commercial decisions ([`ADQ-001`](./executive-decision-register.md#adq-001) through [`ADQ-008`](./executive-decision-register.md#adq-008)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -239,7 +239,7 @@ The table below explains every boundary connection in the context map, classifyi
 | **09. Orders Lifecycle** | **07. Inventory** | OHS / PL | Async Domain Event (`order.confirmed`) | Converts temporary 15-minute hold to permanent stock deduction. | `CONFIRMED` |
 | **09. Orders Lifecycle** | **11. Tax & Invoicing** | OHS / PL | Async Domain Event (`order.confirmed`) | Triggers sequential tax invoice generation ([`BR-FIN-001`](../05-business-rules.md#br-fin-001)). | `CONFIRMED` |
 | **09. Orders Lifecycle** | **12. Shipping & Delivery** | OHS / PL | Async Domain Event (`order.confirmed`) | Initiates consignment fulfillment booking with carrier ([`WF-008`](../06-business-workflows.md#wf-008)). | `CONFIRMED` |
-| **09. Orders Lifecycle** | **14. Notifications** | OHS / PL | Async Domain Event (`order.confirmed`) | Dispatches transactional SMS/WhatsApp/Email to customer ([`WF-012`](../06-business-workflows.md#wf-015)). | `CONFIRMED` |
+| **09. Orders Lifecycle** | **14. Notifications** | OHS / PL | Async Domain Event (`order.confirmed`) | Dispatches transactional SMS/WhatsApp/Email to customer ([`WF-012`](../06-business-workflows.md#wf-012)). | `CONFIRMED` |
 | **12. Shipping & Delivery** | **09. Orders Lifecycle** | OHS / PL | Async Domain Event (`shipment.dispatched`) | Updates order state to `DISPATCHED` with tracking URL ([`WF-009`](../06-business-workflows.md#wf-009)). | `CONFIRMED` |
 | **13. Returns & Diagnostics** | **07. Inventory** | OHS / PL | Async Domain Event (`return.graded`) | Routes inspected unit to refurbished stock or scrap quarantine. | `CONFIRMED` |
 | **13. Returns & Diagnostics** | **10. Payments** | OHS / PL | Async Domain Event (`return.graded`) | Triggers automated source-instrument refund dispatch ([`BR-RET-003`](../05-business-rules.md#br-ret-003)). | `CONFIRMED` |
@@ -921,7 +921,7 @@ mindmap
   * Unverified anonymous public review submissions (strictly restricted to verified purchasers per [`BR-REV-001`](../05-business-rules.md#br-rev-001)).
 * **Business Capabilities & Requirement IDs:**
   * Capabilities: Verified-Buyer Review Submission, Abuse Moderation Queue, Star Rating Aggregation.
-  * Requirements: [`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001), [`FR-REV-001`](../04-functional-requirements.md#fr-rev-001), [`BR-REV-001`](../05-business-rules.md#br-rev-001), [`WF-017`](../06-business-workflows.md#wf-013).
+  * Requirements: [`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001), [`FR-REV-001`](../04-functional-requirements.md#fr-rev-001), [`BR-REV-001`](../05-business-rules.md#br-rev-001), [`WF-017`](../06-business-workflows.md#wf-017).
 * **Candidate Aggregate Roots, Entities, and Value Objects:**
   * `ProductReview` (Aggregate Root): Review ID, SKU, customer ID, order ID, rating (integer 1 to 5), review title, review body, status (`SUBMITTED`, `APPROVED`, `FLAGGED`, `REJECTED`), verified buyer flag.
   * `ReviewRatingAggregate` (Read-Model): SKU, total review count, star distribution (1 to 5), weighted average rating score.
@@ -957,7 +957,7 @@ mindmap
   * Real-time operational transaction processing (Reporting consumes read-only data streams).
 * **Business Capabilities & Requirement IDs:**
   * Capabilities: Commercial KPI Aggregation, Sales Reconciliation, Inventory Turnover BI, Exportable Analytics.
-  * Requirements: [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001), [`BR-RPT-001`](../05-business-rules.md#br-rpt-001), [`WF-014`](../06-business-workflows.md#wf-012).
+  * Requirements: [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001), [`BR-RPT-001`](../05-business-rules.md#br-rpt-001), [`WF-014`](../06-business-workflows.md#wf-014).
 * **Candidate Aggregate Roots, Entities, and Value Objects:**
   * `DailySalesReport` (Read Projection): Report date, total orders placed, GMV, total invoiced value, total discounts given, net sales.
   * `ReconciliationSummary` (Read Projection): Date, order payments captured, tax invoices booked, settled funds deposited, unreconciled delta.
