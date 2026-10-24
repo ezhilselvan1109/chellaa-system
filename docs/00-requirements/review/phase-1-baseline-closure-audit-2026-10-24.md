@@ -65,12 +65,12 @@ The four selections above are business-scope decisions recorded in the current w
 
 - Reconciled the `FEAT-CUST-003` / `FR-CUST-004` traceability mismatch: OQ-020 Option A is confirmed, so the functional requirement and RTM no longer present OQ-020 as an unresolved dependency. The feature/requirement remain `PROPOSED` pending explicit Legal/Security review of export contents, identity verification, anonymization coverage, exceptions, retention mapping and acceptance evidence.
 - `FEAT-NTF-001`, `FEAT-REV-001` and `FEAT-RPT-001` now reflect the selected scope in the Feature Inventory and RTM. Their detailed requirements still contain explicitly open policy/specification items; do not treat those details as settled.
-- Added `WF-017` for verified-buyer review submission and mandatory moderation; updated `FR-REV-001`, the RTM and Document 11's workflow count to reference 17 workflows. A complete cross-document link/identifier audit remains outstanding.
+- Added `WF-017` for verified-buyer review submission and mandatory moderation; updated `FR-REV-001`, the RTM and Document 11's workflow count to reference 17 workflows. Identifier-level crosswalk checks and local target-path existence checks have now been performed; semantic reverse traceability and fragment-anchor validation remain outstanding.
 - OQ-015's selected channel set does not define the event-to-channel matrix, retry/fallback behavior or provider readiness. `DEP-003` remains open.
 - OQ-018's selected advanced reporting scope does not define KPI formulas, freshness, permissions, exports, predictive methodology or validation evidence.
 - OQ-012's selected verified-buyer/moderation scope does not decide photo reviews, appeals, retention, abuse escalation or edit/delete policy.
 - OQ-019 is separate from `FEAT-DAT-001` / `FR-DAT-001`: bulk catalog/inventory import remains in scope; legacy customer/order history migration is excluded for the initial launch.
-- Recheck all linked FR/BR/WF/NFR statuses, links and acceptance criteria during the final whole-package audit. This targeted closure pass is not evidence that every one of the 12 BRD documents has been fully audited.
+- Identifier-level presence is now checked in the RTM: 41/41 FEAT, 56/56 FR, 55/55 BR, 17/17 WF, 18/18 NFR, 10/10 ASM, 6/6 DEP and 22/22 OQ. Relative link target paths were checked across 15 architecture/governance documents (31 unique targets exist); fragment anchors, Mermaid syntax/rendering, semantic mapping correctness and acceptance criteria still require independent whole-package review. This targeted closure pass is not evidence that every one of the 12 BRD documents has been fully audited.
 
 ### 4.3 NFR approval and evidence
 
@@ -106,8 +106,8 @@ Phase 1 is ready to submit for formal approval only when all applicable criteria
 - [ ] All 22 OQs are either explicitly decided or formally deferred with owner, reason, impact, revisit trigger and affected requirements.
 - [ ] All assumptions are validated, rejected or explicitly accepted as time-bounded assumptions by the appropriate owner.
 - [ ] All 6 dependencies have an accountable owner, required evidence, launch-criticality classification and status; open real-world work is not falsely marked complete.
-- [ ] The 41 feature rows in the RTM reconcile to the feature inventory and all FR/BR/WF/NFR IDs exist.
-- [ ] Traceability is bidirectional: no orphan feature/FR/BR/WF/NFR; each OQ and DEP points to all affected requirements; no stale or unrelated dependency links.
+- [x] Identifier-level presence check: the RTM includes all 41 FEAT, 56 FR, 55 BR, 17 WF, 18 NFR, 10 ASM, 6 DEP and 22 OQ source IDs. Semantic correctness and reverse links remain a separate unchecked gate.
+- [ ] Semantic traceability is bidirectional: no orphan feature/FR/BR/WF/NFR; each OQ and DEP points to all affected requirements; no stale or unrelated dependency links.
 - [ ] Requirement/feature statuses match their unresolved decisions; no item is marked confirmed solely because it appears in a draft.
 - [ ] Acceptance criteria are testable, unambiguous, and include normal, alternative, boundary, failure, authorization and concurrency cases where relevant.
 - [ ] Cross-document policy values agree (COD limit/fee/OTP, return window, payment methods, tax-inclusive pricing, identity/guest checkout, delivery lifecycle and NFR targets).
@@ -122,9 +122,9 @@ Phase 1 is ready to submit for formal approval only when all applicable criteria
 1. Complete the remaining detailed policy/specification work for OQ-012, OQ-015 and OQ-018 without changing the selections already recorded.
 2. Validate the OQ-007/ASM-004 four-warehouse/regional-inventory plan against actual sites, legal/tax implications, capacity and serviceability without hard-coding city or PIN-code data.
 3. Keep OQ-019 legacy customer/order migration excluded; validate standard catalog/opening-stock import separately under DEP-005 and inventory readiness.
-4. Complete the whole-package audit of all FR/BR/WF/NFR statuses, identifiers and links; the specific `FEAT-CUST-003` / OQ-020 mismatch has been reconciled.
+4. Complete the whole-package semantic audit of all FR/BR/WF/NFR mappings, fragment anchors, acceptance criteria and decision links; identifier presence and relative target paths have been checked, but the semantic audit remains pending.
 5. Re-audit all 12 core BRD files, acceptance criteria, scope boundaries and cross-document policy values; distinguish decisions recorded from implementation/operational evidence.
-6. Update this working audit with checks actually performed, findings, remediation links and remaining risks. Do not reuse the 2026-10-18 audit verdict as if it were a fresh audit.
+6. Keep this working audit current with checks actually performed, findings, remediation links and remaining risks. Do not reuse the 2026-10-18 audit verdict as if it were a fresh audit.
 7. Submit the package to the authorized Business Owner for formal review. Keep Phase 1 `PENDING_APPROVAL`, baseline `NOT_APPROVED`, architecture `NOT_GRANTED` until genuine sign-off is recorded.
 
 ## 8. Explicit non-claims
