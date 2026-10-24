@@ -323,7 +323,7 @@ mindmap
   * [`DEP-003`](../08-assumptions-dependencies-open-questions.md#dep-003) (Telecom SMS Gateway for OTP transmission).
   * [`ACT-009`](../02-stakeholders-and-actors.md#act-009) (Customer Persona), [`ACT-010`](../02-stakeholders-and-actors.md#act-010) (Guest Persona), [`ACT-013`](../02-stakeholders-and-actors.md#act-013) (Telecom Gateway).
 * **Failure and Recovery Concerns:**
-  * Telecom SMS Gateway outage: Implement retry with exponential backoff; fallback to WhatsApp/Email OTP channel.
+  * Telecom SMS Gateway outage: record delivery failure and apply only an approved retry policy; cross-channel OTP fallback to WhatsApp or Email is not authorized by the recorded decision and remains open under OQ-015 / DEP-003.
   * PII data leakage: AES-256 field-level encryption for customer address and phone at rest per [`NFR-SEC-003`](../07-non-functional-requirements.md#nfr-sec-003).
 * **Open Business and Technical Decisions:**
   * [`ADQ-006`](./executive-decision-register.md#adq-006) / [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010): Primary customer authentication mechanism (Mobile OTP-only vs Hybrid Password + OTP).
@@ -790,7 +790,7 @@ mindmap
   * [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) (shipping lane/provider readiness; provider model requires reconciliation before a named provider is selected).
   * [`ACT-012`](../02-stakeholders-and-actors.md#act-012) (Courier Logistics Partner Persona), [`ACT-005`](../02-stakeholders-and-actors.md#act-005) (Fulfillment Specialist Persona).
 * **Failure and Recovery Concerns:**
-  * 3PL carrier API outage: Queue booking requests in a dead-letter retry topic; fallback to secondary courier partner.
+  * Shipping provider API outage: preserve the internal shipment state and queue/reconcile failed work according to an approved recovery policy. Automatic secondary-provider fallback is not assumed; lane selection, retry timing and fallback behavior remain open under DEP-002.
 * **Open Business and Technical Decisions:**
   * None open (Shipping rules confirmed in BRD Document 05).
 * **Validation and Acceptance Criteria:**
