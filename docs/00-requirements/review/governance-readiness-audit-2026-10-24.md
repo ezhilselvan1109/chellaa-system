@@ -51,13 +51,13 @@ The Open Questions summary in Document 08 now reflects the explicit owner select
 - `OQ-011`: Option B — guest checkout with automatic account creation and phone OTP.
 - `OQ-016`: Option B — 100 orders/minute sustained and 1,000 orders/minute peak.
 - `OQ-017`: Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours.
+- `OQ-004`: Razorpay only; single-gateway approach.
+- `OQ-005`: Option A — build Chellaa's own Shipping Management System; own delivery team or optional direct-carrier integrations by separate decision. No shipping aggregator or courier partner selected.
 
 These selections resolve the associated business choices; they do **not** approve the entire BRD baseline.
 
 ### Questions still requiring business-owner/domain-lead resolution
 
-- `OQ-004` — Payment gateway selection (`CONFIRMED`: Razorpay only; single-gateway approach).
-- `OQ-005` — Courier/logistics partner selection (`CONFIRMED`: Option B, Shiprocket multi-carrier aggregator).
 - `OQ-007` — Warehouse launch topology (currently `UNDER_REVIEW`).
 - `OQ-012` — Customer reviews/ratings scope and moderation (currently `UNDER_REVIEW`).
 - `OQ-015` — Mandatory notification channels (currently `UNDER_REVIEW`).
