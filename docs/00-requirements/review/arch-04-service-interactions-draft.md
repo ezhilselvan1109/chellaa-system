@@ -257,7 +257,7 @@ sequenceDiagram
   autonumber
   actor Operator as Warehouse Operator (ACT-004)
   participant Fulfillment as Fulfillment Cluster (07. Inv / 12. Ship)
-  participant Courier as 3PL Courier API (Shiprocket)
+  participant Shipping as Shipping Management System / approved provider adapter
   participant Commerce as Commerce Cluster (09. Orders)
   participant EventBus as Event Bus (Kafka)
 
