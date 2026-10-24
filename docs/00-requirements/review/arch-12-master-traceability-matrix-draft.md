@@ -43,7 +43,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | :---: | :---: | :--- | :--- |
 | `0.1.0-PLAN` | 2026-10-18 | Principal Software Architect | Preliminary traceability methodology in [`phase-2-architecture-planning.md`](./phase-2-architecture-planning.md). |
 | `0.2.0-REG` | 2026-10-24 | Architecture Governance Lead | Master traceability plan and verification criteria in [`phase-2-document-status-register.md`](./phase-2-document-status-register.md). |
-| `1.0.0-DRAFT` | 2026-10-24 | Requirements Traceability Lead | Comprehensive `ARCH-12` draft: 100% bidirectional traceability verifying complete coverage of all 260 formal baseline BRD identifiers across specifications ARCH-01 through ARCH-11. |
+| `1.0.0-DRAFT` | 2026-10-24 | Requirements Traceability Lead | Working `ARCH-12` draft: feature and NFR ID inventories reconciled; workflow coverage count verified; full FR/BR bidirectional coverage remains pending. |
 
 ---
 
