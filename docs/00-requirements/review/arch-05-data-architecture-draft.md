@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Database engine topologies, schema isolation boundaries, outbox tables, master entity catalogs, and consistency models are fully articulated. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Principal Database Architect, and SRE Lead. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of data retention policies ([`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020)) and zero overselling guarantees ([`NFR-INT-001`](../07-non-functional-requirements.md#nfr-int-001)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -261,7 +261,7 @@ The checklist below governs the quality gate audit for `ARCH-05`:
 - [x] 4. **Transactional Outbox CDC:** Debezium CDC pattern and outbox table schema specified for guaranteed reliable event publishing.
 - [x] 5. **Zero Overselling Concurrency Invariant:** Atomic hold reservation query specified to eliminate overselling during flash sales.
 - [x] 6. **Statutory Compliance Rules:** Gapless invoice sequence counters, 8-year WORM retention, and zero PAN storage enforced at the schema level.
-- [x] 7. **100% Traceability:** All data components map to declared BRD requirement identifiers.
+- [ ] 7. **Traceability verification pending:** All data components map to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
 
 
