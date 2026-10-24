@@ -21,7 +21,8 @@
 The current Document 08 has 22 OQs. Based on the current text, the status distribution is:
 
 - **17 marked `CONFIRMED`:** OQ-001–006, OQ-008–011, OQ-013–014, OQ-016–017, OQ-020–022.
-- **5 marked `UNDER_REVIEW`:** OQ-007, OQ-012, OQ-015, OQ-018, OQ-019.
+- **4 marked `UNDER_REVIEW`:** OQ-012, OQ-015, OQ-018, OQ-019.
+- **1 recorded decision with operational validation still open:** OQ-007 (four initial warehouses and regional inventory; actual sites/PIN codes not validated).
 
 This is a documentation status snapshot, not a claim that the full BRD baseline is approved. Some “confirmed” OQs depend on external commercial, legal, operational or technical evidence that remains open.
 
@@ -29,7 +30,7 @@ This is a documentation status snapshot, not a claim that the full BRD baseline 
 
 | ID | Current finding | Required action | Owner / evidence |
 |---|---|---|---|
-| OQ-007 / ASM-004 | Document 08 still proposes one central warehouse. Later owner planning selected four initial warehouses and regional inventory; proposed city examples are not final validated addresses. | Reconcile OQ-007 and ASM-004. Record four warehouses and regional inventory as the selected planning model; keep exact locations, PIN codes and site readiness pending validation. Keep the architecture location-agnostic/configuration-driven. | Business Owner confirmation of the recorded choice; Operations evidence for real sites and serviceability |
+| OQ-007 / ASM-004 | Reconciled in this branch to four initial warehouses and regional inventory. Exact sites/PIN codes remain unvalidated. | Validate real sites, capacity, tax/legal implications, stock distribution and serviceability. Keep architecture location-agnostic/configuration-driven. | Operations/Finance evidence for real sites and serviceability; baseline approval remains pending |
 | OQ-012 | Reviews and ratings remain `UNDER_REVIEW`. | Choose launch scope (include, defer, or exclude) and moderation/verified-purchase policy; update FR/BR/WF/RTM consistently. | Business Owner / Product |
 | OQ-015 | Notification channels remain `UNDER_REVIEW`, while the RTM describes SMS, email and WhatsApp plus fallback. | Confirm required launch channels, which notifications are mandatory, fallback rules, template ownership and channel-specific dependencies. | Business Owner / Operations; DEP-003 evidence |
 | OQ-018 | Reporting scope remains `UNDER_REVIEW`, while the RTM describes GMV, revenue, tax and stock-velocity reports as confirmed. | Confirm launch reports, roles, export requirements, retention and reconciliation requirements; align FEAT/FR/BR/WF/RTM statuses. | Business Owner / Finance |
@@ -54,9 +55,9 @@ This is a documentation status snapshot, not a claim that the full BRD baseline 
 ### 4.1 Stale audit and decision-register summaries
 
 1. `review/brd-final-quality-audit.md` is dated 2026-10-18 and says 17 of 22 questions remain provisional / only five are confirmed. This conflicts with current Document 08 and later owner decisions recorded on 2026-10-24. Treat the older report as historical; do not use it as the current closure verdict.
-2. `review/executive-decision-register.md` introduction and summary table describe eleven decisions, while later sections include ADQ-012 through ADQ-014. The document needs a consistent index and decision count.
-3. ADQ-011 is historical for delivery-provider mix and is explicitly superseded by ADQ-014. Ensure the summary table clearly marks it as superseded rather than presenting its old restriction as current policy.
-4. The current OQ-007 recommendation and ASM-004 single-warehouse assumption conflict with the later four-warehouse/regional-inventory planning input.
+2. `review/executive-decision-register.md` was updated in this branch to index ADQ-001 through ADQ-015, including the previously missing summary rows for ADQ-012 through ADQ-015.
+3. ADQ-011 remains historical for delivery-provider mix and is explicitly superseded by ADQ-014; the summary row should continue to be visually marked as historical/superseded in any later cleanup.
+4. OQ-007 and ASM-004 were reconciled in this branch to four initial warehouses and regional inventory, with exact sites/PIN codes pending validation.
 
 ### 4.2 Traceability and status mismatches to resolve
 
@@ -119,7 +120,7 @@ Phase 1 is ready to submit for formal approval only when all applicable criteria
 
 ## 7. Recommended closure sequence
 
-1. Reconcile OQ-007/ASM-004 and record the four-warehouse/regional-inventory decision without hard-coding city or PIN-code data into the architecture.
+1. Validate the reconciled OQ-007/ASM-004 four-warehouse/regional-inventory plan against actual sites without hard-coding city or PIN-code data into the architecture.
 2. Obtain owner decisions or explicit deferrals for OQ-012, OQ-015, OQ-018 and OQ-019.
 3. Reconcile the decision register and mark ADQ-011 as superseded for provider mix by ADQ-014.
 4. Correct RTM status/dependency mismatches and recheck all linked FR/BR/WF/NFR records.
