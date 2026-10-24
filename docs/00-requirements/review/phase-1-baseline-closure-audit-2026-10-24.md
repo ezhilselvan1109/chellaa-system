@@ -63,7 +63,7 @@ The four selections above are business-scope decisions recorded in the current w
 
 ### 4.2 Remaining traceability and specification work
 
-- `FEAT-CUST-003` is `PROPOSED` and cites OQ-020 even though OQ-020 is `CONFIRMED`; verify whether the feature remains proposed for another reason and remove/update the unrelated dependency if appropriate.
+- Reconciled the `FEAT-CUST-003` / `FR-CUST-004` traceability mismatch: OQ-020 Option A is confirmed, so the functional requirement and RTM no longer present OQ-020 as an unresolved dependency. The feature/requirement remain `PROPOSED` pending explicit Legal/Security review of export contents, identity verification, anonymization coverage, exceptions, retention mapping and acceptance evidence.
 - `FEAT-NTF-001`, `FEAT-REV-001` and `FEAT-RPT-001` now reflect the selected scope in the Feature Inventory and RTM. Their detailed requirements still contain explicitly open policy/specification items; do not treat those details as settled.
 - Added `WF-017` for verified-buyer review submission and mandatory moderation; updated `FR-REV-001`, the RTM and Document 11's workflow count to reference 17 workflows. A complete cross-document link/identifier audit remains outstanding.
 - OQ-015's selected channel set does not define the event-to-channel matrix, retry/fallback behavior or provider readiness. `DEP-003` remains open.
@@ -122,7 +122,7 @@ Phase 1 is ready to submit for formal approval only when all applicable criteria
 1. Complete the remaining detailed policy/specification work for OQ-012, OQ-015 and OQ-018 without changing the selections already recorded.
 2. Validate the OQ-007/ASM-004 four-warehouse/regional-inventory plan against actual sites, legal/tax implications, capacity and serviceability without hard-coding city or PIN-code data.
 3. Keep OQ-019 legacy customer/order migration excluded; validate standard catalog/opening-stock import separately under DEP-005 and inventory readiness.
-4. Resolve the remaining `FEAT-CUST-003` / OQ-020 traceability mismatch and audit all FR/BR/WF/NFR statuses, identifiers and links.
+4. Complete the whole-package audit of all FR/BR/WF/NFR statuses, identifiers and links; the specific `FEAT-CUST-003` / OQ-020 mismatch has been reconciled.
 5. Re-audit all 12 core BRD files, acceptance criteria, scope boundaries and cross-document policy values; distinguish decisions recorded from implementation/operational evidence.
 6. Update this working audit with checks actually performed, findings, remediation links and remaining risks. Do not reuse the 2026-10-18 audit verdict as if it were a fresh audit.
 7. Submit the package to the authorized Business Owner for formal review. Keep Phase 1 `PENDING_APPROVAL`, baseline `NOT_APPROVED`, architecture `NOT_GRANTED` until genuine sign-off is recorded.
