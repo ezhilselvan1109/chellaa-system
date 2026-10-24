@@ -38,7 +38,7 @@ Document 11 defines ten checkpoints and says they must be formally signed off by
 
 ## 3. Open questions and dependencies
 
-The Open Questions summary in Document 08 now reflects the explicit owner selections that are also recorded in the Executive Decision Register.
+The Open Questions summary in Document 08 now reflects the explicit owner selections that are also recorded in the Executive Decision Register. Since this audit was created, `OQ-003` was resolved by the owner selecting Option C and is recorded as `ADQ-009`.
 
 ### Confirmed owner decisions
 
@@ -56,7 +56,6 @@ These selections resolve the associated business choices; they do **not** approv
 
 ### Questions still requiring business-owner/domain-lead resolution
 
-- `OQ-003` — Required customer payment methods (currently `UNDER_REVIEW`).
 - `OQ-004` — Payment gateway selection (currently `OPEN`).
 - `OQ-005` — Courier/logistics partner selection (currently `OPEN`).
 - `OQ-007` — Warehouse launch topology (currently `UNDER_REVIEW`).
@@ -65,7 +64,7 @@ These selections resolve the associated business choices; they do **not** approv
 - `OQ-018` — Essential executive reports (currently `UNDER_REVIEW`).
 - `OQ-019` — Legacy data migration scope (currently `UNDER_REVIEW`).
 
-The document lists six confirmed questions overall, including `OQ-013`, `OQ-014`, `OQ-020`, `OQ-021`, and `OQ-022` in addition to `OQ-011`. Check the detailed rationale and any affected requirements before considering the BRD ready for final approval.
+The document lists confirmed questions including `OQ-011`, `OQ-013`, `OQ-014`, `OQ-020`, `OQ-021`, and `OQ-022`; `OQ-003` is now also confirmed from the owner selection. Check the detailed rationale and any affected requirements before considering the BRD ready for final approval.
 
 ### Open external dependencies
 
