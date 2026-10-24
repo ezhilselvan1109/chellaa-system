@@ -44,8 +44,8 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 
 | Dependency ID | Dependency Name | Type | Description | Affected Requirements | Potential Commercial Risk | Mitigation / Resolution Strategy | Owner | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| <a id="dep-001"></a>**DEP-001** | Payment Gateway Merchant Agreement | Commercial Integration | Formal merchant account contract with certified payment gateway (e.g., Razorpay, Cashfree, PayU). | `FEAT-PAY-001`, `FR-PAY-001` | Inability to accept online payments or execute automated refunds at launch. | Initiate provider RFP immediately; evaluate sandbox APIs in parallel. | Finance Lead | `OPEN` |
-| <a id="dep-002"></a>**DEP-002** | Courier Logistics Partner Master Services Agreement | Operational Integration | Commercial agreement with national courier aggregator or carriers (e.g., Shiprocket, Delhivery, Blue Dart). | `FEAT-SHP-001`, `FR-SHP-001` | Parcels cannot be automatically booked or tracked via API; manual shipping delays. | Shortlist top 2 logistics partners; finalize SLA on API uptime and COD remittance. | Operations Lead | `OPEN` |
+| <a id="dep-001"></a>**DEP-001** | Razorpay Merchant Agreement | Commercial Integration | Formal Razorpay merchant account agreement, production credentials, settlement terms, refund configuration, and webhook setup. | `FEAT-PAY-001`, `FR-PAY-001` | Inability to accept online payments or execute automated refunds at launch. | Initiate provider RFP immediately; evaluate sandbox APIs in parallel. | Finance Lead | `OPEN` |
+| <a id="dep-002"></a>**DEP-002** | Shiprocket Logistics Partner Agreement | Operational Integration | Shiprocket account/contract, API credentials, serviceability validation, carrier availability, COD remittance terms, reverse pickup, and agreed service levels. | `FEAT-SHP-001`, `FR-SHP-001` | Parcels cannot be automatically booked or tracked via API; manual shipping delays. | Shortlist top 2 logistics partners; finalize SLA on API uptime and COD remittance. | Operations Lead | `OPEN` |
 | <a id="dep-003"></a>**DEP-003** | Telecom SMS DLT Registration & WhatsApp Business API | Regulatory Integration | Distributed Ledger Technology (DLT) template approval for transactional SMS and Meta WhatsApp Business API account. | `FEAT-NTF-001`, `FR-NTF-001` | Transactional OTPs and shipping alerts blocked by telecom operators as spam. | Register enterprise entity and SMS templates on commercial telecom DLT portal immediately. | Operations Lead | `OPEN` |
 | <a id="dep-004"></a>**DEP-004** | Enterprise GSTIN & Invoicing Numbering Scheme | Legal & Tax | Registered corporate Goods and Services Tax Identification Number (GSTIN) and official tax invoice format. | `FEAT-FIN-001`, `FR-FIN-001` | Generated tax invoices non-compliant with statutory tax audits; regulatory penalties. | Obtain legal corporate tax opinion on HSN rate codes and sequential invoice numbering syntax. | Finance Lead | `OPEN` |
 | <a id="dep-005"></a>**DEP-005** | Master Electronics Catalog & Brand Specifications | Business Merchandising | High-resolution photography, accurate technical specification sheets, and manufacturer warranty terms. | `FEAT-CAT-001`, `FR-CAT-001` | Inaccurate product descriptions leading to customer disputes and elevated return rates. | Establish structured ingestion spreadsheet templates for supplier distributors. | Merchandising Lead | `OPEN` |
@@ -120,37 +120,39 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 ---
 
 <a id="oq-004"></a>
-### OQ-004: Payment Gateway Partner Shortlist
-* **Question:** Which external payment gateway providers will be evaluated for primary and secondary integration?
-* **Why the Decision Matters:** Determines available SDKs, transaction fee take-rates, webhook reliability, and automated refund API capabilities.
+### OQ-004: Payment Gateway Partner Selection
+* **Question:** Which external payment gateway provider will be integrated for online payments at launch?
+* **Why the Decision Matters:** Determines the payment API/SDK, transaction fees, webhook verification, payment status handling, refund API integration, settlement reconciliation, and merchant onboarding dependency.
 * **Affected Domains:** Payments, External Integrations.
 * **Affected Requirement IDs:** `FEAT-PAY-001`, `FEAT-INT-001`.
 * **Possible Options:**
-  * *Option A:* Single primary gateway (Razorpay or Cashfree).
-  * *Option B:* Dual gateway architecture (Primary: Razorpay; Failover: Cashfree or PayU).
-* **Recommended Option:** **Option B (Dual Gateway).** A secondary failover gateway prevents checkout abandonment during scheduled maintenance or outages of the primary provider.
-* **Impact of Delaying:** Does not block requirements; must be resolved during Architecture Phase.
+  * *Option A:* Single payment gateway — select Razorpay or Cashfree.
+  * *Option B:* Dual gateway architecture — primary Razorpay with a secondary failover provider.
+* **Business Owner Decision:** **Single gateway — Razorpay only.** Although the earlier option label mentioned Option B, “Razorpay only” means no secondary gateway at launch; this is recorded as the single-gateway approach (Option A), with Razorpay as the named provider. Recorded 2026-10-24 from the explicit Business Owner instruction.
+* **Implementation Constraints:** Integrate Razorpay hosted/checkout flow; verify webhook signatures; process payment events idempotently; reconcile settlements; support source refunds; do not store raw card PAN/CVV. Do not automatically retry an ambiguous/pending payment through another provider.
+* **Impact of Delaying:** Blocks final provider-specific integration configuration and merchant onboarding, but does not itself approve the architecture.
 * **Priority:** `P1`
-* **Decision Owner:** Finance Lead / Technical Lead.
-* **Status:** `OPEN`.
+* **Decision Owner:** EZHIL SELVAN P. — Founder; Finance and Technical review remain required.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; merchant agreement and technical validation remain open).
 
 ---
 
 <a id="oq-005"></a>
-### OQ-005: Courier and Shipping Logistics Partners
-* **Question:** Which courier or shipping logistics providers will be integrated for order dispatch and live tracking?
-* **Why the Decision Matters:** Influences delivery PIN-code coverage, shipping label generation, tracking webhooks, and reverse pickup reliability.
+### OQ-005: Courier and Shipping Logistics Partner
+* **Question:** Which courier/logistics integration approach will be used for dispatch, tracking, and reverse pickup at launch?
+* **Why the Decision Matters:** Influences delivery PIN-code coverage, shipping label generation, tracking webhooks, COD remittance support, and reverse pickup reliability.
 * **Affected Domains:** Shipping & Logistics, Returns, Reverse Logistics.
 * **Affected Requirement IDs:** `FEAT-SHP-001`, `FR-SHP-001`.
 * **Possible Options:**
-  * *Option A:* Direct integration with a single national carrier (e.g., Delhivery or Blue Dart).
-  * *Option B:* Integration with a multi-carrier logistics aggregator (e.g., Shiprocket) providing multi-courier routing.
-  * *Option C:* Direct API integration with top 2 national carriers.
-* **Recommended Option:** **Option B (Multi-carrier aggregator like Shiprocket at launch).** Provides instant access to multiple couriers, broad PIN-code coverage, and unified API tracking.
-* **Impact of Delaying:** Dictates consignment booking data contracts.
+  * *Option A:* Direct integration with one national carrier.
+  * *Option B:* Multi-carrier logistics aggregator such as Shiprocket.
+  * *Option C:* Direct API integrations with two national carriers.
+* **Business Owner Decision:** **Option B — Shiprocket multi-carrier aggregator.** Recorded 2026-10-24 from the Business Owner's selection of Option B for the logistics decision.
+* **Implementation Constraints:** Validate serviceability by PIN code, shipment creation, AWB/label generation, pickup booking, tracking webhooks/polling, cancellations, reverse pickup, COD support/remittance, API rate limits, and failure handling before production launch.
+* **Impact of Delaying:** Blocks final provider contract/SLA and production credentials; does not itself approve the architecture.
 * **Priority:** `P1`
-* **Decision Owner:** Operations Lead.
-* **Status:** `OPEN`.
+* **Decision Owner:** EZHIL SELVAN P. — Founder; Operations and Technical review remain required.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; partner agreement and integration validation remain open).
 
 ---
 
