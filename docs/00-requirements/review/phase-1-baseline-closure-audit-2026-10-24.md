@@ -18,23 +18,23 @@
 
 ## 2. Current business-question status snapshot
 
-The current Document 08 has 22 OQs. Based on the current text, the status distribution is:
+Document 08 contains 22 OQs. After the selections recorded on 2026-10-24, the status distribution is:
 
 - **17 marked `CONFIRMED`:** OQ-001–006, OQ-008–011, OQ-013–014, OQ-016–017, OQ-020–022.
-- **4 marked `UNDER_REVIEW`:** OQ-012, OQ-015, OQ-018, OQ-019.
-- **1 recorded decision with operational validation still open:** OQ-007 (four initial warehouses and regional inventory; actual sites/PIN codes not validated).
+- **4 with `OWNER_DECISION_RECORDED`:** OQ-012, OQ-015, OQ-018 and OQ-019. Their selected business scope is recorded; the detailed follow-up items below remain open where noted.
+- **1 with a recorded planning decision and operational validation still open:** OQ-007 (four initial warehouses and regional inventory; actual sites/PIN codes not validated).
 
-This is a documentation status snapshot, not a claim that the full BRD baseline is approved. Some “confirmed” OQs depend on external commercial, legal, operational or technical evidence that remains open.
+This is a documentation status snapshot, not a claim that the full BRD baseline is approved. Recorded option selections do not close operational dependencies, validate implementation, or replace formal approval in Document 11.
 
 ## 3. Decisions and unresolved questions
 
 | ID | Current finding | Required action | Owner / evidence |
 |---|---|---|---|
-| OQ-007 / ASM-004 | Reconciled in this branch to four initial warehouses and regional inventory. Exact sites/PIN codes remain unvalidated. | Validate real sites, capacity, tax/legal implications, stock distribution and serviceability. Keep architecture location-agnostic/configuration-driven. | Operations/Finance evidence for real sites and serviceability; baseline approval remains pending |
-| OQ-012 | Reviews and ratings remain `UNDER_REVIEW`. | Choose launch scope (include, defer, or exclude) and moderation/verified-purchase policy; update FR/BR/WF/RTM consistently. | Business Owner / Product |
-| OQ-015 | Notification channels remain `UNDER_REVIEW`, while the RTM describes SMS, email and WhatsApp plus fallback. | Confirm required launch channels, which notifications are mandatory, fallback rules, template ownership and channel-specific dependencies. | Business Owner / Operations; DEP-003 evidence |
-| OQ-018 | Reporting scope remains `UNDER_REVIEW`, while the RTM describes GMV, revenue, tax and stock-velocity reports as confirmed. | Confirm launch reports, roles, export requirements, retention and reconciliation requirements; align FEAT/FR/BR/WF/RTM statuses. | Business Owner / Finance |
-| OQ-019 | Historical-data migration scope remains `UNDER_REVIEW`, while the RTM describes bulk spreadsheet catalog/inventory import as confirmed and links it to OQ-019. | Separate **legacy historical migration** from **new catalog/inventory bulk import**. Confirm whether legacy migration is needed; do not make bulk import depend on an unrelated question unless justified. | Business Owner / Merchandising / Data owner |
+| OQ-007 / ASM-004 | Four initial warehouses with regional inventory are recorded; actual sites, addresses and serviceable PIN codes remain unvalidated. | Validate real sites, capacity, tax/legal implications, stock distribution and serviceability. Keep the central design location-agnostic/configuration-driven. | Operations/Finance evidence; DEP-002 remains open |
+| OQ-012 / ADQ-016 | **Option B selected:** Phase 1 reviews for verified buyers only, with mandatory admin moderation before publication. | Specify moderation criteria, roles/permissions, appeals/rejection handling, photo-review policy, retention, abuse escalation and review edit/delete rules. | Business Owner / Product / Security |
+| OQ-015 / ADQ-017 | **Option B selected:** SMS, Email and WhatsApp Business API for order lifecycle events. | Specify event-to-channel matrix, mandatory channels per event, retry/fallback order and timing, consent/preference handling where applicable, templates and delivery targets. Validate DEP-003 provider registration and channel tests. | Business Owner / Operations / Marketing; DEP-003 remains open |
+| OQ-018 / ADQ-018 | **Option B selected:** standard daily reports plus real-time BI, predictive replenishment and customer cohort retention analysis. | Specify KPI definitions/formulas, data sources, refresh latency, cadence, permissions, exports, retention, predictive methodology and acceptance/validation criteria. | Business Owner / Finance / Product / Data |
+| OQ-019 / ADQ-019 | **Option A selected:** no legacy customer/order history migration for initial launch; new catalog and opening stock use the separate bulk import capability. | Keep historical migration out of the current baseline. Validate catalog data quality and opening-stock reconciliation as separate DEP-005/inventory readiness work; reopen migration only through change control if a concrete legacy dataset is identified and approved. | Business Owner / Merchandising / Data owner; DEP-005 remains open |
 
 ### Other recorded owner selections that remain subject to baseline sign-off
 
@@ -48,30 +48,28 @@ This is a documentation status snapshot, not a claim that the full BRD baseline 
 - 99.9% uptime, RPO ≤ 5 minutes and RTO ≤ 2 hours.
 - Guest checkout with automatic account creation after mobile OTP verification.
 - India-wide delivery target with phased activation; own delivery team, direct courier integrations and aggregator are permitted.
-- Four initial warehouse locations and regional inventory are recorded as planning inputs; exact sites, service areas and serviceability are not validated.
+- Four initial warehouse locations and regional inventory are planning inputs; exact sites, service areas and serviceability are not validated.
+
+The four selections above are business-scope decisions recorded in the current working branch. They do not by themselves approve the overall requirements baseline or architecture.
 
 ## 4. Cross-document consistency findings
 
 ### 4.1 Stale audit and decision-register summaries
 
-1. `review/brd-final-quality-audit.md` is dated 2026-10-18 and says 17 of 22 questions remain provisional / only five are confirmed. This conflicts with current Document 08 and later owner decisions recorded on 2026-10-24. Treat the older report as historical; do not use it as the current closure verdict.
-2. `review/executive-decision-register.md` was updated in this branch to index ADQ-001 through ADQ-015, including the previously missing summary rows for ADQ-012 through ADQ-015.
-3. ADQ-011 remains historical for delivery-provider mix and is explicitly superseded by ADQ-014; the summary row should continue to be visually marked as historical/superseded in any later cleanup.
-4. OQ-007 and ASM-004 were reconciled in this branch to four initial warehouses and regional inventory, with exact sites/PIN codes pending validation.
+1. `review/brd-final-quality-audit.md` is dated 2026-10-18 and says 17 of 22 questions remain provisional / only five are confirmed. Treat it as a historical snapshot, not the current closure verdict.
+2. `review/executive-decision-register.md` now indexes ADQ-001 through ADQ-019. ADQ-016 through ADQ-019 record the selections for OQ-012, OQ-015, OQ-018 and OQ-019.
+3. ADQ-011 remains historical for delivery-provider mix and is superseded by ADQ-014; preserve that distinction.
+4. OQ-007 and ASM-004 remain aligned to four initial warehouses with regional inventory; actual sites/PIN codes remain unvalidated.
 
-### 4.2 Traceability and status mismatches to resolve
+### 4.2 Remaining traceability and specification work
 
-The current RTM contains rows whose status/dependency story needs reconciliation with Document 08:
-
-- `FEAT-CUST-003` is `PROPOSED` and cites OQ-020 even though OQ-020 is `CONFIRMED`; verify whether the feature itself is proposed for another reason or update its status and dependency.
-- `FEAT-ADV-001` is `PROPOSED` and cites OQ-014 even though OQ-014 excludes pre-orders/backorders. Verify whether this feature is actually a product bundle capability and remove the unrelated OQ-014 dependency if so.
-- `FEAT-NTF-001` is `CONFIRMED` while OQ-015 is `UNDER_REVIEW`; mark only the undecided channel-specific portions as provisional or resolve the question.
-- `FEAT-RPT-001` is `CONFIRMED` while OQ-018 is `UNDER_REVIEW`; reconcile the scope and status.
-- `FEAT-DAT-001` is `CONFIRMED` while OQ-019 is `UNDER_REVIEW`; distinguish bulk catalog/inventory import from historical migration and correct the traceability link if needed.
-- `FEAT-INV-001` cites OQ-007; update its implementation assumptions for four regional warehouses without hard-coding city names.
-- Confirm that every FR, BR, WF and NFR linked to the five under-review questions has a status consistent with the decision register.
-
-These are findings to resolve; this audit does not silently change the normative requirement status on behalf of the Business Owner.
+- `FEAT-CUST-003` is `PROPOSED` and cites OQ-020 even though OQ-020 is `CONFIRMED`; verify whether the feature remains proposed for another reason and remove/update the unrelated dependency if appropriate.
+- `FEAT-NTF-001`, `FEAT-REV-001` and `FEAT-RPT-001` now reflect the selected scope in the Feature Inventory and RTM. Their detailed requirements still contain explicitly open policy/specification items; do not treat those details as settled.
+- OQ-015's selected channel set does not define the event-to-channel matrix, retry/fallback behavior or provider readiness. `DEP-003` remains open.
+- OQ-018's selected advanced reporting scope does not define KPI formulas, freshness, permissions, exports, predictive methodology or validation evidence.
+- OQ-012's selected verified-buyer/moderation scope does not decide photo reviews, appeals, retention, abuse escalation or edit/delete policy.
+- OQ-019 is separate from `FEAT-DAT-001` / `FR-DAT-001`: bulk catalog/inventory import remains in scope; legacy customer/order history migration is excluded for the initial launch.
+- Recheck all linked FR/BR/WF/NFR statuses, links and acceptance criteria during the final whole-package audit. This targeted closure pass is not evidence that every one of the 12 BRD documents has been fully audited.
 
 ### 4.3 NFR approval and evidence
 
@@ -82,7 +80,7 @@ A recorded business target is not proof that the system meets it. Review the NFR
 - Security, privacy, retention and audit requirements.
 - Observability thresholds and operational response.
 
-Where an NFR is marked `PROPOSED`, either obtain owner approval, revise it with the owner, or explicitly record it as deferred. Where it is confirmed as a target, record validation as `NOT_TESTED` until actual evidence exists.
+Where an NFR is marked `PROPOSED`, obtain owner approval, revise it with the owner, or explicitly record it as deferred. Where a target is selected or confirmed, record validation as `NOT_TESTED` until actual evidence exists.
 
 ## 5. Dependency register: readiness is separate from baseline approval
 
@@ -120,13 +118,13 @@ Phase 1 is ready to submit for formal approval only when all applicable criteria
 
 ## 7. Recommended closure sequence
 
-1. Validate the reconciled OQ-007/ASM-004 four-warehouse/regional-inventory plan against actual sites without hard-coding city or PIN-code data into the architecture.
-2. Obtain owner decisions or explicit deferrals for OQ-012, OQ-015, OQ-018 and OQ-019.
-3. Reconcile the decision register and mark ADQ-011 as superseded for provider mix by ADQ-014.
-4. Correct RTM status/dependency mismatches and recheck all linked FR/BR/WF/NFR records.
-5. Re-audit all 12 core BRD files, identifier/link integrity, Mermaid syntax, acceptance criteria, scope boundaries and policy-value consistency.
-6. Produce a current audit and remediation log; do not reuse the 2026-10-18 audit verdict as if it were a fresh audit.
-7. Submit the package to the authorized Business Owner. Keep Phase 1 `PENDING_APPROVAL`, baseline `NOT_APPROVED`, architecture `NOT_GRANTED` until genuine sign-off is recorded.
+1. Complete the remaining detailed policy/specification work for OQ-012, OQ-015 and OQ-018 without changing the selections already recorded.
+2. Validate the OQ-007/ASM-004 four-warehouse/regional-inventory plan against actual sites, legal/tax implications, capacity and serviceability without hard-coding city or PIN-code data.
+3. Keep OQ-019 legacy customer/order migration excluded; validate standard catalog/opening-stock import separately under DEP-005 and inventory readiness.
+4. Resolve the remaining `FEAT-CUST-003` / OQ-020 traceability mismatch and audit all FR/BR/WF/NFR statuses, identifiers and links.
+5. Re-audit all 12 core BRD files, acceptance criteria, scope boundaries and cross-document policy values; distinguish decisions recorded from implementation/operational evidence.
+6. Update this working audit with checks actually performed, findings, remediation links and remaining risks. Do not reuse the 2026-10-18 audit verdict as if it were a fresh audit.
+7. Submit the package to the authorized Business Owner for formal review. Keep Phase 1 `PENDING_APPROVAL`, baseline `NOT_APPROVED`, architecture `NOT_GRANTED` until genuine sign-off is recorded.
 
 ## 8. Explicit non-claims
 
