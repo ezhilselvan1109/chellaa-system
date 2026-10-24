@@ -18,7 +18,7 @@
 
 ## 1. Purpose and Governance Instructions
 
-This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the nine recorded commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
+This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the eleven recorded commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
 
 ### Mandatory Governance Rules Observed:
 1. **Non-Binding Proposals:** All proposals presented by the engineering team are explicitly designated as **`NON-BINDING RECOMMENDATIONS`**. Engineering has provided technical analysis and operational recommendations, but engineering **cannot** decide commercial policy on behalf of the business.
@@ -40,9 +40,11 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **`ADQ-007`** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) | Peak Festive Surge Capacity Target | Option B: 100 OPM Sustained / 1,000 OPM Peak | **Option B — 100 orders/min sustained; 1,000 orders/min peak** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-008`** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) | Platform Availability SLA & DR Targets | Option A: 99.9% Uptime, RPO $\le 5\text{m}$, RTO $\le 2\text{h}$ | **Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-009`** | [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) | Mandatory Customer Payment Methods | Option B: UPI, cards, net banking, and EMI/BNPL | **Option C — Option A payment methods plus COD under OQ-006 policy** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-010`** | [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) | Payment Gateway Provider | Option B: Dual gateway | **Single gateway — Razorpay only (single-gateway approach / Option A)** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-011`** | [`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005) | Courier / Shipping Logistics Provider | Option B: Multi-carrier aggregator | **Option B — Shiprocket multi-carrier aggregator** | **`OWNER_DECISION_RECORDED`** |
 ---
 
-## 3. Detailed Decision Sheets (ADQ-001 through ADQ-009)
+## 3. Detailed Decision Sheets (ADQ-001 through ADQ-011)
 
 ---
 
@@ -307,6 +309,36 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
+
+### ADQ-010: Payment Gateway Provider
+
+* **Decision ID:** `ADQ-010`
+* **Linked BRD Open Question:** [`OQ-004: Payment Gateway Partner Selection`](../08-assumptions-dependencies-open-questions.md#oq-004)
+* **Affected Business Domains:** Checkout, Payments, Refunds, Settlement Reconciliation, External Integrations.
+* **Business Owner Decision:** **Razorpay only at launch.** No secondary/failover payment gateway is selected for the initial release.
+* **Option Mapping Note:** The BRD's Option A is the single-gateway approach. The owner's phrase “Option B but Razorpay only” has been interpreted by its explicit provider constraint (Razorpay only), so the recorded architecture is single-gateway rather than dual-gateway. This does not authorize a second provider.
+* **Implementation Conditions:** Merchant onboarding and production credentials; hosted/checkout integration; webhook signature verification; idempotent payment processing; payment status reconciliation; source refunds; settlement reconciliation; no raw card PAN/CVV storage.
+* **Business Owner Rationale & Conditions:** None supplied beyond “Razorpay only.”
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**. Razorpay merchant agreement and technical validation remain open dependencies; this is not Phase 1 or architecture approval.
+
+---
+
+### ADQ-011: Courier / Shipping Logistics Provider
+
+* **Decision ID:** `ADQ-011`
+* **Linked BRD Open Question:** [`OQ-005: Courier and Shipping Logistics Partner`](../08-assumptions-dependencies-open-questions.md#oq-005)
+* **Affected Business Domains:** Shipping & Delivery, Returns, Reverse Logistics, COD Reconciliation.
+* **Business Owner Decision:** **Option B — Shiprocket multi-carrier aggregator.**
+* **Implementation Conditions:** Validate PIN-code serviceability, shipment/AWB and label generation, pickup booking, tracking webhooks or polling, cancellation and reverse pickup, COD support/remittance, rate limits, and failure handling.
+* **Business Owner Rationale & Conditions:** None supplied beyond the selected option.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**. Partner agreement, API credentials, commercial terms, and integration validation remain open dependencies; this is not Phase 1 or architecture approval.
+
+---
+
 ## 4. Executive Decision Ratification Record
 
 *(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
@@ -316,6 +348,6 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
 | **Owner Decision Date** | `2026-10-24` |
-| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
