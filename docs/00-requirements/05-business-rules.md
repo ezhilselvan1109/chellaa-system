@@ -822,8 +822,8 @@ $$\text{ATS}_{\text{bundle}} = \min(\text{ATS}_{\text{item}_1}, \text{ATS}_{\tex
 | **BR-PAY-003** | Unknown Payment Status Active Reconciliation | Financial Auditing | High | `CONFIRMED` |
 | **BR-PRM-001** | Strict Coupon Non-Stacking Policy | Promotions | High | `CONFIRMED` |
 | **BR-PRM-002** | Pro-Rata Line-Item Discount Distribution | Accounting & Tax | Critical | `CONFIRMED` |
-| **BR-SHP-001** | Mandatory Air Waybill (AWB) for Dispatch | Logistics Fulfillment| High | `CONFIRMED` |
-| **BR-SHP-002** | Multi-Attempt Delivery (3 Tries) & RTO Protocol| Courier Delivery | Medium | `CONFIRMED` |
+| **BR-SHP-001** | Mandatory Internal Shipment ID and Custody Record for Dispatch | Shipping Fulfillment | High | `PROPOSED` |
+| **BR-SHP-002** | Multi-Attempt In-House Delivery and Return-to-Warehouse Protocol | In-House Delivery | Medium | `PROPOSED` |
 | **BR-RET-001** | Strict 7-Day Electronics Return Window | Returns Management | High | `PROPOSED` (OQ-008) |
 | **BR-RET-002** | Return Quality Grading & Sealed Restocking Rule | Reverse Logistics | Critical | `CONFIRMED` |
 | **BR-RET-003** | Source-Instrument Refund Remittance Rule | Financial Compliance | Critical | `CONFIRMED` |
