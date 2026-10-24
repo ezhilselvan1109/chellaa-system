@@ -31,7 +31,7 @@ Document 11 defines ten checkpoints and says they must be formally signed off by
 | 6 — Business rules catalog | Document 05 exists; formal validation is not recorded. | Pending human sign-off |
 | 7 — Business workflows and state machines | Document 06 exists; formal workflow/exception-path approval is not recorded. | Pending human sign-off |
 | 8 — Quality standards and NFRs | Document 07 exists; agreement on performance, security, scaling and recovery targets is not recorded. | Pending human sign-off |
-| 9 — Uncertainty and open questions | Document 08 was reconciled with owner-selected decisions listed below; six questions remain `UNDER_REVIEW` and two remain `OPEN`. | In progress |
+| 9 — Uncertainty and open questions | Document 08 was reconciled with owner-selected decisions listed below; five questions remain `UNDER_REVIEW` and two remain `OPEN`. | In progress |
 | 10 — Traceability integrity | Document 09 exists and documents traceability claims; an independent current validation run is not evidenced by this audit. | Pending independent validation and sign-off |
 
 **Checkpoint rule:** Do not change the ten checkboxes in `11-review-and-approval.md` until the required human review and evidence exist. Do not fill the formal decision, reviewer signature, or authorization hash from an assumption.
@@ -123,7 +123,7 @@ No signature, authorization hash, technical test result, or committee approval h
 
 ## 7. Recommended execution order
 
-1. Resolve the eight remaining business questions listed in Section 3 with the appropriate owner(s).
+1. Resolve the five remaining business questions listed in Section 3 with the appropriate owner(s).
 2. Confirm launch prerequisites and evidence for DEP-001 through DEP-006.
 3. Independently validate BRD traceability and link integrity; attach test outputs.
 4. Hold the formal Phase 1 checkpoint review and record each checkpoint only when its reviewers accept it.
