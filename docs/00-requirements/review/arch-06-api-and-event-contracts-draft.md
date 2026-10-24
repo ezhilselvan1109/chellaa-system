@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | REST conventions, RFC 7807 problem details, CloudEvents v1.0 specifications, topic taxonomy, and schema evolution rules are fully articulated. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | 100% bidirectional traceability established to functional API requirements ([`FR-INT-001`](../04-functional-requirements.md#fr-int-001)) and observability NFRs ([`NFR-OBS-001`](../07-non-functional-requirements.md#nfr-obs-001)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, API Governance Lead, and Frontend Engineering Leads. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of data schemas and external webhook specifications. |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
