@@ -30,7 +30,7 @@
 
 - `ARCH-01`: replaced the single-central-warehouse assumption with four initial regional warehouse locations, kept exact sites/PIN codes unvalidated, aligned review mapping to `WF-017`, and removed an unapproved automatic email-fallback assumption.
 - `ARCH-04`: changed the old 16-workflow completion/100%-traceability claims to `PENDING_RECONCILIATION`; relabeled the review sequence as `WF-017`. Full workflow title/ID mapping is still outstanding.
-- `ARCH-12`: invalidated the old 260-element/16-workflow/100%-coverage claim, changed workflow total to 17, and marked the workflow coverage row and completion checks as pending re-verification.
+- `ARCH-12`: invalidated the old 260-element/16-workflow/100%-coverage claim; its feature inventory and NFR inventory were expanded to match current source counts (41 and 18). Full FR/BR mapping remains incomplete.
 - Phase 1 `FEAT-CUST-003` / `FR-CUST-004` / RTM traceability was reconciled separately: OQ-020 is confirmed; detailed privacy implementation remains proposed pending Legal/Security review.
 
 These are partial draft corrections, not approval or evidence that all architecture mappings have been reconciled.
@@ -39,15 +39,15 @@ These are partial draft corrections, not approval or evidence that all architect
 
 ### A-01 — Warehouse topology conflict (Critical)
 
-- `ARCH-01` still states a “Single Central Warehouse Baseline” and lists “Single Warehouse Topology” as an operational assumption.
+- Initial draft contained a single-central-warehouse assumption; current ARCH-01 records four configurable warehouse locations. Cross-document inventory/shipping alignment and site-readiness evidence still require review.
 - This conflicts with OQ-007 / ADQ-015, which records four initial warehouse locations with regional inventory.
 - **Required:** align ARCH-01, ARCH-02, ARCH-03, ARCH-05, ARCH-08 and ARCH-12 to a generic, configurable multi-warehouse model. Actual sites, addresses, capacity and PIN-code serviceability must remain unvalidated.
 
 ### A-02 — Workflow identifier and count drift (Critical)
 
 - The requirements workflow inventory now contains `WF-001` through `WF-017`.
-- `ARCH-04` still claims coverage of 16 workflows. Its review sequence is labeled `WF-013`, although requirements now define `WF-013` as Customer Support Ticket Resolution and the review workflow as `WF-017`. Its traceability table also maps several workflow IDs to different business meanings than Document 06.
-- `ARCH-12` still reports 16 workflows and claims 100% coverage of 260 baseline elements without recalculation after WF-017 was added.
+- Initial draft had stale workflow IDs and meanings. Latest ARCH-04 now has 17 unique workflow headings and 17 matrix rows matching the canonical ID inventory; semantic feature/FR/BR mapping is not yet complete.
+- ARCH-12 no longer claims 260 elements or 100% coverage. The remaining overall element total and full bidirectional FR/BR mapping are still not verified.
 - **Required:** reconcile every workflow title, ID, feature/FR/BR link, sequence diagram and coverage total against Document 06. Do not retain a 100% coverage claim until it is actually rechecked.
 
 ### A-03 — Notification fallback is over-specified (High)
@@ -101,3 +101,33 @@ These are partial draft corrections, not approval or evidence that all architect
 - No architecture decision or implementation choice is approved by this audit.
 - No tests, benchmarks, provider integrations or operational readiness checks are claimed as completed.
 - Requirements baseline remains `NOT_APPROVED` and architecture authorization remains `NOT_GRANTED` until the formal governance record is completed.
+
+## 6. Latest execution status — 2026-10-24
+
+### 6.1 Verified counts (mechanical inventory checks)
+
+- **Canonical requirements workflow inventory:** 17 unique workflow IDs (`WF-001`–`WF-017`).
+- **ARCH-04 sequence headings:** 17 unique workflow IDs; no missing or duplicate IDs against Document 06.
+- **ARCH-04 workflow matrix:** 17 unique workflow rows; no missing or duplicate IDs against Document 06.
+- **ARCH-12 feature inventory:** 41/41 source feature IDs are present after adding the eight previously missing feature rows.
+- **ARCH-12 NFR inventory:** 18/18 source NFR IDs are present after adding `NFR-REL-001`, `NFR-ACC-001`, and `NFR-LOC-001`.
+- **ARCH-04 workflow-matrix FR references:** 28 of 56 source FR IDs are explicitly referenced in that matrix.
+- **ARCH-04 workflow-matrix BR references:** 32 of 55 source BR IDs are explicitly referenced in that matrix.
+
+The last two figures measure only explicit ARCH-04 workflow-matrix references, not every architecture document. They demonstrate that the matrix alone does **not** establish full FR/BR traceability. A complete cross-document forward/reverse audit is still required; no overall percentage or “zero orphan” claim is supported yet.
+
+### 6.2 Changes made in this pass
+
+- Reconciled ARCH-04 workflow headings and table meanings to the canonical Document 06 definitions. Catalog publishing is WF-002; inventory receiving is WF-003; search/discovery is WF-004; cart/price-stock revalidation is WF-005; cancellation/inventory release is WF-009; promotion/coupon redemption is WF-011; notifications/support/reporting/provider recovery/admin access/reviews map to WF-012 through WF-017 respectively. Wishlist and tracking are labeled supporting flows rather than invented standalone workflow IDs.
+- Added explicit ARCH-04 sequence flows for WF-002, WF-003 and WF-009, and a conservative WF-015 provider-recovery flow that does not assume automatic payment-gateway or carrier failover.
+- Corrected workflow references in ARCH-01, ARCH-02 and ARCH-12; normalized Markdown workflow link anchors across ARCH-01–ARCH-12.
+- Replaced stale “VALIDATED”/100% coverage claims with `PENDING_RECONCILIATION`, corrected the 50k active-SKU baseline versus 100k stress proposal, aligned several recorded decision descriptions, and removed specific Shiprocket/Delhivery assumptions from updated overview/interaction/resilience passages.
+- Added missing feature/NFR rows to ARCH-12 and marked unverified completion checks pending.
+
+### 6.3 Blocking findings still open
+
+1. **Shipping decision conflict:** current OQ-005 / ADQ-014 describes a hybrid provider model, while a separate owner instruction recorded in project context selects Chellaa's own Shipping Management System and excludes aggregators. This is unresolved and must be reconciled in the source decision register before architecture approval. No named external shipping provider or routing/fallback policy is approved by this audit.
+2. **FR/BR bidirectional mapping:** ARCH-04's workflow matrix explicitly maps only 28/56 FR IDs and 32/55 BR IDs. Trace the remaining source IDs across ARCH-01–ARCH-12 and verify both forward and reverse mappings before claiming full coverage.
+3. **Decision alignment is not uniform implementation readiness:** Razorpay-only, notification channels, verified-buyer moderation, advanced reporting scope, no legacy customer/order-history migration, eight-financial-year statutory retention, COD, four warehouses, 100 orders/min sustained and 1,000 orders/min peak, 99.9% uptime, RPO ≤ 5 minutes and RTO ≤ 2 hours are recorded inputs. Provider readiness, legal/security details, test evidence and operational readiness remain open where noted.
+4. **Validation evidence:** Mermaid syntax, internal Markdown links, architecture diagrams, detailed data/event contracts, and all remaining decision-sensitive statements still need a full-package review. No test suite, renderer, benchmark, provider integration or DR drill is claimed as executed by this pass.
+5. **Formal governance:** Phase 1 review remains `PENDING_APPROVAL`; requirements baseline remains `NOT_APPROVED`; architecture authorization remains `NOT_GRANTED`. Document 11 still requires authorized written sign-off. Do not promote any draft into `docs/01-architecture/` until those gates are formally satisfied.
