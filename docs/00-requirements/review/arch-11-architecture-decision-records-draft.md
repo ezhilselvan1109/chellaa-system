@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | All 12 formal Architecture Decision Records (`ADR-001` through `ADR-012`) are fully articulated in standard MADR format. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to review and ratification by the Architecture Review Board (ARB) and CTO. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to executive ratification of commercial policies in Document 11. |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -289,7 +289,7 @@ The checklist below governs the quality gate audit for `ARCH-11`:
 - [x] 3. **Empirical Evidence Criteria:** Specific benchmark and testing requirements defined for every decision.
 - [x] 4. **Trade-Offs and Consequences:** Positive and negative consequences documented for all selected options.
 - [x] 5. **Single-Retailer Anti-Scope Preserved:** Zero multi-vendor, marketplace, or seller commission architectures evaluated.
-- [x] 6. **100% Traceability:** Mapped to declared BRD requirement identifiers.
+- [ ] 6. **Traceability verification pending:** Mapped to declared BRD requirement identifiers.
 - [x] 7. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
 
 
