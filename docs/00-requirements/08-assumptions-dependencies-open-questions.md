@@ -473,7 +473,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | **OQ-001** | Operating Country Scope | `P0` | `CONFIRMED` | Owner-selected Option A: Domestic India only at launch |
 | **OQ-002** | Currencies & Languages | `P1` | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
 | **OQ-003** | Mandatory Payment Methods | `P0` | `CONFIRMED` | Owner-selected Option C: UPI, cards, net banking, plus COD under OQ-006 policy |
-| **OQ-004** | Payment Gateway Selection | `P1` | `OPEN` | Dual Gateway (Primary + Failover) |
+| **OQ-004** | Payment Gateway Selection | `P1` | `CONFIRMED` | Owner-selected single gateway: Razorpay only |
 | **OQ-005** | Courier Logistics Selection | `P1` | `OPEN` | Multi-carrier aggregator (Shiprocket/similar) |
 | **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
 | **OQ-007** | Warehouse Launch Topology | `P1` | `UNDER_REVIEW` | Single central warehouse at launch |
