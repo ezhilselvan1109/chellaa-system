@@ -325,7 +325,7 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
-### ADQ-011: Shipping Management Approach
+### ADQ-011: Shipping Management Approach (Historical — Provider Mix Superseded by ADQ-014)
 
 * **Decision ID:** `ADQ-011`
 * **Linked BRD Open Question:** [`OQ-005: Shipping Management Approach`](../08-assumptions-dependencies-open-questions.md#oq-005)
@@ -344,9 +344,9 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 * **Decision ID:** `ADQ-012`
 * **Linked BRD Dependency:** [`DEP-002: Shipping Operations Readiness`](../08-assumptions-dependencies-open-questions.md#dep-002)
-* **Related Assumption to Reassess:** [`ASM-004`](../08-assumptions-dependencies-open-questions.md#asm-004) proposes one primary central fulfillment warehouse; nationwide in-house delivery may require a different topology, but no multi-warehouse decision is made here.
+* **Related Assumption to Reassess:** [`ASM-004`](../08-assumptions-dependencies-open-questions.md#asm-004) proposes one primary central fulfillment warehouse; India-wide hybrid delivery may require a different topology, but no multi-warehouse decision is made here.
 * **Affected Business Domains:** Shipping & Delivery, Fulfillment, Warehouse Operations, Workforce Planning, Delivery Fees, Reverse Logistics, Customer Experience.
-* **Business Owner Decision:** **India-wide initial delivery scope using Chellaa's own delivery team and in-house Shipping Management System.** No shipping aggregator is required by this decision.
+* **Business Owner Decision:** **India-wide intended delivery scope using Chellaa's own delivery team and in-house Shipping Management System.** This decision set the geographic target; the hybrid provider model (own team + direct courier partners + shipping aggregator) is defined later by `ADQ-014`.
 * **Interpretation boundary:** This sets the intended geographic scope; it does not assert that every Indian PIN code is immediately serviceable or that staffing, fleet, warehouse capacity, SLAs, or operational readiness have been validated. Checkout must be limited to explicitly enabled PIN codes in the internal serviceability registry.
 * **Implementation / readiness conditions:** Record the actual serviceable PIN codes and phased rollout; confirm warehouse topology; define operating hours, delivery estimates/SLAs, fee policy, staff and backup capacity, fleet model, proof-of-delivery/retention rules, reverse logistics, exception handling, and service continuity. Verify each enabled area through end-to-end operational testing before enabling it in checkout.
 * **Business Owner Rationale & Conditions:** The owner selected India-wide delivery by Chellaa's own team. No specific PIN-code list, rollout schedule, headcount, fleet, warehouse topology, fee, or service-level target was supplied with this decision.
