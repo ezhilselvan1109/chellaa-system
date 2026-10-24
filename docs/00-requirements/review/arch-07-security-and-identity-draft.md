@@ -144,7 +144,7 @@ To satisfy Indian Digital Personal Data Protection (DPDP) Act requirements, sens
 
 To maintain strict PCI-DSS SAQ-A compliance:
 1. No raw Primary Account Numbers (PAN), CVVs, or cardholder banking PINs may enter or touch Chellaa backend servers.
-2. Web and mobile clients interact directly with Razorpay / Cashfree client-side SDKs.
+2. Web and mobile clients interact with Razorpay client-side SDKs; Razorpay is the only recorded online payment gateway. Merchant onboarding and production validation remain open under DEP-001.
 3. Chellaa databases persist exclusively opaque gateway transaction references (`gateway_payment_id`), masked card representations (`last_4: "1234"`), and payment network tokens.
 
 ### 5.3 Cryptographic WORM Audit Ledgers ([`BR-AUD-001`](../05-business-rules.md#br-aud-001), [`BR-DAT-001`](../05-business-rules.md#br-dat-001))
