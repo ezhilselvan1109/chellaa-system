@@ -73,7 +73,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Blocks finalizing the tax calculation engine and courier serviceability architecture.
 * **Priority:** `P0` (Critical)
 * **Decision Owner:** Enterprise Business Owner.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Business Owner Decision:** **Option A — Domestic India only at launch.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -91,7 +93,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Minor impact on backend requirements; major impact on frontend localization frameworks.
 * **Priority:** `P1`
 * **Decision Owner:** Enterprise Business Owner / Marketing Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Business Owner Decision:** **Option A — INR (₹) and English only.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -162,7 +166,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Direct impact on checkout payment validation rules and cash collection reconciliation workflows.
 * **Priority:** `P0`
 * **Decision Owner:** Enterprise Business Owner / Finance Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Business Owner Decision:** **Option B — Restricted COD up to ₹10,000, delivery OTP, and ₹50 non-refundable convenience fee.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -197,7 +203,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Dictates warehouse return inspection grading criteria and customer self-service return workflows.
 * **Priority:** `P0`
 * **Decision Owner:** Enterprise Business Owner.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Business Owner Decision:** **Option B — 7-day return/refund or replacement, subject to technician diagnostic inspection and serial/IMEI verification.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -214,7 +222,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** High impact on cart and checkout price calculation formulas.
 * **Priority:** `P0`
 * **Decision Owner:** Finance Lead / Tax Advisor.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Business Owner Decision:** **Option A — GST-inclusive storefront pricing with tax breakdown/invoice reverse extraction.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -232,7 +242,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Determines registration data schema and identity provider authentication flow.
 * **Priority:** `P0`
 * **Decision Owner:** Product Lead / Business Owner.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Business Owner Decision:** **Option A — Mobile-first SMS OTP; email optional.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -340,7 +352,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Affects technical infrastructure sizing and stress-testing specifications.
 * **Priority:** `P0`
 * **Decision Owner:** Enterprise Business Owner / Technical Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Business Owner Decision:** **Option B — 100 orders/minute sustained; 1,000 orders/minute festive peak.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -357,7 +371,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Impact of Delaying:** Sets parameters for cloud architecture design.
 * **Priority:** `P0`
 * **Decision Owner:** Enterprise Business Owner.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Business Owner Decision:** **Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours.** Selection recorded 2026-10-24 in the Executive Decision Register.
+* **Decision Owner:** EZHIL SELVAN P. — Founder.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -450,23 +466,23 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 | Question ID | Decision Topic | Priority | Current Status | Recommended Baseline Parameter |
 | :---: | :--- | :---: | :---: | :--- |
-| **OQ-001** | Operating Country Scope | `P0` | `UNDER_REVIEW` | Domestic India only at launch |
-| **OQ-002** | Currencies & Languages | `P1` | `UNDER_REVIEW` | INR (₹) and English only |
+| **OQ-001** | Operating Country Scope | `P0` | `CONFIRMED` | Owner-selected Option A: Domestic India only at launch |
+| **OQ-002** | Currencies & Languages | `P1` | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
 | **OQ-003** | Mandatory Payment Methods | `P0` | `UNDER_REVIEW` | UPI, Cards, Net Banking, EMI |
 | **OQ-004** | Payment Gateway Selection | `P1` | `OPEN` | Dual Gateway (Primary + Failover) |
 | **OQ-005** | Courier Logistics Selection | `P1` | `OPEN` | Multi-carrier aggregator (Shiprocket/similar) |
-| **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `UNDER_REVIEW` | Restricted COD ($\le ₹10,000$ limit) |
+| **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
 | **OQ-007** | Warehouse Launch Topology | `P1` | `UNDER_REVIEW` | Single central warehouse at launch |
-| **OQ-008** | Returns & Inspection Policy | `P0` | `UNDER_REVIEW` | 7-day window; defect verification |
-| **OQ-009** | Tax Structure & Display Prices | `P0` | `UNDER_REVIEW` | Indian GST; 100% Tax-Inclusive display |
-| **OQ-010** | Customer Verification Method | `P0` | `UNDER_REVIEW` | Mobile number + SMS OTP primary |
+| **OQ-008** | Returns & Inspection Policy | `P0` | `CONFIRMED` | Owner-selected Option B: 7-day return/refund with diagnostic gate |
+| **OQ-009** | Tax Structure & Display Prices | `P0` | `CONFIRMED` | Owner-selected Option A: GST-inclusive display |
+| **OQ-010** | Customer Verification Method | `P0` | `CONFIRMED` | Owner-selected Option A: mobile SMS OTP; email optional |
 | **OQ-011** | Guest Checkout Support | `P1` | `CONFIRMED` | Owner-selected Option B: guest checkout with phone-OTP auto-account |
 | **OQ-012** | Customer Reviews & Ratings | `P2` | `UNDER_REVIEW` | Deferred to Phase 2 (Frontend) |
 | **OQ-013** | Loyalty & Store Credit | `P2` | `CONFIRMED` | Out of scope for Phase 1 baseline |
 | **OQ-014** | Pre-orders & Backorders | `P1` | `CONFIRMED` | Out of scope (Strict non-negative stock) |
 | **OQ-015** | Notification Channels | `P1` | `UNDER_REVIEW` | SMS (OTP), Email (Invoice), WhatsApp (Order) |
-| **OQ-016** | Peak Traffic & Order Capacity | `P0` | `UNDER_REVIEW` | 100 OPM baseline; 1,000 OPM peak |
-| **OQ-017** | Availability, RTO & RPO Targets | `P0` | `UNDER_REVIEW` | 99.9% Uptime; RPO $\le 5$m; RTO $\le 2$h |
+| **OQ-016** | Peak Traffic & Order Capacity | `P0` | `CONFIRMED` | Owner-selected Option B: 100 OPM sustained; 1,000 OPM peak |
+| **OQ-017** | Availability, RTO & RPO Targets | `P0` | `CONFIRMED` | Owner-selected Option A: 99.9% uptime; RPO ≤ 5m; RTO ≤ 2h |
 | **OQ-018** | Required Business Reports | `P1` | `UNDER_REVIEW` | Standard daily sales, velocity, GST reports |
 | **OQ-019** | Legacy Data Migration Scope | `P1` | `UNDER_REVIEW` | Greenfield launch with catalog import |
 | **OQ-020** | Data Retention & Privacy (DPDPA)| `P0` | `CONFIRMED` | 8-year tax retention; anonymize profile PII |
