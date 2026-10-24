@@ -764,7 +764,7 @@ mindmap
 
 * **Business Responsibility:** Governs carrier consignment booking, Air Waybill (AWB) generation, thermal shipping label generation, delivery PIN code serviceability verification, carrier status webhook ingestion, delivery attempt tracking, and Return-to-Origin (RTO) execution.
 * **Explicit Exclusions:**
-  * Physical road/air package transit (delegated to 3PL logistics couriers, e.g., Shiprocket/Delhivery).
+  * Physical road/air package transit (delegated to 3PL logistics couriers, named shipping provider not selected).
   * Internal warehouse bin picking (owned by *07. Inventory and Warehouse Operations*).
 * **Business Capabilities & Requirement IDs:**
   * Capabilities: Carrier Consignment Booking, AWB Generation, Thermal Label Generation, Tracking Webhook Ingestion, RTO Management.
@@ -1335,7 +1335,7 @@ The checklist below governs the quality gate audit for `ARCH-02`:
 - [x] 5. **Domain Event Catalog:** Complete taxonomy of domain events with past-tense naming syntax, owning domains, triggers, minimum payloads, aggregate IDs, consumers, and security restrictions.
 - [x] 6. **Domain Consistency & Failure Matrix:** All 7 critical cross-domain workflows analyzed for transaction boundaries, invariants, sync vs async profiles, consistency models, retry handling, and compensations.
 - [x] 7. **Candidate Context Groupings:** 6 logical clusters evaluated for cohesion, coupling, communication overhead, and failure isolation.
-- [ ] 8. **Requirements Traceability — verification pending:** All 41 Features, 56 FRs, 55 BRs, 16 Workflows, and 18 NFRs verified against baseline BRD identifiers.
+- [ ] 8. **Requirements Traceability — verification pending:** Current feature/FR/BR/NFR totals and all 17 workflow mappings must be independently verified before completeness can be claimed.
 - [x] 9. **Open Decision & Risk Tracking:** Complete tracking of `ADQ-001` through `ADQ-008`, `AD-001` through `AD-012`, and `OQ-011` with explicit `OPEN` status.
 - [x] 10. **Syntax & Link Cleanliness:** Valid Mermaid diagrams with balanced delimiters, zero broken relative markdown links, and prominent non-binding governance warnings.
 
