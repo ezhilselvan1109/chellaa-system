@@ -471,18 +471,18 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 <a id="oq-019"></a>
 ### OQ-019: Legacy Historical Data Migration Scope
-* **Question:** Does historical customer, product, or order data exist in legacy spreadsheets or prior systems that must be migrated into the new platform?
-* **Why the Decision Matters:** Legacy data migration requires writing ETL mapping scripts, cleansing duplicate records, and reconciling historical financial balances.
-* **Affected Domains:** Data Migration, Catalog, Customer Accounts.
-* **Affected Requirement IDs:** `FEAT-DAT-001`.
+* **Question:** Does Chellaa have historical customer, product or order data in existing systems that must be migrated, beyond the new-platform bulk catalog and inventory import capability?
+* **Why the Decision Matters:** Historical migration may require source-system discovery, data cleansing, identity matching, financial reconciliation, retention/legal review and a controlled cutover.
+* **Affected Domains:** Data Migration, Customer Accounts, Orders, Finance.
+* **Affected Requirement IDs:** A separate historical-migration capability is not yet baselined. `FEAT-DAT-001` / `FR-DAT-001` define ongoing bulk catalog/inventory import and are not, by themselves, proof that legacy order/customer migration is in scope.
 * **Possible Options:**
-  * *Option A:* Clean greenfield launch (only master product catalog and active warehouse stock imported via bulk spreadsheet).
-  * *Option B:* Full historical order and customer account migration from legacy systems.
-* **Recommended Option:** **Option A (Greenfield launch with master catalog and inventory import).** Avoids contaminating the new architecture with incomplete or non-compliant legacy order data.
-* **Impact of Delaying:** Determines whether historical migration pipelines are in baseline scope.
+  * *Option A:* Greenfield launch with no historical customer/order migration. New master catalog and opening stock are loaded through the standard bulk import capability.
+  * *Option B:* Migrate specified historical data sets after source inventory, mapping, cleansing, privacy review and reconciliation are approved.
+* **Recommended Option:** Option A is a non-binding proposal only; the Business Owner must confirm whether legacy data exists and whether migration is required.
+* **Impact of Delaying:** Determines whether a distinct historical migration workstream and acceptance criteria are needed. It does not block documenting or validating the standard bulk catalog/inventory import.
 * **Priority:** `P1`
-* **Decision Owner:** Enterprise Business Owner.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Enterprise Business Owner / Data Owner.
+* **Status:** `UNDER_REVIEW` (Historical migration decision remains open; bulk import is a separate capability).
 
 ---
 
