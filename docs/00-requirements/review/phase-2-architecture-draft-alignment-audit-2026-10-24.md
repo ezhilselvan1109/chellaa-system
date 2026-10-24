@@ -85,6 +85,7 @@ The source inventories were recalculated by extracting unique IDs from the curre
 - Corrected ARCH-04 workflow-matrix titles to match Document 06, restricted its payment actor to Razorpay, and preserved the extra shipment-tracking flow as supporting WF-008 work rather than a new workflow.
 - Removed unapproved notification cross-channel fallback assumptions in ARCH-02 and ARCH-08; channel fallback order/timing remains open under OQ-015 / DEP-003.
 - Removed Cashfree as a second payment-gateway option in ARCH-04, ARCH-07 and ARCH-08; Razorpay is the only recorded online gateway, with DEP-001 readiness still open.
+- Rebuilt ARCH-02's Context Relationship Catalog with canonical workflow references and `PROPOSED` status for non-binding architecture relationships; repaired the domain-to-requirement matrix's obvious incorrect OQ/ADQ/ASM mappings for catalog, search, accounts, inventory/warehousing, payments, tax, shipping, returns, notifications, reviews, reporting, bulk import and audit operations. The matrix remains a working crosswalk and needs independent semantic review.
 - Corrected ARCH-12's NFR crosswalk from the nonexistent `NFR-OPS-001` to source-defined `NFR-OBS-001`; added explicit ASM-001–010 and DEP-001–006 source-index tables, preserving source statuses.
 - Corrected the invalid `FR-OBS-001` reference to `FR-OPS-001`.
 - Updated Document 09 with assumption/dependency/open-question crosswalks and corrected missing `BR-CAT-003` and `NFR-AVL-001` RTM references.
