@@ -1135,7 +1135,7 @@ Every functional requirement specifies:
   5. The system records the internal Shipment ID, selected lane, provider booking reference if applicable, manifest, custody handover evidence, actor and timestamp.
 * **Alternative Scenarios:**
   * Shipment creation request is retried: return the existing active Shipment ID rather than creating a duplicate.
-  * Direct carrier integration is later approved: add a separately scoped adapter and carrier-specific identifiers without replacing the internal Shipment ID.
+  * A new courier or aggregator lane is approved later: add/configure its provider adapter, serviceability, provider-specific identifiers and tests without replacing the internal Shipment ID.
 * **Exception and Failure Scenarios:**
   * Item/serial mismatch, package damage, missing delivery address, out-of-area PIN code, or missing assignment blocks dispatch and creates a tracked exception.
 * **Business Rules:** `BR-SHP-001`, `BR-ORD-001`, `BR-ORD-002`.
