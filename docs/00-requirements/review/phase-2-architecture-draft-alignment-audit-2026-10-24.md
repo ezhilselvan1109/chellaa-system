@@ -26,6 +26,15 @@
 | OQ-019 / ADQ-019 | No legacy customer/order history migration for launch; new catalog and opening-stock import remains in scope. | Do not design a mandatory legacy customer/order migration path. Keep catalog/opening-stock import separate. |
 | OQ-020 | Option A confirmed: retain statutory financial records for eight financial years while allowing appropriate profile/marketing-data anonymization. | Treat the business decision as confirmed; architecture/security/legal implementation detail and evidence remain subject to review. |
 
+## 2.1 Remediation performed in this working branch
+
+- `ARCH-01`: replaced the single-central-warehouse assumption with four initial regional warehouse locations, kept exact sites/PIN codes unvalidated, aligned review mapping to `WF-017`, and removed an unapproved automatic email-fallback assumption.
+- `ARCH-04`: changed the old 16-workflow completion/100%-traceability claims to `PENDING_RECONCILIATION`; relabeled the review sequence as `WF-017`. Full workflow title/ID mapping is still outstanding.
+- `ARCH-12`: invalidated the old 260-element/16-workflow/100%-coverage claim, changed workflow total to 17, and marked the workflow coverage row and completion checks as pending re-verification.
+- Phase 1 `FEAT-CUST-003` / `FR-CUST-004` / RTM traceability was reconciled separately: OQ-020 is confirmed; detailed privacy implementation remains proposed pending Legal/Security review.
+
+These are partial draft corrections, not approval or evidence that all architecture mappings have been reconciled.
+
 ## 3. Findings requiring architecture-draft remediation
 
 ### A-01 — Warehouse topology conflict (Critical)
