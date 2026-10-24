@@ -50,16 +50,16 @@ The table below confirms the creation, completeness, and review readiness of all
 
 ## 3. Business Scope Compliance Verification
 
-A rigorous compliance audit was performed against the mandatory constraints established in the project charter:
+A preliminary scope-compliance review was performed against the documented constraints. Final verification and owner acceptance remain part of the pending formal gate:
 
 | Scope Verification Dimension | Compliance Audit Findings | Status |
 | :--- | :--- | :---: |
-| **Single-Enterprise Ownership** | Documented model reflects 100% single retailer ownership of all inventory, catalog listings, and customer relationships. Enterprise is the sole Merchant of Record. | `VERIFIED` |
-| **Strict Marketplace Exclusion** | Zero multi-vendor capabilities exist. No third-party seller registration, no vendor portals, no commission calculations, no vendor split payouts, and no seller dispute arbitration. | `VERIFIED` |
-| **Backend-First Philosophy** | All business logic, reservation mechanics, financial calculations, state machines, and validation rules are fully specified at the business tier independently of UI. | `VERIFIED` |
-| **Frontend Phase Isolation** | Customer web application, mobile applications, and admin user interfaces are documented as strictly deferred to subsequent phases. | `VERIFIED` |
-| **Zero Premature Architecture Prescriptions** | No microservice boundaries, database table schemas, Kafka topic names, or REST payload schemas have been finalized in this documentation baseline. | `VERIFIED` |
-| **Explicit Uncertainty Labeling** | Unconfirmed parameters are strictly tagged as `PROPOSED` or `UNDECIDED` and cross-referenced in the Open Questions register. Zero unauthorized business assumptions exist. | `VERIFIED` |
+| **Single-Enterprise Ownership** | Documented model reflects 100% single retailer ownership of all inventory, catalog listings, and customer relationships. Enterprise is the sole Merchant of Record. | `DOCUMENTED; REVIEW PENDING` |
+| **Strict Marketplace Exclusion** | Zero multi-vendor capabilities exist. No third-party seller registration, no vendor portals, no commission calculations, no vendor split payouts, and no seller dispute arbitration. | `DOCUMENTED; REVIEW PENDING` |
+| **Backend-First Philosophy** | All business logic, reservation mechanics, financial calculations, state machines, and validation rules are fully specified at the business tier independently of UI. | `DOCUMENTED; REVIEW PENDING` |
+| **Frontend Phase Isolation** | Customer web application, mobile applications, and admin user interfaces are documented as strictly deferred to subsequent phases. | `DOCUMENTED; REVIEW PENDING` |
+| **Zero Premature Architecture Prescriptions** | No microservice boundaries, database table schemas, Kafka topic names, or REST payload schemas have been finalized in this documentation baseline. | `DOCUMENTED; REVIEW PENDING` |
+| **Explicit Uncertainty Labeling** | Unconfirmed parameters are strictly tagged as `PROPOSED` or `UNDECIDED` and cross-referenced in the Open Questions register. Zero unauthorized business assumptions exist. | `DOCUMENTED; REVIEW PENDING` |
 
 ---
 
@@ -67,21 +67,30 @@ A rigorous compliance audit was performed against the mandatory constraints esta
 
 * **Unique Identifiers:** All business objectives (`OBJ-xxx`), actors (`ACT-xxx`), features (`FEAT-xxx`), functional requirements (`FR-xxx`), business rules (`BR-xxx`), workflows (`WF-xxx`), quality requirements (`NFR-xxx`), assumptions (`ASM-xxx`), dependencies (`DEP-xxx`), and questions (`OQ-xxx`) maintain globally unique, non-overlapping IDs.
 * **Testability & Acceptance Criteria:** Every functional requirement includes testable scenarios specified in standard Given/When/Then format, covering positive paths, edge cases, concurrent access, and failure modes.
-* **Traceability Completeness:** The Requirements Traceability Matrix ([Document 09](./09-requirements-traceability-matrix.md)) maps 100% of functional requirements to originating business objectives, business rules, and workflows with zero orphaned requirements.
+* **Traceability Completeness:** Document 09 contains a requirements matrix, but bidirectional semantic coverage has not yet been independently verified. The architecture draft crosswalk currently enumerates all 56 FR IDs and 55 BR IDs; this does not establish that every mapping is correct or that there are zero semantic orphans. Keep Checkpoint 10 open until the source RTM is audited in both directions.
 * **Operational Resilience:** Workflows and NFRs explicitly model timeout handling, idempotent webhook processing, circuit breaker resilience, and disaster recovery objectives (RTO $\le 2\text{ hours}$, RPO $\le 5\text{ minutes}$).
 
 ---
 
 ## 5. Executive Open Decision Summary
 
-Before approving the BRD baseline for architectural implementation, the Enterprise Business Owner must review and resolve the following high-priority commercial decisions documented in [Document 08](./08-assumptions-dependencies-open-questions.md):
+Owner selections have been recorded in the [Executive Decision Register](./review/executive-decision-register.md); these selections do not themselves approve the BRD baseline or authorize architecture. The following are **recorded decisions with readiness/detail work still open**, not unresolved business choices:
 
-1. **[OQ-001] Operating Country Scope:** Confirm Domestic India as primary launch territory (`PROPOSED: Domestic India`).
-2. **[OQ-006] Cash on Delivery (COD) Policy:** Confirm whether to offer COD under a restricted ₹10,000 ceiling or launch 100% prepaid (`PROPOSED: Restricted COD`).
-3. **[OQ-008] Electronics Return Policy:** Confirm the 7-day return policy window and mandatory defect/seal verification criteria (`PROPOSED: 7-day window, inspection mandatory`).
-4. **[OQ-010] Customer Signup Verification:** Confirm mobile-first registration with SMS OTP as primary authentication (`PROPOSED: Mobile OTP`).
-5. **[OQ-016] Peak Order Throughput Target:** Confirm capacity sizing for 100 orders/min baseline and 1,000 orders/min festive peak (`PROPOSED: 1,000 OPM Peak`).
-6. **[OQ-017] Availability & Recovery SLA:** Confirm platform uptime target ($\ge 99.90\%$) and disaster recovery targets ($\text{RPO} \le 5\text{m}$, $\text{RTO} \le 2\text{h}$) (`PROPOSED: 99.9% Uptime`).
+- **OQ-001 / ADQ-001:** India domestic launch; INR and English only.
+- **OQ-006 / ADQ-003 / ADQ-009:** Restricted COD up to ₹10,000, eligible/verified PIN codes, delivery OTP, ₹50 non-refundable convenience fee; COD included alongside online payment methods.
+- **OQ-008:** Seven-day return window with diagnostic inspection and serial/IMEI verification; detailed operational/legal policy and refund evidence remain to be reviewed.
+- **OQ-010:** Mobile-first SMS OTP; email remains optional.
+- **OQ-016 / ADQ-007:** 100 orders/minute sustained and 1,000 orders/minute peak; capacity evidence remains unverified.
+- **OQ-017 / ADQ-008:** 99.9% uptime, RPO ≤ 5 minutes and RTO ≤ 2 hours; monitoring and recovery-test evidence remain unverified.
+- **OQ-004 / ADQ-010:** Razorpay only for online payments; merchant onboarding and production validation remain open.
+- **OQ-005 / ADQ-014 / OQ-007 / ADQ-015:** Chellaa-owned Shipping Management System, permitted own-team/direct-courier/aggregator lanes, four planned regional warehouses; named providers, actual sites, serviceable PIN codes and operational readiness remain open.
+- **OQ-012 / ADQ-016:** Verified-buyer reviews with mandatory admin moderation; detailed moderation policy remains open.
+- **OQ-015 / ADQ-017:** SMS, Email and WhatsApp Business API selected for order lifecycle events; event matrix, retry/fallback policy and provider readiness remain open.
+- **OQ-018 / ADQ-018:** Standard reports plus real-time BI, predictive replenishment and customer cohort retention; detailed KPI and acceptance specifications remain open.
+- **OQ-019 / ADQ-019:** No legacy customer/order history migration; new catalog and opening-stock import remains in scope.
+- **OQ-020 Option A:** Retain statutory financial records for eight financial years while supporting appropriate profile/marketing-data anonymization; legal/security implementation detail remains open.
+
+The whole requirements package, source RTM, and decision dependencies still require independent review. Formal sign-off must be entered by the authorized human reviewer in Section 7; no decision is inferred from this summary.
 
 ---
 
