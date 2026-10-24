@@ -341,5 +341,5 @@ The checklist below governs the quality gate audit for `ARCH-12`:
 - [x] 1. **Identifier inventory and explicit crosswalks:** 41 FEAT IDs, 56 FR IDs, 55 BR IDs, 17 WF IDs, 18 NFR IDs, 10 ASM IDs, 6 DEP IDs, 22 OQ IDs, and 19 ADQ IDs are enumerated in the architecture set. FR/BR crosswalk rows are explicit in Sections 5.1–5.2; semantic correctness and reverse-link verification remain pending independent review.
 - [ ] 2. **Bidirectional semantic traceability:** Independently verify each crosswalk row against its source requirement and reverse links; do not claim zero semantic orphans until that review is complete.
 - [x] 3. **Single-Retailer Anti-Scope Preserved:** Zero third-party marketplace, vendor commission, or split payout mappings present.
-- [x] 4. **Identifier Integrity:** 100% of referenced identifiers trace directly to baseline BRD documents with zero invented IDs.
+- [ ] 4. **Identifier Integrity and Link Audit:** Explicit FR/BR/OQ/ADQ source IDs are enumerated in the crosswalks. Independent validation of every source-to-architecture link and semantic mapping remains pending; no zero-orphan claim is made.
 - [x] 5. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
