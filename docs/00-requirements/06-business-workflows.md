@@ -131,7 +131,7 @@ sequenceDiagram
 * **Expected Final Business State:** Product is `PUBLISHED`; SKUs are active; Search indices updated; Audit log written.
 * **Dependencies:** `FEAT-CAT-001`, `FEAT-BRD-001`, `FEAT-CTG-001`.
 * **Related Functional Requirements:** `FR-CAT-001`, `FR-CAT-002`.
-* **Unresolved Decisions:** OQ-018 Option B scope is recorded; KPI formulas, refresh latency, cadence, permissions, exports, predictive methodology and validation criteria remain open.
+* **Unresolved Decisions:** None recorded for the catalog-authoring workflow; catalog data readiness remains a separate operational dependency.
 
 ```mermaid
 flowchart TD
@@ -707,7 +707,7 @@ flowchart TD
 * **Expected Final Business State:** Daily reconciliation ledger closed; Executive reports generated.
 * **Dependencies:** `FEAT-PAY-002`, `FEAT-FIN-001`, `FEAT-RPT-001`.
 * **Related Functional Requirements:** `FR-PAY-003`, `FR-RPT-001`.
-* **Unresolved Decisions:** None.
+* **Unresolved Decisions:** OQ-018 Option B scope is recorded; KPI formulas, refresh latency, cadence, permissions, exports, predictive methodology and validation criteria remain open.
 
 ```mermaid
 flowchart TD
