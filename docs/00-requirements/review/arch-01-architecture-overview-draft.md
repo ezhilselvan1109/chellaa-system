@@ -443,13 +443,13 @@ The following engineering principles govern the Chellaa technical architecture. 
 
 ### 11.1 Strategic Business Decisions (`ADQ-001` through `ADQ-008`)
 The following commercial decisions remain strictly **`OPEN`** in [`executive-decision-register.md`](./executive-decision-register.md) awaiting Enterprise Business Owner ratification:
-* **`ADQ-001` Operating Country Scope ([`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001)):** Confirm Domestic India only at launch vs cross-border trade (`Status: OPEN; Proposed: Domestic India`).
-* **`ADQ-002` Currency Architecture ([`OQ-002`](../08-assumptions-dependencies-open-questions.md#oq-002)):** Confirm Single INR base currency vs multi-currency engine (`Status: OPEN; Proposed: Single INR`).
+* **`ADQ-001` Operating Country Scope ([`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001)):** Domestic India only is recorded for launch; cross-border trade is out of initial scope. Operational rollout remains subject to readiness checks.
+* **`ADQ-002` Currency Architecture ([`OQ-002`](../08-assumptions-dependencies-open-questions.md#oq-002)):** INR only is recorded for launch; multi-currency support is out of initial scope.
 * **`ADQ-003` Cash on Delivery (COD) Policy ([`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006)):** Restricted COD is recorded (up to ₹10,000, eligible/verified PIN code, delivery OTP, ₹50 non-refundable convenience fee); operational validation remains open.
-* **`ADQ-004` Electronics Return Inspection Gating ([`OQ-008`](../08-assumptions-dependencies-open-questions.md#oq-008)):** Confirm mandatory technician diagnostic grading before refund vs instant pickup refund (`Status: OPEN; Proposed: Technician Diagnostic Gate`).
+* **`ADQ-004` Electronics Return Inspection Gating ([`OQ-008`](../08-assumptions-dependencies-open-questions.md#oq-008)):** Seven-day return window with technician diagnostic inspection and serial/IMEI verification before refund is recorded; detailed acceptance/exceptions remain open.
 * **`ADQ-005` Tax-Inclusive Storefront Pricing ([`OQ-009`](../08-assumptions-dependencies-open-questions.md#oq-009)):** GST-inclusive storefront prices with tax breakdown are recorded; detailed tax calculation and invoice validation remain open.
-* **`ADQ-006` Customer Signup Authentication ([`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010)):** Confirm mobile-first signup with SMS OTP vs email/password (`Status: OPEN; Proposed: Mobile Phone + SMS OTP`).
-* **`ADQ-007` Peak Festive Surge Sizing ([`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016)):** Confirm capacity sizing for 100 orders/min baseline and 1,000 orders/min peak surge (`Status: OPEN; Proposed: 1,000 OPM Peak`).
+* **`ADQ-006` Customer Signup Authentication ([`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010)):** Mobile-first SMS OTP is recorded; email is optional.
+* **`ADQ-007` Peak Festive Surge Sizing ([`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016)):** 100 orders/min sustained and 1,000 orders/min peak are recorded targets; capacity testing and evidence remain open.
 * **Related Strategic Decision ([`OQ-011`](../08-assumptions-dependencies-open-questions.md#oq-011)):** Guest checkout with automatic account creation after mobile OTP verification is recorded as confirmed; implementation details remain subject to architecture review.
 
 ### 11.2 Core Architectural Risks & Mitigations
@@ -515,7 +515,7 @@ This checklist tracks the document's progression across the 6 formal governance 
 * [x] 4. All 12 runtime interaction scenarios specified with triggers, data, and outcomes.
 * [x] 5. Quantitative quality attributes separated into confirmed, proposed, and provisional.
 
-### Stage 2: Requirements Traceability Audit (`VALIDATED`)
+### Stage 2: Requirements Traceability Audit (`PENDING_RECONCILIATION`)
 * [x] 1. 100% of cited requirement identifiers exist in baseline BRD documents (Docs 00–11).
 * [x] 2. All 14 system actors (`ACT-001` through `ACT-014`) mapped accurately to Document 02.
 * [x] 3. All 6 external dependencies (`DEP-001` through `DEP-006`) reconciled with Document 08.
