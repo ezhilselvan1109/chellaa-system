@@ -62,7 +62,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 - **Status:** `OWNER_DECISION_RECORDED` (owner selection received 2026-10-24); operational readiness remains `OPEN` under DEP-002.
 - **Implementation boundary:** Maintain an internally approved serviceability registry of the PIN codes actually covered at each rollout stage. Checkout must accept deliveries only for enabled PIN codes and must use the approved fee, delivery estimate, and COD-eligibility rules. Do not claim nationwide coverage for a PIN code until local delivery capacity and the end-to-end process are verified.
 - **Open operational details:** Complete serviceable PIN-code list and rollout sequence; regional/warehouse topology; delivery hours and service targets; staffing, shifts and backup capacity; fleet/vehicle model; delivery-fee policy; proof-of-delivery and retention policy; reverse-logistics capacity; and contingency arrangements for remote/low-density areas.
-- **Related assumption to revisit:** `ASM-004` proposes a single primary central fulfillment warehouse. Nationwide in-house delivery may be incompatible with that assumption for cost, speed, or capacity reasons. Do not automatically change to multiple warehouses; assess and explicitly decide the launch warehouse topology before architecture approval.
+- **Related assumption to revisit:** `ASM-004` proposes a single primary central fulfillment warehouse. India-wide hybrid delivery may be incompatible with that assumption for cost, speed, or capacity reasons. Do not automatically change to multiple warehouses; assess and explicitly decide the launch warehouse topology before architecture approval.
 
 
 #### Decision record — phased PIN-code rollout
