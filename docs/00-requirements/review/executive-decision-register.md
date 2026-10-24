@@ -41,7 +41,7 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **`ADQ-008`** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) | Platform Availability SLA & DR Targets | Option A: 99.9% Uptime, RPO $\le 5\text{m}$, RTO $\le 2\text{h}$ | **Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-009`** | [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) | Mandatory Customer Payment Methods | Option B: UPI, cards, net banking, and EMI/BNPL | **Option C — Option A payment methods plus COD under OQ-006 policy** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-010`** | [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) | Payment Gateway Provider | Option B: Dual gateway | **Single gateway — Razorpay only (single-gateway approach / Option A)** | **`OWNER_DECISION_RECORDED`** |
-| **`ADQ-011`** | [`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005) | Courier / Shipping Logistics Provider | Option B: Multi-carrier aggregator | **Option B — Shiprocket multi-carrier aggregator** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-011`** | [`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005) | Shipping Management Approach | Option B: Multi-carrier aggregator | **Option A — build Chellaa's own Shipping Management System; own delivery team or separately decided direct-carrier integrations; no aggregator/courier partner selected** | **`OWNER_DECISION_RECORDED`** |
 ---
 
 ## 3. Detailed Decision Sheets (ADQ-001 through ADQ-011)
@@ -325,14 +325,14 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
-### ADQ-011: Courier / Shipping Logistics Provider
+### ADQ-011: Shipping Management Approach
 
 * **Decision ID:** `ADQ-011`
-* **Linked BRD Open Question:** [`OQ-005: Courier and Shipping Logistics Partner`](../08-assumptions-dependencies-open-questions.md#oq-005)
+* **Linked BRD Open Question:** [`OQ-005: Shipping Management Approach`](../08-assumptions-dependencies-open-questions.md#oq-005)
 * **Affected Business Domains:** Shipping & Delivery, Returns, Reverse Logistics, COD Reconciliation.
-* **Business Owner Decision:** **Option B — Shiprocket multi-carrier aggregator.**
-* **Implementation Conditions:** Validate PIN-code serviceability, shipment/AWB and label generation, pickup booking, tracking webhooks or polling, cancellation and reverse pickup, COD support/remittance, rate limits, and failure handling.
-* **Business Owner Rationale & Conditions:** None supplied beyond the selected option.
+* **Business Owner Decision:** **Option A — build Chellaa's own Shipping Management System.** The business may use its own delivery team. No shipping aggregator will be used; direct carrier integrations are optional and require a separate decision. No courier partner has been selected.
+* **Implementation Conditions:** Define shipment lifecycle, internal tracking events, delivery assignment and attempts, proof of delivery, cancellations, reverse logistics, COD collection/reconciliation, and exception handling. Treat carrier-specific API, serviceability, and SLA work as out of scope until a separate carrier decision is recorded.
+* **Business Owner Rationale & Conditions:** The owner explicitly requested to develop the shipping feature in-house and not use Shiprocket or any shipping aggregator.
 * **Decision Owner:** EZHIL SELVAN P. — Founder (selection recorded 2026-10-24).
 * **Decision Date:** `2026-10-24`
 * **Status:** **`OWNER_DECISION_RECORDED`**. Partner agreement, API credentials, commercial terms, and integration validation remain open dependencies; this is not Phase 1 or architecture approval.
