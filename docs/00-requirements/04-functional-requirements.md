@@ -1425,7 +1425,7 @@ Every functional requirement specifies:
 * **Priority:** `P2`
 * **Requirement Status:** `CONFIRMED` (core verified-buyer and pre-publication moderation scope selected; detailed moderation/photo policy remains open).
 * **Open Questions:** OQ-012 selection recorded; detailed policy items listed above remain open.
-* **Related Workflow IDs:** `WF-004`.
+* **Related Workflow IDs:** `WF-017`.
 
 ---
 
