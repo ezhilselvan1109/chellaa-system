@@ -64,6 +64,16 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 - **Open operational details:** Complete serviceable PIN-code list and rollout sequence; regional/warehouse topology; delivery hours and service targets; staffing, shifts and backup capacity; fleet/vehicle model; delivery-fee policy; proof-of-delivery and retention policy; reverse-logistics capacity; and contingency arrangements for remote/low-density areas.
 - **Related assumption to revisit:** `ASM-004` proposes a single primary central fulfillment warehouse. Nationwide in-house delivery may be incompatible with that assumption for cost, speed, or capacity reasons. Do not automatically change to multiple warehouses; assess and explicitly decide the launch warehouse topology before architecture approval.
 
+
+#### Decision record — phased PIN-code rollout
+
+- **Business Owner decision:** Use **Option B — phased rollout** for India-wide in-house delivery. Enable service areas/PIN codes in stages only after each area meets the defined operational readiness gate.
+- **Status:** `OWNER_DECISION_RECORDED` (owner selection received 2026-10-24). This confirms the rollout approach, not any specific PIN-code activation or a launch date.
+- **Minimum readiness gate per rollout area:** approved serviceable PIN-code list; fulfillment/warehouse coverage; trained and assigned delivery capacity with backup; vehicle/run capacity; approved operating hours, delivery promise and fee policy; COD eligibility and cash-control procedure; customer communication and proof-of-delivery procedure; return-to-warehouse/reverse-logistics handling; support and incident escalation; and documented end-to-end test results with an accountable Operations Lead decision.
+- **Checkout control:** Only PIN codes explicitly marked enabled in the internal serviceability registry may be accepted. Unenabled or unsupported PIN codes must be rejected clearly; COD eligibility is separately evaluated from delivery serviceability.
+- **Expansion control:** Review delivery success, on-time delivery, first-attempt success, failed/returned shipments, customer complaints, loss/damage and COD variance for enabled areas. Define numeric thresholds and review windows before treating these metrics as automatic expansion criteria; no thresholds are invented by this decision.
+- **Still open:** initial pilot locations/PIN codes, number and order of rollout waves, numeric go/no-go thresholds, review period, service hours/SLAs, delivery fees, regional warehouse topology, headcount/fleet and backup arrangements.
+
 #### A. Proposed internal roles
 
 | Role | Core responsibility | Required control |
@@ -76,7 +86,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | COD / Finance Reconciler | Reconciles COD due, cash/approved payment evidence collected, receipts, handovers, shortages, and refunds. | Daily per-associate reconciliation with variance reason and supervisor review; no silent balance adjustments. |
 | Shipping Supervisor (may be the Operations Lead at launch) | Approves exceptions, reviews incidents, and signs off unresolved cash/parcel discrepancies. | Separation of duties is preferred; where one person holds multiple roles at launch, record the combined-role risk and compensating review. |
 
-These are proposed responsibilities, not a claim that staff have already been hired or assigned. India-wide delivery scope has been selected, but serviceable PIN codes by rollout stage, headcount, shifts, and regional capacity must be defined using forecast order volume and actual geography.
+These are proposed responsibilities, not a claim that staff have already been hired or assigned. India-wide delivery scope and a phased PIN-code rollout have been selected, but the initial pilot areas, rollout-wave sequence, go/no-go thresholds, serviceable PIN codes, headcount, shifts, and regional capacity must be defined using forecast order volume and actual geography.
 
 #### B. End-to-end operating workflows
 
@@ -112,7 +122,7 @@ DEP-002 remains OPEN until the Operations Lead records evidence for all applicab
 - [ ] Any direct carrier integration is either explicitly out of launch scope or separately approved with named partner, commercial/legal review, API/security validation, and failure handling.
 - [ ] Operations Lead confirms readiness with links to SOPs, test evidence, staffing/coverage plan, and unresolved risks.
 
-**Not yet decided:** exact serviceable PIN codes and rollout sequence across India, delivery hours/service targets, delivery-fee schedule, staffing/headcount and regional capacity, warehouse topology (revisit `ASM-004`), vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, reverse-logistics capacity, and whether/when to integrate directly with any carrier. These must not be invented in implementation.
+**Not yet decided:** initial pilot PIN codes, exact serviceable PIN codes and rollout-wave sequence across India, numeric area activation/expansion thresholds and review period, delivery hours/service targets, delivery-fee schedule, staffing/headcount and regional capacity, warehouse topology (revisit `ASM-004`), vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, reverse-logistics capacity, and whether/when to integrate directly with any carrier. These must not be invented in implementation.
 
 ---
 
