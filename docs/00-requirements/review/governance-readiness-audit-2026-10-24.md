@@ -71,13 +71,13 @@ The document lists confirmed questions including `OQ-011`, `OQ-013`, `OQ-014`, `
 Document 08 lists these six dependencies as `OPEN`:
 
 1. `DEP-001` — Razorpay merchant agreement, production credentials, settlement/refund configuration, and webhook setup.
-2. `DEP-002` — Shiprocket partner agreement, API credentials, serviceability validation, COD terms, and logistics SLAs.
+2. `DEP-002` — In-house shipping operations readiness: shipping workflows, delivery-team operating model, tracking, proof of delivery, reverse logistics, and COD reconciliation. No external courier partner or aggregator is selected; direct carrier integration requires a separate decision.
 3. `DEP-003` — SMS DLT / WhatsApp Business registration.
 4. `DEP-004` — Enterprise GSTIN and invoice-numbering/legal-tax validation.
 5. `DEP-005` — Approved electronics catalog and brand specifications.
 6. `DEP-006` — Physical warehouse and barcode infrastructure.
 
-These may not all block the BRD approval itself, but the accountable owners must confirm which are launch prerequisites and record evidence or a controlled deferral.
+These may not all block the BRD approval itself, but the accountable owners must confirm which are launch prerequisites and record evidence or a controlled deferral. `DEP-002` is an internal operational-readiness dependency, not a courier contract.
 
 ## 4. Technical architecture ADRs and evidence
 
