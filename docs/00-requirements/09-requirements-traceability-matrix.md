@@ -32,7 +32,7 @@ The Requirements Traceability Matrix (RTM) validates bidirectional alignment acr
 | **OBJ-001** | `FEAT-CUST-001` | `FR-CUST-001`<br>`FR-CUST-003` | `BR-CUST-001`<br>`BR-SEC-002` | `WF-001` | `NFR-SEC-002`<br>`NFR-SEC-003` | Mobile number signup verified via 6-digit SMS OTP within 5-min TTL. | `P0` | `CONFIRMED` | `DEP-003`, `OQ-010` |
 | **OBJ-001** | `FEAT-CUST-002` | `FR-CUST-002` | `BR-CUST-002`<br>`BR-SHP-001` | `WF-001`<br>`WF-006` | `NFR-LOC-001` | Store multiple addresses; PIN code validated against courier registry. | `P0` | `CONFIRMED` | `DEP-002` |
 | **OBJ-008** | `FEAT-CUST-003` | `FR-CUST-004` | `BR-DAT-001` | `WF-001` | `NFR-SEC-003` | Self-service data export and profile anonymization while retaining statutory financial records for eight financial years. | `P1` | `PROPOSED` | Legal/Security review of detailed privacy controls and acceptance evidence; OQ-020 Option A is confirmed |
-| **OBJ-002** | `FEAT-CAT-001` | `FR-CAT-001` | `BR-CAT-001`<br>`BR-CAT-002`<br>`BR-PRC-001` | `WF-002` | `NFR-SCL-002`<br>`NFR-INT-002` | Multi-variant electronics modeling (color, RAM, storage); unique SKUs. | `P0` | `CONFIRMED` | `DEP-005` |
+| **OBJ-002** | `FEAT-CAT-001` | `FR-CAT-001` | `BR-CAT-001`<br>`BR-CAT-002`<br>`BR-CAT-003`<br>`BR-PRC-001` | `WF-002` | `NFR-SCL-002`<br>`NFR-INT-002` | Multi-variant electronics modeling (color, RAM, storage); unique SKUs. | `P0` | `CONFIRMED` | `DEP-005` |
 | **OBJ-002** | `FEAT-CAT-002` | `FR-CAT-003` | `BR-CAT-001` | `WF-002` | `NFR-PERF-001` | High-resolution media upload; primary thumbnail designation; CDN delivery. | `P1` | `CONFIRMED` | `DEP-005` |
 | **OBJ-002** | `FEAT-CTG-002` | `FR-CAT-002`<br>`FR-CTG-002` | `BR-CTG-002` | `WF-002` | `NFR-SCL-002` | Mandatory category specification schemas validated before publish. | `P1` | `CONFIRMED` | `DEP-005` |
 | **OBJ-002** | `FEAT-BRD-001` | `FR-BRD-001` | `BR-BRD-001` | `WF-002` | `NFR-SCL-002` | Brand identity management; brands linked to active products cannot be deleted. | `P0` | `CONFIRMED` | `DEP-005` |
@@ -65,7 +65,7 @@ The Requirements Traceability Matrix (RTM) validates bidirectional alignment acr
 | **OBJ-008** | `FEAT-SEC-001` | `FR-SEC-001`<br>`FR-SEC-002` | `BR-SEC-001`<br>`BR-SEC-002` | `WF-007` | `NFR-SEC-001`<br>`NFR-SEC-002` | Zero cardholder PAN storage; tokenized checkout; bcrypt credential hashing. | `P0` | `CONFIRMED` | `DEP-001` |
 | **OBJ-010** | `FEAT-OPS-001` | `FR-OPS-001` | `BR-OPS-001` | `WF-015` | `NFR-OBS-001`<br>`NFR-OBS-002` | Distributed correlation tracing (Trace ID) and real-time operational alerting. | `P0` | `CONFIRMED` | `OQ-022` |
 | **OBJ-010** | `FEAT-REL-001` | `FR-REL-001` | `BR-REL-001` | N/A | `NFR-REL-001` | Automated CI testing gates and zero-downtime rolling production deployments. | `P1` | `CONFIRMED` | `OQ-021` |
-| **OBJ-010** | `FEAT-BCM-001` | `FR-BCM-001` | `BR-BCM-001` | N/A | `NFR-BCM-001` | Continuous automated backups ensuring RPO <= 5 mins and RTO <= 2 hours. | `P0` | `CONFIRMED` | `OQ-017` |
+| **OBJ-010** | `FEAT-BCM-001` | `FR-BCM-001` | `BR-BCM-001` | N/A | `NFR-AVL-001`<br>`NFR-BCM-001` | 99.9% uptime target plus automated backups with RPO <= 5 mins and RTO <= 2 hours; evidence remains unverified. | `P0` | `CONFIRMED` | `OQ-017` |
 | **OBJ-001** | `FEAT-ADV-001` | `FR-ADV-001` | `BR-ADV-001` | `WF-002`<br>`WF-005` | `NFR-PERF-002` | Optional configurable electronics bundles with discounted pricing and atomic component-stock validation; remains a proposed P3 capability. | `P3` | `PROPOSED` | None |
 | **OBJ-001** | `FEAT-ADV-002` | `FR-ADV-002` | `BR-ADV-002` | `WF-003`<br>`WF-012` | `NFR-AVL-002` | Automated customer notifications dispatched upon warehouse stock replenishment. | `P2` | `PROPOSED` | None |
 
@@ -83,3 +83,68 @@ To ensure that strictly excluded features do NOT silently emerge during implemen
 | **Marketplace Commissions** | Financial Accounting | 100% of retail revenue belongs to the enterprise owner. | Zero commission calculation or take-rate deduction logic in payment flows. |
 | **Vendor Payouts & Escrow** | Banking Integration | No funds disbursed to third-party bank accounts. | Payment gateway disbursements route strictly to enterprise merchant account. |
 | **Buyer-Seller Dispute Mediation** | Customer Care | Support is handled directly between customer and enterprise. | Support ticketing is internal-only; no multi-party arbitration workflows. |
+
+---
+
+## 4. Assumption, Dependency and Open-Question Traceability
+
+> This section supplements the capability-level matrix above. The source register in Document 08 remains authoritative for the wording and current status of each ASM, DEP and OQ. A recorded owner selection is not the same as implementation readiness or formal baseline approval.
+
+### 4.1 Assumptions (ASM)
+
+| ID | Source assumption | Linked capabilities / requirements | Source status | Validation / follow-up |
+| :--- | :--- | :--- | :--- | :--- |
+| ASM-001 | Primary operational country is India. | OBJ-001, NFR-LOC-001, FEAT-SHP-001 | `PROPOSED` | Formal confirmation by Enterprise Business Owner. |
+| ASM-002 | Transaction currency is Indian Rupee (INR - ₹) exclusively for Phase 1. | NFR-LOC-001, FEAT-FIN-001 | `PROPOSED` | Commercial policy sign-off. |
+| ASM-003 | Retail display prices are tax-inclusive (MRP / Gross Selling Price). | OQ-009, FEAT-FIN-001, FEAT-PRC-001 | `PROPOSED` | Legal / Tax Advisor review. |
+| ASM-004 | Initial planning model uses four warehouse locations with regional inventory; the central architecture must remain location-agnostic and configuration-driven. Exact sites and serviceable areas are not yet validated. | OQ-007, FEAT-INV-001, FEAT-SHP-001, DEP-002 | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` | Validate each actual warehouse address, state/GST implications, inventory plan, staffing/capacity and serviceability before launch. |
+| ASM-005 | Pre-orders and backorders are out of scope for the baseline release. | OQ-014, FEAT-INV-001, FR-INV-001 | `CONFIRMED` | Commercial merchandising policy review. |
+| ASM-006 | Digital customer identity is primarily tied to mobile phone numbers. | OQ-010, FEAT-CUST-001, FR-CUST-001 | `PROPOSED` | Customer UX persona review. |
+| ASM-007 | A standard 7-calendar-day return window applies to consumer electronics. | OQ-008, FEAT-RET-001, FR-RET-001 | `PROPOSED` | Business Owner policy sign-off (subject to [OQ-008](#oq-008)). |
+| ASM-008 | External payment gateway will handle all cardholder credential entry (Hosted / Iframe). | OQ-004, FEAT-PAY-001, FR-PAY-001 | `CONFIRMED` | Security & Gateway contract review. |
+| ASM-009 | Chellaa will own its Shipping Management System and may fulfil shipments through its own delivery team, directly integrated courier partners, and a shipping aggregator. | OQ-005, FEAT-SHP-001, FR-SHP-001, DEP-002 | `PROPOSED` | Validate the provider-neutral shipment lifecycle, provider selection/routing rules, commercial terms, integrations, and end-to-end tests. |
+| ASM-010 | Cash on Delivery (COD) will be restricted to orders under ₹10,000 and verified PIN codes. | FEAT-AUD-001, FEAT-OPS-001, BR-AUD-001 | `PROPOSED` | Finance & Risk assessment. |
+
+### 4.2 Dependencies (DEP)
+
+| ID | Source dependency | Linked capabilities / requirements | Source status | Required follow-up |
+| :--- | :--- | :--- | :--- | :--- |
+| DEP-001 | Razorpay Merchant Agreement | FEAT-PAY-001, FR-PAY-001, FR-PAY-003 | `OPEN` | Initiate provider RFP immediately; evaluate sandbox APIs in parallel. |
+| DEP-002 | Shipping Operations Readiness | FEAT-SHP-001, FR-SHP-001, FR-SHP-002, FEAT-RET-001 | `OPEN` | Select and validate pilot areas and providers; assign operational ownership; confirm provider contracts, API credentials, serviceability, fees/SLAs, COD/remittance, returns, support and fallback; run end-to-end tests before enabling each lane. |
+| DEP-003 | Telecom SMS DLT Registration & WhatsApp Business API | FEAT-CUST-001, FEAT-NTF-001, FR-CUST-001, FR-NTF-001 | `OPEN` | Register enterprise entity and SMS templates on commercial telecom DLT portal immediately. |
+| DEP-004 | Enterprise GSTIN & Invoicing Numbering Scheme | FEAT-FIN-001, FR-FIN-001 | `OPEN` | Obtain legal corporate tax opinion on HSN rate codes and sequential invoice numbering syntax. |
+| DEP-005 | Master Electronics Catalog & Brand Specifications | FEAT-CAT-001, FEAT-DAT-001, FR-CAT-001, FR-DAT-001 | `OPEN` | Establish structured ingestion spreadsheet templates for supplier distributors. |
+| DEP-006 | Physical Warehouse Infrastructure & Barcode Hardware | FEAT-INV-001, FR-INV-001, WF-003 | `OPEN` | Define standardized SKU barcode symbologies (Code 128 / EAN-13) before inwarding stock. |
+
+### 4.3 Open Questions and Recorded Selections (OQ)
+
+| ID | Source question | Linked capabilities / requirements | Source status | Recorded selection / remaining detail |
+| :--- | :--- | :--- | :--- | :--- |
+| OQ-001 | Operating Country Scope | OBJ-001, NFR-LOC-001, FEAT-SHP-001 | `CONFIRMED` | Owner-selected Option A: Domestic India only at launch |
+| OQ-002 | Currencies & Languages | NFR-LOC-001, FEAT-FIN-001 | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
+| OQ-003 | Mandatory Payment Methods | FEAT-PAY-001, FEAT-CHK-001, OQ-006 | `CONFIRMED` | Owner-selected Option C: UPI, cards, net banking, plus COD under OQ-006 policy |
+| OQ-004 | Payment Gateway Selection | FEAT-PAY-001, FR-PAY-001, DEP-001 | `CONFIRMED` | Owner-selected single gateway: Razorpay only |
+| OQ-005 | Shipping Management Approach | FEAT-SHP-001, FR-SHP-001, FR-SHP-002, DEP-002 | `CONFIRMED` | Owner-selected Option C: own delivery team, direct courier partners and shipping aggregator permitted; Chellaa owns canonical Shipping Management System; provider/lane readiness remains open |
+| OQ-006 | Cash on Delivery (COD) Policy | FEAT-PAY-001, FEAT-CHK-001, FR-CHK-001 | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
+| OQ-007 | Warehouse Launch Topology | FEAT-INV-001, FEAT-SHP-001, DEP-002, DEP-006 | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` | Four initial warehouse locations with regional inventory; exact sites/PIN codes pending validation; generic configurable design |
+| OQ-008 | Returns & Inspection Policy | FEAT-RET-001, FEAT-RET-002, FR-RET-001 | `CONFIRMED` | Owner-selected Option B: 7-day return/refund with diagnostic gate |
+| OQ-009 | Tax Structure & Display Prices | FEAT-FIN-001, FEAT-PRC-001, FR-FIN-001 | `CONFIRMED` | Owner-selected Option A: GST-inclusive display |
+| OQ-010 | Customer Verification Method | FEAT-CUST-001, FR-CUST-001, DEP-003 | `CONFIRMED` | Owner-selected Option A: mobile SMS OTP; email optional |
+| OQ-011 | Guest Checkout Support | FEAT-CART-001, FEAT-CHK-001, FR-CHK-001, WF-006 | `CONFIRMED` | Owner-selected Option B: guest checkout with phone-OTP auto-account |
+| OQ-012 | Customer Reviews & Ratings | FEAT-REV-001, FR-REV-001, WF-017 | `OWNER_DECISION_RECORDED` | Option B: verified buyers only; admin moderation required before publication |
+| OQ-013 | Loyalty & Store Credit | Phase 1 anti-scope: loyalty/store credit excluded | `CONFIRMED` | Out of scope for Phase 1 baseline |
+| OQ-014 | Pre-orders & Backorders | FEAT-INV-001, FR-INV-001, WF-003 | `CONFIRMED` | Out of scope (Strict non-negative stock) |
+| OQ-015 | Notification Channels | FEAT-NTF-001, FR-NTF-001, DEP-003, WF-012 | `OWNER_DECISION_RECORDED` | Option B: SMS, Email and WhatsApp Business API for order lifecycle events; fallback/event matrix open |
+| OQ-016 | Peak Traffic & Order Capacity | NFR-SCL-001, FEAT-OPS-001, WF-015 | `CONFIRMED` | Owner-selected Option B: 100 OPM sustained; 1,000 OPM peak |
+| OQ-017 | Availability, RTO & RPO Targets | NFR-AVL-001, NFR-BCM-001, FEAT-BCM-001, WF-015 | `CONFIRMED` | Owner-selected Option A: 99.9% uptime; RPO ≤ 5m; RTO ≤ 2h |
+| OQ-018 | Required Business Reports | FEAT-RPT-001, FR-RPT-001, WF-014 | `OWNER_DECISION_RECORDED` | Option B: standard reports + real-time BI, predictive replenishment and customer cohort retention |
+| OQ-019 | Legacy Data Migration Scope | FEAT-DAT-001, FR-DAT-001, DEP-005 | `OWNER_DECISION_RECORDED` | Option A: no legacy customer/order history migration; bulk catalog/opening-stock import remains in scope |
+| OQ-020 | Data Retention & Privacy (DPDPA) | FEAT-CUST-003, FR-CUST-004, BR-DAT-001 | `CONFIRMED` | 8-year tax retention; anonymize profile PII |
+| OQ-021 | Release Approval Governance | FEAT-REL-001, FR-REL-001, NFR-REL-001 | `CONFIRMED` | Automated CI with manual release gate |
+| OQ-022 | Operational Incident Protocols | FEAT-OPS-001, FR-OPS-001, WF-015 | `CONFIRMED` | Automated Slack/SMS alerts for $> 2\%$ error |
+
+### 4.4 Coverage Gate
+
+- Source inventory counts: 41 FEAT IDs, 56 FR IDs, 55 BR IDs, 17 WF IDs, 18 NFR IDs, 10 ASM IDs, 6 DEP IDs and 22 OQ IDs.
+- Identifier-level check: FEAT 41/41, FR 56/56, BR 55/55 after adding BR-CAT-003, WF 17/17, NFR 18/18 after adding NFR-AVL-001, DEP 6/6, ASM 10/10 and OQ 22/22 are explicitly indexed in this RTM.
+- These are identifier-level checks only. The requirements baseline remains NOT_APPROVED until a reviewer verifies every mapping in both directions, checks the source links, and completes the formal approval record in Document 11.
