@@ -598,19 +598,19 @@ graph LR
 
 ## 19. Domain 17: Shipping, Logistics & Delivery
 
-### FEAT-SHP-001: Courier Partner Integration & Consignment Tracking
+### FEAT-SHP-001: Provider-Neutral Shipment Lifecycle & Delivery Tracking
 
 * **Domain:** Shipping & Fulfillment
-* **Description:** Integrates with third-party logistics carriers to book consignments, generate Air Waybills (AWBs), and ingest real-time delivery tracking events.
+* **Description:** Owns Chellaa's canonical shipment lifecycle and supports configured fulfilment through Chellaa's own delivery team, directly integrated courier partners, and a shipping aggregator. Provider-specific booking references/AWBs and tracking events are mapped into the internal Shipment ID and lifecycle.
 * **Business Value:** Automates warehouse shipping label generation and provides customers with real-time delivery milestone visibility.
-* **Primary Actor:** `ACT-005` (Fulfillment Specialist), `ACT-012` (Courier Partner)
+* **Primary Actor:** `ACT-005` (Fulfillment Specialist), delivery associates and configured delivery providers
 * **Preconditions:** Order status is `PACKED`.
 * **Main Capabilities:**
-  * Automatically assign courier partner based on destination PIN code and package weight.
-  * Generate printable carrier shipping labels with scannable AWB barcodes.
-  * Ingest tracking webhooks (In-Transit, Out for Delivery, Delivered, Delivery Failed) and update order tracking status.
+  * Select only enabled fulfilment lanes using configured serviceability, inventory, capacity, cost and delivery-promise rules.
+  * Assign own-team delivery runs or book an approved direct-courier/aggregator lane; preserve the internal Shipment ID as canonical.
+  * Map provider tracking/webhook events to validated internal shipment states with idempotency, audit history and duplicate-event handling.
 * **Important Business Rules:**
-  * An order cannot transition to `DISPATCHED` without a valid carrier AWB number (`BR-SHP-001`).
+  * External AWB/booking reference is required only for lanes whose provider contract requires one; own-team deliveries must record their internal assignment and custody evidence (`BR-SHP-001`).
   * Failed delivery attempts (up to 3 tries) must trigger customer communication before return-to-origin (RTO) (`BR-SHP-002`).
 * **Dependencies:** `FEAT-INT-001`, `FEAT-ORD-001`.
 * **Priority:** `P0`
@@ -663,22 +663,22 @@ graph LR
 
 ## 21. Domain 19: Notification & Communication Management
 
-### FEAT-NTF-001: Multi-Channel Transactional Notification Relay
+### FEAT-NTF-001: Transactional Notification Relay
 
 * **Domain:** Notifications
-* **Description:** Delivers automated, event-driven transactional alerts across Email, SMS, and WhatsApp for critical order and account milestones.
+* **Description:** Delivers automated, event-driven transactional alerts for critical order and account milestones. The exact launch channel set and channel-fallback policy remain pending the OQ-015 decision.
 * **Business Value:** Keeps customers informed in real-time, reducing customer support inquiries ("Where Is My Order?").
 * **Primary Actor:** System (Automated), `ACT-013` (Messaging Gateway)
 * **Preconditions:** Business event triggered (Order Confirmed, Dispatched, Delivered, OTP requested).
 * **Main Capabilities:**
   * Render standardized notification templates with personalized order variables.
-  * Route messages to appropriate channel (SMS for OTPs, Email for Invoices, WhatsApp for live tracking).
+  * Route messages through configured, approved channels once the launch channel policy is confirmed.
   * Maintain delivery status log (Sent, Delivered, Failed, Bounced).
 * **Important Business Rules:**
   * Transactional security alerts and order confirmations bypass promotional opt-out restrictions (`BR-NTF-001`).
 * **Dependencies:** `FEAT-INT-001`.
 * **Priority:** `P0`
-* **Status:** `CONFIRMED`
+* **Status:** `PROPOSED` (channel scope and fallback policy pending OQ-015).
 * **Related Functional Requirements:** `FR-NTF-001`.
 
 ---
@@ -729,10 +729,10 @@ graph LR
 
 ## 24. Domain 22: Reporting & Business Analytics
 
-### FEAT-RPT-001: Commercial Sales & Operational Intelligence Reporting
+### FEAT-RPT-001: Commercial Sales & Operational Intelligence Reporting (Launch Scope Pending)
 
 * **Domain:** Analytics & Reporting
-* **Description:** Provides executive and operational reporting on revenue, gross merchandise value (GMV), order fulfillment latency, return rates, and stock velocity.
+* **Description:** Candidate executive and operational reporting capability. The mandatory launch report set, cadence, roles and export requirements remain pending OQ-018.
 * **Business Value:** Empowers the business owner with actionable insights to optimize pricing, inventory procurement, and operational efficiency.
 * **Primary Actor:** `ACT-001` (Business Owner), `ACT-007` (Finance Officer)
 * **Preconditions:** Historical transaction and operational data exist.
@@ -745,7 +745,7 @@ graph LR
   * Sales reports must strictly reconcile with confirmed payment and invoice totals (`BR-RPT-001`).
 * **Dependencies:** `FEAT-ORD-001`, `FEAT-FIN-001`.
 * **Priority:** `P1`
-* **Status:** `CONFIRMED`
+* **Status:** `PROPOSED` (launch report scope pending OQ-018).
 * **Related Functional Requirements:** `FR-RPT-001`.
 
 ---
@@ -961,10 +961,10 @@ graph LR
 |  **16**  | Promotions, Coupons & Discounts  |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **17**  | Shipping, Logistics & Delivery   |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **18**  | Returns, Replacements & Refunds  |       2       |       1       |      1      |      0      | 2 CONFIRMED                        |
-|  **19**  | Notification Management          |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
+|  **19**  | Notification Management          |       1       |       0       |      1      |      0      | 1 PROPOSED (OQ-015)                |
 |  **20**  | Product Reviews & Ratings        |       1       |       0       |      0      |      1      | 1 PROPOSED                         |
 |  **21**  | Customer Support & Ticketing     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
-|  **22**  | Reporting & Business Analytics   |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
+|  **22**  | Reporting & Business Analytics   |       1       |       0       |      1      |      0      | 1 PROPOSED (OQ-018)                |
 |  **23**  | Audit & Historical Retention     |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **24**  | Data Import / Export (Bulk)      |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **25**  | External Integration Resilience  |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
@@ -973,4 +973,4 @@ graph LR
 |  **28**  | Release Management Readiness     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **29**  | Business Continuity & Backups    |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **30**  | Value-Add Capabilities (Bundles) |       2       |       0       |      0      |      2      | 2 PROPOSED                         |
-| **TOTAL** | **30 Domains Covered**     |  **41**  | **27** | **11** | **3** | **36 CONFIRMED, 5 PROPOSED** |
+| **TOTAL** | **30 Domains Covered**     |  **41**  | **27** | **11** | **3** | **34 CONFIRMED, 7 PROPOSED** |
