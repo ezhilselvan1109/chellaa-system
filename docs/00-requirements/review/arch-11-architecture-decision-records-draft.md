@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | All 12 formal Architecture Decision Records (`ADR-001` through `ADR-012`) are fully articulated in standard MADR format. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | 100% bidirectional traceability established to all relevant business requirements, NFRs, and open questions. |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to review and ratification by the Architecture Review Board (ARB) and CTO. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to executive ratification of commercial policies in Document 11. |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
