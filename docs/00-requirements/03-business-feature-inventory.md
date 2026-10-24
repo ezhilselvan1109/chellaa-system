@@ -666,7 +666,7 @@ graph LR
 ### FEAT-NTF-001: Transactional Notification Relay
 
 * **Domain:** Notifications
-* **Description:** Delivers automated, event-driven transactional alerts for critical order and account milestones. The exact launch channel set and channel-fallback policy remain pending the OQ-015 decision.
+* **Description:** Delivers event-driven transactional alerts using the selected SMS, Email and WhatsApp Business API channel scope for order lifecycle events. Event-to-channel mapping, retries and fallback behavior remain to be specified under OQ-015 follow-up work.
 * **Business Value:** Keeps customers informed in real-time, reducing customer support inquiries ("Where Is My Order?").
 * **Primary Actor:** System (Automated), `ACT-013` (Messaging Gateway)
 * **Preconditions:** Business event triggered (Order Confirmed, Dispatched, Delivered, OTP requested).
@@ -678,7 +678,7 @@ graph LR
   * Transactional security alerts and order confirmations bypass promotional opt-out restrictions (`BR-NTF-001`).
 * **Dependencies:** `FEAT-INT-001`.
 * **Priority:** `P0`
-* **Status:** `PROPOSED` (channel scope and fallback policy pending OQ-015).
+* **Status:** `CONFIRMED` (OQ-015 Option B channel scope selected; event matrix, retry/fallback behavior and DEP-003 readiness remain open).
 * **Related Functional Requirements:** `FR-NTF-001`.
 
 ---
@@ -700,7 +700,7 @@ graph LR
   * Only verified purchasers can submit ratings and reviews (`BR-REV-001`).
 * **Dependencies:** `FEAT-ORD-001`.
 * **Priority:** `P2`
-* **Status:** `PROPOSED`
+* **Status:** `CONFIRMED` (OQ-012 Option B selected; detailed moderation policy remains open).
 * **Related Functional Requirements:** `FR-REV-001`.
 
 ---
@@ -729,10 +729,10 @@ graph LR
 
 ## 24. Domain 22: Reporting & Business Analytics
 
-### FEAT-RPT-001: Commercial Sales & Operational Intelligence Reporting (Launch Scope Pending)
+### FEAT-RPT-001: Commercial Sales & Operational Intelligence Reporting
 
 * **Domain:** Analytics & Reporting
-* **Description:** Candidate executive and operational reporting capability. The mandatory launch report set, cadence, roles and export requirements remain pending OQ-018.
+* **Description:** Includes standard daily operational/financial reports plus the selected real-time BI dashboards, predictive replenishment and customer cohort retention analysis (OQ-018 Option B). KPI definitions, refresh latency, cadence, permissions, exports and validation criteria remain to be specified.
 * **Business Value:** Empowers the business owner with actionable insights to optimize pricing, inventory procurement, and operational efficiency.
 * **Primary Actor:** `ACT-001` (Business Owner), `ACT-007` (Finance Officer)
 * **Preconditions:** Historical transaction and operational data exist.
@@ -745,7 +745,7 @@ graph LR
   * Sales reports must strictly reconcile with confirmed payment and invoice totals (`BR-RPT-001`).
 * **Dependencies:** `FEAT-ORD-001`, `FEAT-FIN-001`.
 * **Priority:** `P1`
-* **Status:** `PROPOSED` (launch report scope pending OQ-018).
+* **Status:** `CONFIRMED` (OQ-018 Option B scope selected; detailed specifications and data validation remain open).
 * **Related Functional Requirements:** `FR-RPT-001`.
 
 ---
@@ -961,10 +961,10 @@ graph LR
 |  **16**  | Promotions, Coupons & Discounts  |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **17**  | Shipping, Logistics & Delivery   |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **18**  | Returns, Replacements & Refunds  |       2       |       1       |      1      |      0      | 2 CONFIRMED                        |
-|  **19**  | Notification Management          |       1       |       0       |      1      |      0      | 1 PROPOSED (OQ-015)                |
-|  **20**  | Product Reviews & Ratings        |       1       |       0       |      0      |      1      | 1 PROPOSED                         |
+|  **19**  | Notification Management          |       1       |       0       |      1      |      0      | 1 CONFIRMED; channel details open  |
+|  **20**  | Product Reviews & Ratings        |       1       |       0       |      0      |      1      | 1 CONFIRMED; moderation details open |
 |  **21**  | Customer Support & Ticketing     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
-|  **22**  | Reporting & Business Analytics   |       1       |       0       |      1      |      0      | 1 PROPOSED (OQ-018)                |
+|  **22**  | Reporting & Business Analytics   |       1       |       0       |      1      |      0      | 1 CONFIRMED; specifications open   |
 |  **23**  | Audit & Historical Retention     |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **24**  | Data Import / Export (Bulk)      |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **25**  | External Integration Resilience  |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
@@ -973,4 +973,4 @@ graph LR
 |  **28**  | Release Management Readiness     |       1       |       0       |      1      |      0      | 1 CONFIRMED                        |
 |  **29**  | Business Continuity & Backups    |       1       |       1       |      0      |      0      | 1 CONFIRMED                        |
 |  **30**  | Value-Add Capabilities (Bundles) |       2       |       0       |      0      |      2      | 2 PROPOSED                         |
-| **TOTAL** | **30 Domains Covered**     |  **41**  | **27** | **11** | **3** | **34 CONFIRMED, 7 PROPOSED** |
+| **TOTAL** | **30 Domains Covered**     |  **41**  | **27** | **11** | **3** | **37 CONFIRMED, 4 PROPOSED** |
