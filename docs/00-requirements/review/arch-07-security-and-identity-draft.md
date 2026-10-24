@@ -196,3 +196,13 @@ The checklist below governs the quality gate audit for `ARCH-07`:
 - [x] 7. **Single-Retailer Anti-Scope Preserved:** Zero multi-tenant or third-party vendor role permissions present.
 - [x] 8. **100% Traceability:** Mapped to declared BRD requirement identifiers.
 - [x] 9. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
+
+
+---
+
+## Cross-document reconciliation note (2026-10-24)
+
+- Canonical workflow identifiers and titles are defined by `docs/00-requirements/06-business-workflows.md` (WF-001–WF-017). Do not infer workflow meaning from an old identifier or copy stale mapping labels.
+- Recorded business decisions are inputs, not implementation approval. Online payment gateway: Razorpay only. Notification channels: SMS, Email and WhatsApp Business API; channel/fallback policy remains open. Reviews: verified buyers with admin moderation; detailed policy remains open. Advanced reporting is selected while specifications remain open. Legacy customer/order history migration is out of scope; catalog and opening-stock import remain in scope. Statutory financial records are retained for eight financial years, subject to Legal/Security review of anonymization details.
+- **Shipping decision conflict:** The current OQ-005 / ADQ-014 decision register describes a hybrid provider model, while a separate owner instruction recorded in project context selects Chellaa's own Shipping Management System and excludes aggregators. This conflict is unresolved; no named courier/aggregator integration or provider-routing policy is approved by this note. Resolve the source decision before architecture sign-off.
+- This draft remains non-binding. Phase 1 review is `PENDING_APPROVAL`, the requirements baseline is `NOT_APPROVED`, and architecture implementation authorization is `NOT_GRANTED`. This note does not authorize promotion to `docs/01-architecture/`.
