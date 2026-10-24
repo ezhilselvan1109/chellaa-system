@@ -35,7 +35,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | <a id="asm-006"></a>**ASM-006** | Digital customer identity is primarily tied to mobile phone numbers. | Reflects Indian consumer shopping patterns where mobile OTP is the primary authentication rail. | If email-first is mandated, registration funnels and communications channels must be redesigned. | Customer UX persona review. | Product Lead | `PROPOSED` |
 | <a id="asm-007"></a>**ASM-007** | A standard 7-calendar-day return window applies to consumer electronics. | Industry-standard duration balancing customer satisfaction with prevention of device wear and fraud. | Financial return rate projections and reverse logistics contracts will require renegotiation. | Business Owner policy sign-off (subject to [OQ-008](#oq-008)). | Business Owner | `PROPOSED` |
 | <a id="asm-008"></a>**ASM-008** | External payment gateway will handle all cardholder credential entry (Hosted / Iframe). | Completely isolates the Chellaa platform from PCI-DSS Level 1 audit liability and card security scope. | Enterprise must undergo full PCI-DSS Level 1 certification, dramatically increasing security costs. | Security & Gateway contract review. | Security Lead | `CONFIRMED` |
-| <a id="asm-009"></a>**ASM-009** | Third-party courier partners will provide REST APIs or Webhooks for automated AWB and tracking. | Eliminates manual waybill typing and manual customer order tracking phone inquiries. | Warehouse operators will be forced to manually enter tracking numbers into spreadsheet batches. | Logistics provider RFP evaluation. | Logistics Lead | `CONFIRMED` |
+| <a id="asm-009"></a>**ASM-009** | Chellaa will build its own Shipping Management System; own delivery operations are in scope, while direct carrier API integrations are optional and require a separate decision. | Preserves control of shipment workflows without committing to an aggregator or unnamed courier partner. | Delivery coverage, staffing, tracking sources, and carrier integrations may need further operational decisions before launch. | Validate shipping workflows, own-team operating model, and any separately approved direct-carrier integration. | Operations Lead | `PROPOSED` |
 | <a id="asm-010"></a>**ASM-010** | Cash on Delivery (COD) will be restricted to orders under ₹10,000 and verified PIN codes. | High-value electronics (smartphones, laptops) carry extreme RTO theft and cash handling risk under COD. | Uncapped COD risks massive return-to-origin freight costs and cash collection shrinkage. | Finance & Risk assessment. | Finance Lead | `PROPOSED` |
 
 ---
@@ -45,7 +45,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | Dependency ID | Dependency Name | Type | Description | Affected Requirements | Potential Commercial Risk | Mitigation / Resolution Strategy | Owner | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | <a id="dep-001"></a>**DEP-001** | Razorpay Merchant Agreement | Commercial Integration | Formal Razorpay merchant account agreement, production credentials, settlement terms, refund configuration, and webhook setup. | `FEAT-PAY-001`, `FR-PAY-001` | Inability to accept online payments or execute automated refunds at launch. | Initiate provider RFP immediately; evaluate sandbox APIs in parallel. | Finance Lead | `OPEN` |
-| <a id="dep-002"></a>**DEP-002** | Shiprocket Logistics Partner Agreement | Operational Integration | Shiprocket account/contract, API credentials, serviceability validation, carrier availability, COD remittance terms, reverse pickup, and agreed service levels. | `FEAT-SHP-001`, `FR-SHP-001` | Parcels cannot be automatically booked or tracked via API; manual shipping delays. | Shortlist top 2 logistics partners; finalize SLA on API uptime and COD remittance. | Operations Lead | `OPEN` |
+| <a id="dep-002"></a>**DEP-002** | Shipping Operations Readiness | Internal Operational Readiness | Define and validate the in-house Shipping Management System workflows, delivery-team operating model, shipment tracking, delivery attempts, proof of delivery, reverse logistics, and COD reconciliation. Direct carrier integrations remain optional and are not selected. | `FEAT-SHP-001`, `FR-SHP-001` | Shipping software may be ready before staffing, operational procedures, delivery coverage, and evidence of end-to-end shipment handling are ready. | Define launch service area, assign operational ownership, validate shipping workflows, and record a separate decision before adding any direct carrier API. | Operations Lead | `OPEN` |
 | <a id="dep-003"></a>**DEP-003** | Telecom SMS DLT Registration & WhatsApp Business API | Regulatory Integration | Distributed Ledger Technology (DLT) template approval for transactional SMS and Meta WhatsApp Business API account. | `FEAT-NTF-001`, `FR-NTF-001` | Transactional OTPs and shipping alerts blocked by telecom operators as spam. | Register enterprise entity and SMS templates on commercial telecom DLT portal immediately. | Operations Lead | `OPEN` |
 | <a id="dep-004"></a>**DEP-004** | Enterprise GSTIN & Invoicing Numbering Scheme | Legal & Tax | Registered corporate Goods and Services Tax Identification Number (GSTIN) and official tax invoice format. | `FEAT-FIN-001`, `FR-FIN-001` | Generated tax invoices non-compliant with statutory tax audits; regulatory penalties. | Obtain legal corporate tax opinion on HSN rate codes and sequential invoice numbering syntax. | Finance Lead | `OPEN` |
 | <a id="dep-005"></a>**DEP-005** | Master Electronics Catalog & Brand Specifications | Business Merchandising | High-resolution photography, accurate technical specification sheets, and manufacturer warranty terms. | `FEAT-CAT-001`, `FR-CAT-001` | Inaccurate product descriptions leading to customer disputes and elevated return rates. | Establish structured ingestion spreadsheet templates for supplier distributors. | Merchandising Lead | `OPEN` |
@@ -138,21 +138,21 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 ---
 
 <a id="oq-005"></a>
-### OQ-005: Courier and Shipping Logistics Partner
-* **Question:** Which courier/logistics integration approach will be used for dispatch, tracking, and reverse pickup at launch?
-* **Why the Decision Matters:** Influences delivery PIN-code coverage, shipping label generation, tracking webhooks, COD remittance support, and reverse pickup reliability.
+### OQ-005: Shipping Management Approach
+* **Question:** Will Chellaa use an external shipping aggregator/carrier integration or build and operate its own Shipping Management System?
+* **Why the Decision Matters:** Defines ownership of shipment lifecycle workflows, delivery operations, tracking, reverse logistics, COD reconciliation, and any future direct-carrier integrations.
 * **Affected Domains:** Shipping & Logistics, Returns, Reverse Logistics.
 * **Affected Requirement IDs:** `FEAT-SHP-001`, `FR-SHP-001`.
 * **Possible Options:**
-  * *Option A:* Direct integration with one national carrier.
-  * *Option B:* Multi-carrier logistics aggregator such as Shiprocket.
-  * *Option C:* Direct API integrations with two national carriers.
-* **Business Owner Decision:** **Option B — Shiprocket multi-carrier aggregator.** Recorded 2026-10-24 from the Business Owner's selection of Option B for the logistics decision.
-* **Implementation Constraints:** Validate serviceability by PIN code, shipment creation, AWB/label generation, pickup booking, tracking webhooks/polling, cancellations, reverse pickup, COD support/remittance, API rate limits, and failure handling before production launch.
-* **Impact of Delaying:** Blocks final provider contract/SLA and production credentials; does not itself approve the architecture.
+  * *Option A:* Build Chellaa's own Shipping Management System; use the business's own delivery team or consider direct carrier integrations only after a separate decision.
+  * *Option B:* Use a multi-carrier shipping aggregator.
+  * *Option C:* Integrate directly with two or more named national carriers.
+* **Business Owner Decision:** **Option A — Build our own Shipping Management System.** No shipping aggregator will be used. The business may use its own delivery team; any direct carrier integration is optional and must be decided separately. No courier partner is selected by this decision. Recorded 2026-10-24 from the explicit Business Owner instruction.
+* **Implementation Constraints:** Define shipment creation and lifecycle, internal tracking events, delivery assignment/attempts, proof of delivery, cancellation, reverse logistics, COD collection/reconciliation, and operational exception handling. Direct carrier API requirements and partner selection are out of scope until separately decided.
+* **Impact of Delaying:** Delays shipping workflow implementation and launch operations readiness; no external courier contract or provider-specific API is selected by this decision.
 * **Priority:** `P1`
 * **Decision Owner:** EZHIL SELVAN P. — Founder; Operations and Technical review remain required.
-* **Status:** `CONFIRMED` (Business Owner selection recorded; partner agreement and integration validation remain open).
+* **Status:** `CONFIRMED` (Business Owner decision recorded; in-house shipping operations readiness remains open under DEP-002).
 
 ---
 
@@ -474,7 +474,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | **OQ-002** | Currencies & Languages | `P1` | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
 | **OQ-003** | Mandatory Payment Methods | `P0` | `CONFIRMED` | Owner-selected Option C: UPI, cards, net banking, plus COD under OQ-006 policy |
 | **OQ-004** | Payment Gateway Selection | `P1` | `CONFIRMED` | Owner-selected single gateway: Razorpay only |
-| **OQ-005** | Courier Logistics Selection | `P1` | `OPEN` | Multi-carrier aggregator (Shiprocket/similar) |
+| **OQ-005** | Shipping Management Approach | `P1` | `CONFIRMED` | Owner-selected Option A: build own Shipping Management System; own delivery team or separately decided direct-carrier integrations; no aggregator or courier partner selected |
 | **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
 | **OQ-007** | Warehouse Launch Topology | `P1` | `UNDER_REVIEW` | Single central warehouse at launch |
 | **OQ-008** | Returns & Inspection Policy | `P0` | `CONFIRMED` | Owner-selected Option B: 7-day return/refund with diagnostic gate |
