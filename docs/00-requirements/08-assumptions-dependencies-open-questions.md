@@ -30,7 +30,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | <a id="asm-001"></a>**ASM-001** | Primary operational country is India. | Domestic retail electronics market context and legal framework. | Requires re-architecting cross-border customs, multi-tax calculations, and international shipping. | Formal confirmation by Enterprise Business Owner. | Business Owner | `PROPOSED` |
 | <a id="asm-002"></a>**ASM-002** | Transaction currency is Indian Rupee (INR - ₹) exclusively for Phase 1. | Eliminates currency conversion risk and multi-currency accounting complexity at launch. | Requires multi-currency pricing, exchange rate feeds, and foreign exchange bank reconciliation. | Commercial policy sign-off. | Business Owner / Finance | `PROPOSED` |
 | <a id="asm-003"></a>**ASM-003** | Retail display prices are tax-inclusive (MRP / Gross Selling Price). | Compliance with Indian Consumer Protection (E-Commerce) Rules and consumer price transparency. | Requires re-engineering cart calculations and checkout UI if taxes are added on top at checkout. | Legal / Tax Advisor review. | Finance Lead | `PROPOSED` |
-| <a id="asm-004"></a>**ASM-004** | The enterprise operates from a single primary central fulfillment warehouse at launch. | Simplifies initial inventory allocation and warehouse logistics for initial launch. | Multi-warehouse order routing, split shipments, and regional stock balancing must be engineered earlier. | Warehouse operations audit. | Operations Lead | `PROPOSED` |
+| <a id="asm-004"></a>**ASM-004** | Initial planning model uses four warehouse locations with regional inventory; the central architecture must remain location-agnostic and configuration-driven. Exact sites and serviceable areas are not yet validated. | Regional inventory is the selected planning model for the India-wide delivery target. | Site selection, GST registrations, stock transfers, regional allocation, split shipments, and operating cost may require changes if the actual sites or capacity differ. | Validate each actual warehouse address, state/GST implications, inventory plan, staffing/capacity and serviceability before launch. | Business Owner / Operations / Finance | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` |
 | <a id="asm-005"></a>**ASM-005** | Pre-orders and backorders are out of scope for the baseline release. | Prevents operational liability for out-of-stock electronics with unpredictable supply chain dates. | Requires engineering backorder queues, delayed capture, and customer cancellation waivers. | Commercial merchandising policy review. | Business Owner | `CONFIRMED` |
 | <a id="asm-006"></a>**ASM-006** | Digital customer identity is primarily tied to mobile phone numbers. | Reflects Indian consumer shopping patterns where mobile OTP is the primary authentication rail. | If email-first is mandated, registration funnels and communications channels must be redesigned. | Customer UX persona review. | Product Lead | `PROPOSED` |
 | <a id="asm-007"></a>**ASM-007** | A standard 7-calendar-day return window applies to consumer electronics. | Industry-standard duration balancing customer satisfaction with prevention of device wear and fraud. | Financial return rate projections and reverse logistics contracts will require renegotiation. | Business Owner policy sign-off (subject to [OQ-008](#oq-008)). | Business Owner | `PROPOSED` |
@@ -62,7 +62,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 - **Status:** `OWNER_DECISION_RECORDED` (owner selection received 2026-10-24); operational readiness remains `OPEN` under DEP-002.
 - **Implementation boundary:** Maintain an internally approved serviceability registry of the PIN codes actually covered at each rollout stage. Checkout must accept deliveries only for enabled PIN codes and must use the approved fee, delivery estimate, and COD-eligibility rules. Do not claim nationwide coverage for a PIN code until local delivery capacity and the end-to-end process are verified.
 - **Open operational details:** Complete serviceable PIN-code list and rollout sequence; regional/warehouse topology; delivery hours and service targets; staffing, shifts and backup capacity; fleet/vehicle model; delivery-fee policy; proof-of-delivery and retention policy; reverse-logistics capacity; and contingency arrangements for remote/low-density areas.
-- **Related assumption to revisit:** `ASM-004` proposes a single primary central fulfillment warehouse. India-wide hybrid delivery may be incompatible with that assumption for cost, speed, or capacity reasons. Do not automatically change to multiple warehouses; assess and explicitly decide the launch warehouse topology before architecture approval.
+- **Warehouse topology decision:** The owner’s planning input selects four initial warehouse locations and regional inventory. This is a planning decision, not evidence that any actual site is contracted, operational, GST-registered, or serviceable. The system design must be generic and configuration-driven; do not hard-code Chennai, Mumbai/Pune, Delhi NCR, Kolkata, or specific PIN codes. Validate actual sites, legal/tax implications, regional stock allocation and serviceability before launch.
 
 
 #### Decision record — phased PIN-code rollout
@@ -251,18 +251,16 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 <a id="oq-007"></a>
 ### OQ-007: Warehouse Topology at Launch
-* **Question:** Will the enterprise operate from a single central warehouse or multiple regional warehouses at launch?
-* **Why the Decision Matters:** Multiple warehouses require stock allocation algorithms, regional inventory partitioning, split shipments, and complex tax invoicing across multiple state GSTINs.
-* **Affected Domains:** Inventory Management, Order Routing, Tax Invoicing.
-* **Affected Requirement IDs:** `FEAT-INV-001`, `FEAT-FIN-001`, `FR-INV-001`.
-* **Possible Options:**
-  * *Option A:* Single central fulfillment warehouse at launch; multi-warehouse capable data model.
-  * *Option B:* Multi-warehouse operations from Day 1 (e.g., North and South hubs).
-* **Recommended Option:** **Option A (Single Central Warehouse at launch).** Keeps physical inventory operations lean while ensuring software schemas support adding warehouse locations later without schema rewrites.
-* **Impact of Delaying:** Affects order routing logic and inventory reservation scopes.
+* **Question:** What warehouse topology and inventory model should the launch architecture support?
+* **Why the Decision Matters:** Multiple regional warehouses require warehouse-scoped inventory, allocation/routing, transfer controls, shipment sourcing, and tax/legal validation for the actual sites.
+* **Affected Domains:** Inventory Management, Order Routing, Fulfilment, Tax Invoicing.
+* **Affected Requirement IDs:** `FEAT-INV-001`, `FEAT-FIN-001`, `FR-INV-001`, `FR-SHP-001`.
+* **Recorded Business Owner Planning Decision:** Four initial warehouse locations with regional inventory. Candidate cities previously discussed are illustrative planning options only; exact sites and PIN codes are pending validation. The architecture must be location-agnostic and must not hard-code city or PIN-code values.
+* **Implementation Boundary:** Model warehouses, inventory, serviceability and fulfilment lanes as configurable data. Do not enable any location/lane until actual address, capacity, legal/tax requirements and provider serviceability have been validated.
+* **Impact:** Requires warehouse-scoped inventory, configurable allocation and routing, and a site-readiness gate.
 * **Priority:** `P1`
-* **Decision Owner:** Operations Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Operations Lead.
+* **Status:** `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` (Phase 1 baseline approval remains pending).
 
 ---
 
@@ -547,9 +545,9 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | **OQ-002** | Currencies & Languages | `P1` | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
 | **OQ-003** | Mandatory Payment Methods | `P0` | `CONFIRMED` | Owner-selected Option C: UPI, cards, net banking, plus COD under OQ-006 policy |
 | **OQ-004** | Payment Gateway Selection | `P1` | `CONFIRMED` | Owner-selected single gateway: Razorpay only |
-| **OQ-005** | Shipping Management Approach | `P1` | `CONFIRMED` | Owner-selected Option A: build own Shipping Management System; own delivery team or separately decided direct-carrier integrations; no aggregator or courier partner selected |
+| **OQ-005** | Shipping Management Approach | `P1` | `CONFIRMED` | Owner-selected Option C: own delivery team, direct courier partners and shipping aggregator permitted; Chellaa owns canonical Shipping Management System; provider/lane readiness remains open |
 | **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
-| **OQ-007** | Warehouse Launch Topology | `P1` | `UNDER_REVIEW` | Single central warehouse at launch |
+| **OQ-007** | Warehouse Launch Topology | `P1` | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` | Four initial warehouse locations with regional inventory; exact sites/PIN codes pending validation; generic configurable design |
 | **OQ-008** | Returns & Inspection Policy | `P0` | `CONFIRMED` | Owner-selected Option B: 7-day return/refund with diagnostic gate |
 | **OQ-009** | Tax Structure & Display Prices | `P0` | `CONFIRMED` | Owner-selected Option A: GST-inclusive display |
 | **OQ-010** | Customer Verification Method | `P0` | `CONFIRMED` | Owner-selected Option A: mobile SMS OTP; email optional |
