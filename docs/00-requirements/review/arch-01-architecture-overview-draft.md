@@ -24,7 +24,7 @@
 | **1. Draft Completion** | **`COMPLETED`** (All 14 required architecture sections and C4 diagrams fully articulated) |
 | **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** (Subject to technical peer review by CTO and Principal Architects) |
-| **4. Business Owner Policy Review** | **`PENDING_REVIEW`** (Subject to review and ratification of ADQ-001 through ADQ-008) |
+| **4. Business Owner Policy Review** | **`PENDING_REVIEW`** (Subject to policy review against the canonical Executive Decision Register ADQ-001 through ADQ-019; recorded selections do not equal formal baseline approval) |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** (Maintained strictly per Document 11 governance gate) |
 | **6. Implementation Authorization** | **`NOT_GRANTED`** (Strictly blocked pending Business Owner signature in Document 11 Section 7) |
 
