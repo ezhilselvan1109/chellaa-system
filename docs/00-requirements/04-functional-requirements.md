@@ -1364,18 +1364,18 @@ Every functional requirement specifies:
 * **Requirement Title:** Event-Driven Asynchronous Notification Relay with Multi-Channel Fallback
 * **Feature ID:** `FEAT-NTF-001`
 * **Business Objective:** `OBJ-006`, `OBJ-007`
-* **Requirement Statement:** The system must ingest domain events asynchronously and dispatch transactional customer notifications across SMS, WhatsApp, and Email, automatically falling back to SMS if WhatsApp delivery fails or times out within 60 seconds.
+* **Requirement Statement:** The system must ingest domain events asynchronously and support the selected SMS, Email and WhatsApp Business API channels for order lifecycle notifications. The event-to-channel matrix, retry policy and fallback behavior must be specified before implementation; no automatic WhatsApp-to-SMS fallback timing is approved by OQ-015.
 * **Description:** Guarantees critical transactional messaging (OTPs, order confirmations, dispatch alerts) reaches consumers promptly regardless of third-party gateway outages.
 * **Primary Actor:** System (Automated Notification Engine)
 * **Preconditions:** Domain event published with recipient contact data.
 * **Trigger:** Critical lifecycle event published (e.g., `OrderConfirmedEvent`, `OTPGeneratedEvent`).
 * **Main Success Scenario:**
   1. System listens to domain event and matches it to a registered notification template.
-  2. System resolves customer preferred channel (e.g., WhatsApp).
-  3. System dispatches message to primary channel gateway.
-  4. Gateway confirms successful delivery; system logs delivery timestamp.
+  2. System resolves the applicable approved channel(s) from the event-to-channel policy (still to be specified).
+  3. System dispatches through configured channel gateways.
+  4. Gateway responses and delivery timestamps are logged for each attempted channel.
 * **Alternative Scenarios:**
-  * WhatsApp fallback to SMS: WhatsApp gateway reports customer unreachable or delivery times out after 60 seconds; system automatically dispatches message via national SMS gateway.
+  * A channel delivery failure is recorded and escalated according to the retry/fallback policy, which remains to be specified.
 * **Exception and Failure Scenarios:**
   * All channels fail: System retries dispatch with exponential backoff and logs an operational alert.
 * **Business Rules:** `BR-NTF-001`.
@@ -1383,10 +1383,10 @@ Every functional requirement specifies:
 * **Expected Business Outcomes:** 99.9% delivery rate for mission-critical transactional alerts.
 * **Dependencies:** `DEP-003`, `FEAT-INT-001`.
 * **Acceptance Criteria:**
-  * **Given** a WhatsApp dispatch that fails or times out after 60 seconds, **When** failure is detected, **Then** the system automatically dispatches the identical notification via SMS within 5 seconds.
+  * **Given** a channel delivery failure, **When** the failure is recorded, **Then** the system retains an auditable failure status and applies the retry/fallback behavior only after that policy is approved.
 * **Priority:** `P0`
-* **Requirement Status:** `PROPOSED`
-* **Open Questions:** See [OQ-015](./08-assumptions-dependencies-open-questions.md#oq-015).
+* **Requirement Status:** `PROPOSED` (channel set selected; event matrix, retry/fallback policy and provider readiness remain open).
+* **Open Questions:** OQ-015 channel selection recorded; remaining details and DEP-003 readiness remain open.
 * **Related Workflow IDs:** `WF-012`.
 
 ---
@@ -1398,32 +1398,33 @@ Every functional requirement specifies:
 * **Requirement Title:** Verified-Buyer Review Submission, Rating Governance and Moderation Queue
 * **Feature ID:** `FEAT-REV-001`
 * **Business Objective:** `OBJ-007`
-* **Requirement Statement:** The system must restrict product rating and review submission strictly to verified buyers who have completed a delivered purchase of that SKU, route all submissions through an administrative moderation queue, and compute aggregated star ratings.
+* **Requirement Statement:** The system must restrict product rating and review submission to verified buyers with a completed, delivered purchase of the SKU, hold each submission for administrative moderation before publication, and compute aggregate star ratings. Photo-review support and detailed moderation/appeal policies remain undecided.
 * **Description:** Establishes trustworthy social proof while preventing fake reviews, competitor spam, and abusive content.
 * **Primary Actor:** `ACT-009` (Customer), `ACT-006` (Customer Support / Moderator)
 * **Preconditions:** Customer has an order containing the SKU in `DELIVERED` status.
 * **Trigger:** Customer submits star rating (1-5) and written review from order history.
 * **Main Success Scenario:**
-  1. Customer submits rating, title, review body, and optional product photos.
-  2. System verifies customer purchased the item and order is `DELIVERED`.
-  3. System flags review as `VERIFIED_PURCHASER` and sets status to `PENDING_MODERATION`.
-  4. Moderator reviews content in admin portal and clicks `APPROVED`.
-  5. Review publishes to product page and system recalculates aggregate SKU rating.
+  1. Customer submits a rating (1-5 stars), title and review body.
+  2. System verifies the customer purchased the item and the order is `DELIVERED`.
+  3. System flags the review as `VERIFIED_PURCHASER` and sets status to `PENDING_MODERATION`.
+  4. An authorized moderator reviews the content and records an approval or rejection.
+  5. Only an approved review is published; the system recalculates the aggregate SKU rating.
+  6. Photo-review support, moderation criteria, appeals and review-edit/delete rules remain open for separate product/security specification.
 * **Alternative Scenarios:**
   * Customer updates existing review: Review returns to moderation queue before updated text is published.
 * **Exception and Failure Scenarios:**
   * Non-buyer attempts review submission: System blocks submission with error: "Only verified purchasers of this item may submit reviews."
   * Profanity / spam detected: Automated filter flags review as `AUTO_FLAGGED` for priority moderator review or auto-rejection.
 * **Business Rules:** `BR-REV-001`.
-* **Inputs and Business Information Required:** Order ID, SKU, star rating (1-5), review title, body text, optional photos.
+* **Inputs and Business Information Required:** Customer/account ID, order ID, SKU, star rating (1-5), review title and body text. Photo inputs remain undecided.
 * **Expected Business Outcomes:** Authentic consumer reviews enhancing brand credibility.
 * **Dependencies:** `FEAT-ORD-001`, `FEAT-CAT-001`.
 * **Acceptance Criteria:**
   * **Given** a customer who has not purchased SKU X, **When** they attempt to submit a review for SKU X, **Then** submission is denied.
   * **Given** a submitted review, **When** approved by a moderator, **Then** it appears on the live PDP and the product's aggregate rating updates.
 * **Priority:** `P2`
-* **Requirement Status:** `PROPOSED`
-* **Open Questions:** See [OQ-012](./08-assumptions-dependencies-open-questions.md#oq-012).
+* **Requirement Status:** `CONFIRMED` (core verified-buyer and pre-publication moderation scope selected; detailed moderation/photo policy remains open).
+* **Open Questions:** OQ-012 selection recorded; detailed policy items listed above remain open.
 * **Related Workflow IDs:** `WF-004`.
 
 ---
@@ -1470,7 +1471,7 @@ Every functional requirement specifies:
 * **Requirement Title:** Executive Commercial Performance, Tax Liability and Inventory Velocity Analytics
 * **Feature ID:** `FEAT-RPT-001`
 * **Business Objective:** `OBJ-009`
-* **Requirement Statement:** The system must aggregate operational and financial data into executive reporting dashboards, providing real-time visibility into Gross Merchandise Value (GMV), net revenue, statutory tax liabilities, return rates, and SKU inventory velocity, with CSV/Excel export capabilities.
+* **Requirement Statement:** The selected reporting scope includes standard daily operational/financial reports plus real-time BI dashboards, predictive replenishment and customer cohort retention analysis. Exact KPI definitions, refresh latency, report cadence, permissions, exports, data sources and acceptance thresholds remain to be specified.
 * **Description:** Delivers commercial intelligence to leadership for inventory planning, financial reconciliation, and margin optimization.
 * **Primary Actor:** `ACT-001` (Business Owner), `ACT-007` (Finance Lead)
 * **Preconditions:** Operator has executive reporting permissions.
@@ -1491,8 +1492,8 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** an export request for Monthly Sales, **When** generated, **Then** Gross Sales minus Discounts minus Refunds equals Net Revenue with 100% mathematical precision.
 * **Priority:** `P1`
-* **Requirement Status:** `PROPOSED`
-* **Open Questions:** See [OQ-018](./08-assumptions-dependencies-open-questions.md#oq-018).
+* **Requirement Status:** `PROPOSED` (OQ-018 Option B scope selected; detailed reporting specifications and validation criteria remain open).
+* **Open Questions:** OQ-018 scope selection recorded; detailed reporting requirements remain open.
 * **Related Workflow IDs:** `WF-014`.
 
 ### <a id="fr-aud-001"></a>FR-AUD-001: Immutable Business Audit Trail & Sensitive Action Logging
@@ -1581,8 +1582,8 @@ Every functional requirement specifies:
 * **Acceptance Criteria:**
   * **Given** an uploaded spreadsheet where row 10 has Selling Price > MRP, **When** bulk import validation runs, **Then** row 10 is flagged with an explicit pricing rule error.
 * **Priority:** `P1`
-* **Requirement Status:** `PROPOSED`
-* **Open Questions:** See [OQ-019](./08-assumptions-dependencies-open-questions.md#oq-019).
+* **Requirement Status:** `CONFIRMED` for the separate bulk catalog/inventory import capability; legacy customer/order migration is out of scope under OQ-019 Option A.
+* **Open Questions:** OQ-019 is resolved for legacy migration scope. Import data ownership and opening-stock reconciliation remain operational tasks under DEP-005 and related inventory requirements.
 * **Related Workflow IDs:** `WF-002`.
 
 ---
