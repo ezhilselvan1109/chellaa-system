@@ -831,4 +831,16 @@ sequenceDiagram
 * **Related Functional Requirements:** `FR-REV-001`.
 * **Unresolved Decisions:** Photo-review support, detailed moderation criteria, moderator permissions, appeal/rejection handling, retention, abuse escalation and review edit/delete rules remain open under the OQ-012 follow-up.
 
+```mermaid
+flowchart TD
+    A[Customer submits rating and review] --> B{Delivered purchase of this SKU verified?}
+    B -->|No| C[Reject submission and record reason]
+    B -->|Yes| D[Mark verified and queue for moderation]
+    D --> E[Authorized moderator reviews content]
+    E --> F{Approved?}
+    F -->|No| G[Record rejection and reason]
+    F -->|Yes| H[Publish review]
+    H --> I[Recalculate aggregate product rating]
+```
+
 ---
