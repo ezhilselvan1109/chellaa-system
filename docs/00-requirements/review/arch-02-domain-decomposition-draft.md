@@ -1030,7 +1030,7 @@ mindmap
   * Capabilities: Outbound Gateway Proxying, Circuit Breaking, Secret Management, Rate Limiting, Signature Verification.
   * Requirements: [`FEAT-INT-001`](../03-business-feature-inventory.md#feat-int-001), [`FR-INT-001`](../04-functional-requirements.md#fr-int-001), [`BR-INT-001`](../05-business-rules.md#br-int-001), [`NFR-AVL-002`](../07-non-functional-requirements.md#nfr-avl-002).
 * **Candidate Aggregate Roots, Entities, and Value Objects:**
-  * `IntegrationPartnerConfig` (Aggregate Root): Partner code (`RAZORPAY`, `SHIPROCKET`, `TELECOM_SMS`), endpoint URL, timeout thresholds, circuit breaker state (`CLOSED`, `OPEN`, `HALF_OPEN`), rate limit quota.
+  * `IntegrationPartnerConfig` (Aggregate Root): Partner code (`RAZORPAY`, `DIRECT_COURIER`, `SHIPPING_AGGREGATOR`, `TELECOM_SMS`, `WHATSAPP_BUSINESS`, `EMAIL_PROVIDER`), endpoint URL, timeout thresholds, circuit breaker state (`CLOSED`, `OPEN`, `HALF_OPEN`), rate limit quota.
   * `OutboundCallAudit` (Entity): Call ID, partner code, endpoint, response status, duration ms, retry attempt.
 * **Invariants Owned by the Domain:**
   * Third-party gateway network latency or outages must be isolated via circuit breakers to prevent cascading thread pool exhaustion ([`NFR-AVL-002`](../07-non-functional-requirements.md#nfr-avl-002)).
@@ -1086,7 +1086,7 @@ mindmap
 * **Failure and Recovery Concerns:**
   * Tampering attempt: Broken hash chain immediately fires critical security alerts and locks the audit partition.
 * **Open Business and Technical Decisions:**
-  * [`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020): Audit log retention architecture and automated S3 Glacier lifecycle tiering.
+  * [`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020) Option A is recorded: retain statutory financial records for eight financial years while supporting appropriate profile/marketing-data anonymization. Archive tiering and technical/legal evidence remain subject to review.
 * **Validation and Acceptance Criteria:**
   * Any direct database modification to an existing audit record causes `VerifyChainIntegrity` to fail with exact row location.
 
@@ -1275,28 +1275,24 @@ The matrix below is a working domain-to-requirement map, not a verified complete
 
 ## 10. Open Decisions and Architectural Risks
 
-### 10.1 Active Architectural Decisions Register (ADQ & AD Tracking)
+### 10.1 Business Decision Source of Truth and Technical Decision Boundary
 
-The domain model in this specification interfaces directly with open strategic business decisions ([`ADQ-001`](./executive-decision-register.md#adq-001) to [`ADQ-008`](./executive-decision-register.md#adq-008)) and technical architecture decisions ([`AD-001`](./architecture-decision-analysis.md#ad-001) to [`AD-012`](./architecture-decision-analysis.md#ad-012)). These decisions remain formally **`OPEN`** pending executive sign-off:
+Business-owner decision IDs `ADQ-001` through `ADQ-019` are governed by the canonical [Executive Decision Register](./executive-decision-register.md). Their statuses are **not all OPEN**: the register records owner selections, while operational dependencies and detailed policy/evidence can remain open. This document must not reuse an `ADQ` identifier for a different technical question.
 
-| Decision ID | Source Reference | Decision Title & Subject | Decision Owner | Architectural Impact on Domain Modeling | Status | Required Evidence / Benchmark |
-| :--- | :--- | :--- | :--- | :--- | :---: | :--- |
-| **`ADQ-001`** | [`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001) | Electronics Return Window & Restocking Fee Policy | Enterprise Business Owner | Dictates whether `ReturnRequest` aggregate deducts restocking fee from `RefundDisbursement`. | `OPEN` | Legal review of Indian consumer protection laws on open electronics. |
-| **`ADQ-002`** | [`OQ-002`](../08-assumptions-dependencies-open-questions.md#oq-002) | Bulk Spreadsheet Limits & Validation SLAs | Enterprise Business Owner | Shapes `BulkJobBatch` aggregate chunking size (5,000 SKUs $\le 15\text{m}$). | `OPEN` | Memory profiling benchmark on multi-part spreadsheet ingestion. |
-| **`ADQ-003`** | [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) | Cash-on-Delivery (COD) Policy & Risk Thresholds | Enterprise Business Owner | Determines whether `CheckoutSession` allows COD payment state transition. | `OPEN` | Historical courier RTO loss data on consumer electronics COD. |
-| **`ADQ-004`** | [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) | Damaged-in-Transit Liability & Reverse Freight Policy | Enterprise Business Owner | Defines dispute state machine between `12. Shipping` and `15. Support`. | `OPEN` | Courier SLA contracts regarding damaged-in-transit liability coverage. |
-| **`ADQ-005`** | [`OQ-007`](../08-assumptions-dependencies-open-questions.md#oq-007) | Product Rating Aggregation & Anti-Spam Moderation | Enterprise Business Owner | Selects algorithm for `ReviewRatingAggregate` (simple vs Bayesian mean). | `OPEN` | Mathematical simulation of rating skew on low review volumes. |
-| **`ADQ-006`** | [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) | Customer Authentication Strategy (OTP vs Password) | Enterprise Business Owner | Governs `CustomerProfile` credential entities and SMS cost budgets. | `OPEN` | Per-OTP SMS cost projections vs user login drop-off analysis. |
-| **`ADQ-007`** | [`OQ-013`](../08-assumptions-dependencies-open-questions.md#oq-013) | Surge Capacity & Concurrency Sizing (1,000 OPM) | Enterprise Business Owner / CTO | Sizing baseline for `InventoryLedger` hold locking and DB connection pooling. | `OPEN` | Flash sale stress testing proving zero lock timeouts at 1,000 OPM. |
-| **`ADQ-008`** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) | SLA Penalties & Disaster Recovery Targets | Enterprise Business Owner / SRE Lead | Governs data replication topology and WORM audit archiving intervals. | `OPEN` | Multi-AZ PostgreSQL failover timing verification (RTO $\le 2\text{h}$, RPO $\le 5\text{m}$). |
-| **`AD-001`** | Architecture Style | Service Decomposition & Packaging Topology | Chief Technology Officer | Evaluates Modular Monolith vs Coarse Clusters vs Fine Microservices. | `OPEN` | Latency simulation comparing in-process calls vs inter-service gRPC. |
-| **`AD-002`** | Inventory State | Reservation Hold Mechanism (Redis vs DB Locking) | Principal Database Architect | Governs physical data store for `StockHold` entities. | `OPEN` | Contention benchmark comparing Redis Lua holds vs Postgres row locking. |
-| **`AD-003`** | Payment State | Late Webhook Reconciliation Strategy | Principal Solution Architect | Dictates automated refund state machine in `10. Payments`. | `OPEN` | End-to-end integration test with simulated 20-minute webhook delays. |
-| **`AD-004`** | Commerce Saga | Distributed Transaction Coordination Pattern | Principal Solution Architect | Selects Orchestrated Saga Coordinator vs Event Choreography. | `OPEN` | Rollback audit proving zero orphaned stock holds upon payment crash. |
-| **`AD-005`** | Data Architecture | Database Isolation Strategy (Schema vs Database-per-Service)| Principal Database Architect | Governs physical database deployment boundaries for aggregates. | `OPEN` | Connection pool saturation benchmark on shared vs isolated databases. |
-| **`AD-006`** | Event Bus | Transactional Outbox vs Direct Publishing | Principal Solution Architect | Implements CDC event emission pipeline from domain aggregates. | `OPEN` | Benchmarking Debezium CDC latency under 1,000 events/second. |
-| **`AD-010`** | Search State | Catalog to Search Read-Model Sync Strategy | Search & Discovery Lead | Dictates event consumption vs CDC pipeline for `SearchCatalogView`. | `OPEN` | Search indexing lag benchmark under 5,000 bulk SKU updates. |
-| **`OQ-011`** | Catalog Schema | Taxonomy & Dynamic Specification Schema Design | Catalog Lead | Defines JSON Schema templates for category specification sheets. | `OPEN` | Complete smartphone/laptop attribute dictionary review. |
+| Decision area | Canonical source | Domain-model consequence | Remaining readiness / detail |
+| :--- | :--- | :--- | :--- |
+| COD and payment methods | `ADQ-003`, `ADQ-009`; `OQ-006` | Restricted COD up to ₹10,000, eligible/verified PIN codes, delivery OTP and ₹50 non-refundable convenience fee; Razorpay only for online payments. | Operations, provider onboarding and end-to-end payment/COD evidence remain open. |
+| Online payment provider | `ADQ-010`; `OQ-004` | Configure Razorpay as the only launch online gateway; do not infer a secondary payment gateway. | Merchant onboarding, credentials, webhook and settlement validation remain open. |
+| Shipping provider mix | `ADQ-014`; `OQ-005` | Chellaa owns its Shipping Management System and canonical internal Shipment ID; own-team, direct courier and aggregator lanes are permitted. | No named provider or lane is approved by this business decision alone; `DEP-002` remains open. |
+| Warehouse topology | `ADQ-015`; `OQ-007` | Four planned regional warehouses with location-agnostic, configuration-driven records and warehouse-scoped inventory. | Actual sites, GST implications, capacity and PIN-code serviceability remain unvalidated. |
+| Reviews and ratings | `ADQ-016`; `OQ-012` | Verified-buyer reviews only; mandatory administrative moderation before publication. | Moderation criteria, roles, appeals, photo reviews, retention and edit/delete policy remain open. |
+| Notifications | `ADQ-017`; `OQ-015` | SMS, Email and WhatsApp Business API are selected for order lifecycle events. | Event-to-channel matrix, retries/fallback, consent/preferences and provider readiness remain open. |
+| Reporting and analytics | `ADQ-018`; `OQ-018` | Standard reports plus real-time BI, predictive replenishment and customer cohort retention analysis. | KPI definitions, refresh/cadence, permissions, methodology and acceptance criteria remain open. |
+| Migration boundary | `ADQ-019`; `OQ-019` | No legacy customer/order history migration for launch; master catalog and opening-stock import remain in scope. | Import templates, source ownership, data quality and stock reconciliation remain open. |
+| Statutory retention and anonymization | `OQ-020`, Option A recorded | Retain statutory financial records for eight financial years while supporting appropriate profile/marketing-data anonymization. | Legal/Security review of export, identity verification, exceptions, coverage and evidence remains open. |
+| Capacity and service-level targets | `ADQ-007`, `ADQ-008`; `OQ-016`, `OQ-017` | 100 orders/minute sustained, 1,000 orders/minute peak, 99.9% uptime, RPO ≤ 5 minutes and RTO ≤ 2 hours are recorded planning targets. | Capacity benchmarks, availability evidence and recovery drills remain unverified. |
+
+Technical architecture choices and their review status are tracked separately in `ARCH-11`. They remain draft decisions until the required architecture review and authorization gates are completed.
 
 ### 10.2 Architectural Domain Risks & Mitigations
 
@@ -1336,7 +1332,7 @@ The checklist below governs the quality gate audit for `ARCH-02`:
 - [x] 6. **Domain Consistency & Failure Matrix:** All 7 critical cross-domain workflows analyzed for transaction boundaries, invariants, sync vs async profiles, consistency models, retry handling, and compensations.
 - [x] 7. **Candidate Context Groupings:** 6 logical clusters evaluated for cohesion, coupling, communication overhead, and failure isolation.
 - [ ] 8. **Requirements Traceability — verification pending:** Current feature/FR/BR/NFR totals and all 17 workflow mappings must be independently verified before completeness can be claimed.
-- [x] 9. **Open Decision & Risk Tracking:** Complete tracking of `ADQ-001` through `ADQ-008`, `AD-001` through `AD-012`, and `OQ-011` with explicit `OPEN` status.
+- [x] 9. **Decision namespace and status alignment:** Business-owner decisions use the canonical `ADQ-001`–`ADQ-019` register; technical architecture decisions remain separate in `ARCH-11`. Do not mark recorded owner decisions as `OPEN` merely because implementation evidence remains pending.
 - [x] 10. **Syntax & Link Cleanliness:** Valid Mermaid diagrams with balanced delimiters, zero broken relative markdown links, and prominent non-binding governance warnings.
 
 
