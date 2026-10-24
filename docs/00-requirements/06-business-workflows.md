@@ -383,10 +383,10 @@ flowchart TD
 
 ### WF-008: Order Fulfillment, Packing and Dispatch
 * **Workflow ID:** `WF-008`
-* **Workflow Name:** In-House Order Fulfillment, Shipment Assignment, Delivery and Proof of Delivery
+* **Workflow Name:** Hybrid Order Fulfillment, Shipment Assignment, Delivery and Proof of Delivery
 * **Business Objective:** `OBJ-004`, `OBJ-006`
 * **Trigger:** Order status becomes `CONFIRMED` and the order is released for fulfillment.
-* **Participating Actors:** `ACT-005` (Fulfillment Specialist), Customer, Shipping Operations Lead, Dispatcher / Route Coordinator, Delivery Associate, Customer Support Agent, COD / Finance Reconciler, System.
+* **Participating Actors:** `ACT-005` (Fulfillment Specialist), Customer, Shipping Operations Lead, Dispatcher / Route Coordinator, Delivery Associate, direct courier partner, shipping aggregator, Customer Support Agent, COD / Finance Reconciler, System.
 * **Preconditions:** Order is `CONFIRMED`; inventory is allocated; destination is in Chellaa's approved internal service area; applicable COD policy is satisfied.
 * **Main Success Path:**
   1. System creates an internal Shipment ID linked to the order, immutable delivery address snapshot, package items, declared value, and COD due if applicable. The operation is idempotent.
@@ -394,13 +394,13 @@ flowchart TD
   3. System generates a picklist by warehouse bin and moves the order to `PROCESSING`.
   4. Specialist picks items, scans each SKU/variant, and verifies quantity and serial/IMEI where applicable.
   5. Specialist records package weight/dimensions, packs and seals the parcel, and records the packing operator and timestamp. Barcode/serial mismatch or damage blocks progression and creates an exception.
-  6. System moves the shipment to `READY_FOR_DISPATCH` after packing checks pass; no external AWB or aggregator booking is required.
-  7. Dispatcher groups ready shipments by approved service area and delivery capacity, assigns a delivery run and Delivery Associate, and records the manifest.
-  8. Warehouse staff and Delivery Associate acknowledge the parcel handover; system records Shipment IDs, count, actor, and timestamp, then sets shipment to `ASSIGNED`.
-  9. Delivery Associate starts the assigned run; shipment moves to `OUT_FOR_DELIVERY`. System sends the customer a status notification and internal tracking link.
+  6. System moves the shipment to `READY_FOR_DISPATCH` after packing checks pass and checks the enabled provider lanes for the destination.
+  7. The dispatcher/system selects an approved lane under the configured serviceability, capacity, cost and delivery-promise rules: Chellaa's own team, a directly integrated courier, or an approved shipping aggregator. Provider routing/fallback rules must be configured before the lane is enabled.
+  8. For own-team delivery, warehouse staff and Delivery Associate acknowledge parcel custody and a run manifest is recorded. For direct courier/aggregator delivery, record provider booking/label, external AWB/reference, pickup manifest and provider handover evidence. All lanes retain the internal Shipment ID as the canonical reference.
+  9. Shipment milestones are ingested from authenticated own-team actions or validated provider API/webhook updates. The system deduplicates provider events, maps them to the common internal lifecycle, and sends the customer a safe tracking link/status update.
   10. Associate records the delivery attempt. For successful delivery, the system validates the required delivery OTP, records recipient confirmation and timestamp, and changes shipment/order to `DELIVERED` only after evidence is complete.
   11. System sends delivery confirmation and starts the 7-calendar-day return eligibility window from the verified delivery timestamp.
-  12. For COD, associate records collection amount and receipt/reference; at shift end, cash/collection evidence is handed over and Finance reconciles it against the COD due.
+  12. For eligible COD, the collection channel (own associate/direct courier/aggregator), amount, receipt/reference and timestamp are recorded. Finance reconciles own-team handovers or provider remittance statements against the COD due, including provider fees/deductions. Online prepaid payments continue under the existing Razorpay-only policy.
 * **Alternative Paths:**
   * **Customer unavailable / address issue / reschedule:** Record a standardized failed-attempt reason, notify Customer Support and customer, and assign a retry within the existing maximum of three consecutive calendar-day attempts.
   * **Third failed attempt:** Escalate to Shipping Operations Lead, return the parcel to warehouse custody, record the return handover, and move shipment to the approved internal return-to-warehouse/RTO state.
