@@ -63,18 +63,18 @@ The architectural planning is derived directly from the business objectives, cor
 | Target / Metric | Target Value | Target Classification | Source Requirement IDs | Architectural Implication |
 | :--- | :--- | :--- | :--- | :--- |
 | **Baseline Order Throughput** | 100 sustained orders/minute | **Proposed Requirement** | [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001) | Baseline sizing for thread pools, connection pools, and database I/O. |
-| **Peak Surge Order Throughput** | 1,000 peak orders/minute | **Open Commercial Decision** (Provisional Target) | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001) | Sizing for Kafka partitions, horizontal container auto-scaling, and Redis cache clusters. |
+| **Peak Surge Order Throughput** | 1,000 peak orders/minute | **Owner decision recorded; verification evidence open** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001) | Sizing for Kafka partitions, horizontal container auto-scaling, and Redis cache clusters. |
 | **Active Catalog Capacity** | Up to 100,000 active SKUs | **Confirmed Requirement** | [`NFR-SCL-002`](../07-non-functional-requirements.md#nfr-scl-002), [`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001) | Sizing for search indexes, database table partitioning, and memory footprints. |
 | **Search & Browsing Latency** | $\le 200\text{ms}$ ($p95$) | **Proposed Requirement** | [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001) | Mandates dedicated search indexing / read models isolated from OLTP writes. |
 | **Checkout Submission Latency** | $\le 1,000\text{ms}$ ($p95$) | **Proposed Requirement** | [`NFR-PERF-002`](../07-non-functional-requirements.md#nfr-perf-002) | Requires low-latency atomic reservation and asynchronous post-order processing. |
 | **Batch Catalog Import** | 5,000 SKUs in $\le 15\text{ min}$ | **Proposed Requirement** | [`NFR-PERF-003`](../07-non-functional-requirements.md#nfr-perf-003), [`FEAT-DAT-001`](../03-business-feature-inventory.md#feat-dat-001) | Mandates asynchronous batch worker with streaming chunk validation. |
-| **Core Checkout Availability** | 99.9% uptime during operational windows | **Open Commercial Decision** (Provisional Target) | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001) | Evaluates Multi-AZ deployment and health check circuit breakers. |
-| **Disaster Recovery (RPO / RTO)** | RPO $\le 5\text{ min}$, RTO $\le 2\text{ hours}$ | **Open Commercial Decision** (Provisional Target) | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001) | Requires automated continuous WAL archiving, PITR, and standby failover runbooks. |
+| **Core Checkout Availability** | 99.9% uptime during operational windows | **Owner decision recorded; verification evidence open** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001) | Evaluates Multi-AZ deployment and health check circuit breakers. |
+| **Disaster Recovery (RPO / RTO)** | RPO $\le 5\text{ min}$, RTO $\le 2\text{ hours}$ | **Owner decision recorded; verification evidence open** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017), [`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001) | Requires automated continuous WAL archiving, PITR, and standby failover runbooks. |
 | **Cardholder Data Storage** | Zero PAN / CVV stored | **Confirmed Requirement** | [`BR-SEC-001`](../05-business-rules.md#br-sec-001), [`NFR-SEC-001`](../07-non-functional-requirements.md#nfr-sec-001) | Enforces client-side tokenization via PCI DSS Level 1 certified gateway SDKs. |
 | **Customer Password Security** | bcrypt (factor $ge 12$) or Argon2id | **Confirmed Requirement** | [`FR-SEC-001`](../04-functional-requirements.md#fr-sec-001), [`NFR-SEC-002`](../07-non-functional-requirements.md#nfr-sec-002) | Mandates salted cryptographic hashing before persistence. |
 | **Customer PII Protection** | AES-256 at rest, automated log redaction | **Confirmed Requirement** | [`NFR-SEC-003`](../07-non-functional-requirements.md#nfr-sec-003) | Enforces database field-level encryption and regex log interceptors. |
 | **Audit Ledger Retention** | 8-financial-year statutory retention with appropriate profile/marketing-data anonymization | **Owner decision recorded; Legal/Security details open** | [`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020), [`BR-DAT-001`](../05-business-rules.md#br-dat-001) | Archive tiers, anonymization coverage and legal/operational evidence remain subject to review. |
-| **Cash on Delivery (COD) Ceiling** | ₹10,000 order ceiling | **Open Commercial Decision** (Provisional Target) | [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006), [`BR-PAY-001`](../05-business-rules.md#br-pay-001) | Sizing post-delivery cash collection reconciliation and delivery OTP state machines. |
+| **Cash on Delivery (COD) Ceiling** | ₹10,000 order ceiling | **Owner decision recorded; verification evidence open** | [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006), [`BR-PAY-001`](../05-business-rules.md#br-pay-001) | Sizing post-delivery cash collection reconciliation and delivery OTP state machines. |
 | **Single Warehouse Topology** | Central enterprise warehouse | **Operational Assumption** | [`ASM-007`](../08-assumptions-dependencies-open-questions.md#asm-007) | Architecture initially assumes single-node inventory ledger with warehouse zones. |
 
 ---
@@ -412,7 +412,7 @@ The following 9 core technical design areas represent critical architectural tra
   * *Consistency:* Option A preserves local ACID transactions. Option B restricts distributed transactions to cross-cluster milestones. Option C mandates complex distributed Sagass across almost all business workflows.
   * *Reliability:* Options B and C prevent a crash in reporting from taking down checkout; Option A requires strict thread isolation.
 * **Relevant BRD References:** [`FEAT-001`](../03-business-feature-inventory.md) through [`FEAT-041`](../03-business-feature-inventory.md), all 56 FRs, [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak throughput), initial team size assumption.
+* **Recorded Decisions and Remaining Evidence:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak throughput), initial team size assumption.
 * **Evidence / Testing Needed Before Selection:** Comparative prototyping evaluating inter-service latency, developer onboarding speed, and CI/CD build times.
 * **Evaluation Status:** `PROPOSED for Evaluation` (All options remain under objective consideration).
 
@@ -433,7 +433,7 @@ The following 9 core technical design areas represent critical architectural tra
   * *Consistency:* Option B requires automated reconciliation workers to handle expired reservation TTLs and restock inventory if customer abandons checkout ([`WF-005`](../06-business-workflows.md#wf-005)).
   * *Reliability:* Redis must be deployed in a Multi-AZ cluster with automatic failover to prevent reservation blockage during cache node outages.
 * **Relevant BRD References:** [`FEAT-INV-001`](../03-business-feature-inventory.md#feat-inv-001), [`FEAT-INV-003`](../03-business-feature-inventory.md#feat-inv-003), [`FR-INV-001`](../04-functional-requirements.md#fr-inv-001), [`FR-INV-003`](../04-functional-requirements.md#fr-inv-003), [`BR-INV-001`](../05-business-rules.md#br-inv-001), [`BR-INV-002`](../05-business-rules.md#br-inv-002), [`WF-005`](../06-business-workflows.md#wf-005).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak load confirmation), [`ASM-007`](../08-assumptions-dependencies-open-questions.md#asm-007) (Single central warehouse).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Peak load confirmation), [`ASM-007`](../08-assumptions-dependencies-open-questions.md#asm-007) (Single central warehouse).
 * **Evidence / Testing Needed Before Selection:** Distributed load testing (k6/Gatling) simulating 1,000 concurrent checkout hold requests against a SKU with only 10 available units; verify 10 successes, 990 immediate 409 rejections, and zero overselling.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -454,7 +454,7 @@ The following 9 core technical design areas represent critical architectural tra
   * *Reliability:* Compensating actions in Sagas must be strictly idempotent to handle network retry duplicates.
   * *Operational:* Orchestrator must persist execution logs to prevent orphan transactions if the orchestrator restarts mid-flow.
 * **Relevant BRD References:** [`FEAT-CHK-001`](../03-business-feature-inventory.md#feat-chk-001), [`FEAT-ORD-001`](../03-business-feature-inventory.md#feat-ord-001), [`FR-CHK-001`](../04-functional-requirements.md#fr-chk-001), [`FR-ORD-001`](../04-functional-requirements.md#fr-ord-001), [`BR-CHK-001`](../05-business-rules.md#br-chk-001), [`BR-ORD-001`](../05-business-rules.md#br-ord-001), [`WF-005`](../06-business-workflows.md#wf-005).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006) (COD flow rules), [`OQ-011`](../08-assumptions-dependencies-open-questions.md#oq-011) (Guest checkout).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006) (COD flow rules), [`OQ-011`](../08-assumptions-dependencies-open-questions.md#oq-011) (Guest checkout).
 * **Evidence / Testing Needed Before Selection:** Chaos engineering test simulating gateway timeout and kill-signal during payment authorization; verify 100% automated release of reserved inventory within 60 seconds.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -475,7 +475,7 @@ The following 9 core technical design areas represent critical architectural tra
   * *Security:* Webhook signature verification is mandatory to prevent fraudulent payment confirmation injections.
   * *Consistency:* Out-of-order resolution ensures that if a customer completes payment redirect before the webhook arrives, the order state is updated cleanly without double capture.
 * **Relevant BRD References:** [`FEAT-PAY-001`](../03-business-feature-inventory.md#feat-pay-001), [`FEAT-PAY-002`](../03-business-feature-inventory.md#feat-pay-002), [`FR-PAY-001`](../04-functional-requirements.md#fr-pay-001) through [`FR-PAY-003`](../04-functional-requirements.md#fr-pay-003), [`BR-PAY-001`](../05-business-rules.md#br-pay-001) through [`BR-PAY-003`](../05-business-rules.md#br-pay-003), [`WF-007`](../06-business-workflows.md#wf-007).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) (Payment methods), [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) (Shortlisted gateway partners).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) (Payment methods), [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) (Shortlisted gateway partners).
 * **Evidence / Testing Needed Before Selection:** Synthetic webhook replay tests delivering duplicate webhook payloads simultaneously across multiple threads; verify exactly one `order.paid` event published.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -496,7 +496,7 @@ The following 9 core technical design areas represent critical architectural tra
   * *Consistency:* Options A and B guarantee At-Least-Once delivery. Consumers must implement deduplication via unique event ID.
   * *Operational:* Message replay from broker commit log enables rebuilding corrupted read models or re-running downstream jobs.
 * **Relevant BRD References:** [`FEAT-OPS-001`](../03-business-feature-inventory.md#feat-ops-001), [`FEAT-INT-001`](../03-business-feature-inventory.md#feat-int-001), [`FR-OPS-001`](../04-functional-requirements.md#fr-ops-001), [`BR-OPS-001`](../05-business-rules.md#br-ops-001), [`BR-INT-001`](../05-business-rules.md#br-int-001).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Event throughput sizing).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) (Event throughput sizing).
 * **Evidence / Testing Needed Before Selection:** Kill-9 container crash test immediately following DB transaction commit; verify outbox event is picked up and published upon container reboot.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -517,7 +517,7 @@ The following 9 core technical design areas represent critical architectural tra
   * *Operational:* Option B allows automated CI schema linting to reject any PR containing cross-schema `REFERENCES` constraints.
   * *Disaster Recovery:* Option B allows a single point-in-time recovery restore to bring back the entire consistent platform state.
 * **Relevant BRD References:** [`FEAT-FIN-001`](../03-business-feature-inventory.md#feat-fin-001), [`FEAT-ORD-001`](../03-business-feature-inventory.md#feat-ord-001), [`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001), [`BR-FIN-001`](../05-business-rules.md#br-fin-001), [`BR-ORD-001`](../05-business-rules.md#br-ord-001).
-* **Unresolved Business Decisions & Assumptions:** Infrastructure budget and operational team capacity.
+* **Recorded Decisions and Remaining Evidence:** Infrastructure budget and operational team capacity.
 * **Evidence / Testing Needed Before Selection:** Stress testing PostgreSQL connection pool under 1,000 OPM synthetic load to evaluate noisy neighbor impact across isolated schemas.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -537,7 +537,7 @@ The following 9 core technical design areas represent critical architectural tra
 * **Security, Consistency, Reliability & Operational Implications:**
   * *Security:* Option A requires internal VPC firewall rules or a shared gateway signature token (`X-Gateway-Signature`) to prevent attackers from bypassing the gateway.
 * **Relevant BRD References:** [`FEAT-ADM-001`](../03-business-feature-inventory.md#feat-adm-001), [`FEAT-CUST-001`](../03-business-feature-inventory.md#feat-cust-001), [`FR-SEC-001`](../04-functional-requirements.md#fr-sec-001), [`BR-ADM-001`](../05-business-rules.md#br-adm-001), [`BR-ADM-002`](../05-business-rules.md#br-adm-002), [`NFR-SEC-002`](../07-non-functional-requirements.md#nfr-sec-002).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) (Customer identity primary key).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) (Customer identity primary key).
 * **Evidence / Testing Needed Before Selection:** Penetration testing verifying that direct HTTP calls to internal service ports with forged `X-User-Id: admin` headers are rejected with 401/403.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -557,7 +557,7 @@ The following 9 core technical design areas represent critical architectural tra
 * **Security, Consistency, Reliability & Operational Implications:**
   * *Consistency:* Option A and B are eventually consistent; catalog update event propagation lag must remain under 1 second.
 * **Relevant BRD References:** [`FEAT-SRCH-001`](../03-business-feature-inventory.md#feat-srch-001), [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`FR-SRCH-001`](../04-functional-requirements.md#fr-srch-001), [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001), [`BR-SRCH-001`](../05-business-rules.md#br-srch-001), [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001), [`NFR-SCL-002`](../07-non-functional-requirements.md#nfr-scl-002).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-018`](../08-assumptions-dependencies-open-questions.md#oq-018) (Reporting metrics and generation frequency).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-018`](../08-assumptions-dependencies-open-questions.md#oq-018) (Reporting metrics and generation frequency).
 * **Evidence / Testing Needed Before Selection:** Benchmark query latency comparing PostgreSQL `tsvector` vs OpenSearch with 100,000 SKUs under 5,000 concurrent search queries.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
@@ -577,7 +577,7 @@ The following 9 core technical design areas represent critical architectural tra
 * **Security, Consistency, Reliability & Operational Implications:**
   * *Disaster Recovery:* Automated continuous WAL streaming to cloud object storage (S3) ensures Point-In-Time Recovery with RPO $< 5\text{ minutes}$.
 * **Relevant BRD References:** [`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001), [`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001), [`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001), [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001), [`NFR-PERF-002`](../07-non-functional-requirements.md#nfr-perf-002).
-* **Unresolved Business Decisions & Assumptions:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) (Formal sign-off on SLA/DR parameters).
+* **Recorded Decisions and Remaining Evidence:** [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016), [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) (Formal sign-off on SLA/DR parameters).
 * **Evidence / Testing Needed Before Selection:** Staging failover drill: terminate primary database instance under load and measure exact cutover time to standby replica and data integrity.
 * **Evaluation Status:** `PROPOSED for Evaluation`.
 
