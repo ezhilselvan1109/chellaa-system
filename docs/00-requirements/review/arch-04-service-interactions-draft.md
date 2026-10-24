@@ -90,7 +90,7 @@ sequenceDiagram
 
 ---
 
-### 3.2 WF-002: Catalog Search, Dynamic Facets & Stockout Demotion
+### 3.2 WF-004: Product Discovery, Search & Filtering
 
 * **Scope:** Full-text typo-tolerant search, faceted filtering, and stockout demotion ([`FEAT-SRCH-001`](../03-business-feature-inventory.md#feat-srch-001), [`BR-SRCH-001`](../05-business-rules.md#br-srch-001), [`NFR-PERF-001`](../07-non-functional-requirements.md#nfr-perf-001)).
 
@@ -115,7 +115,7 @@ sequenceDiagram
 
 ---
 
-### 3.3 WF-003: Cart Addition & Quantity Cap Validation
+### 3.3 WF-005: Shopping Cart Management & Price/Stock Revalidation
 
 * **Scope:** Adding SKUs to shopping cart and enforcing maximum purchase limits ([`FEAT-CART-001`](../03-business-feature-inventory.md#feat-cart-001), [`BR-CART-001`](../05-business-rules.md#br-cart-001), [`BR-CART-002`](../05-business-rules.md#br-cart-002)).
 
@@ -139,7 +139,7 @@ sequenceDiagram
 
 ---
 
-### 3.4 WF-004: Wishlist Management & Price Watch
+### Supporting Flow: Wishlist Management & Price Watch (part of cart capability; no separate WF ID)
 
 * **Scope:** Adding/removing items to authenticated customer wishlist ([`FEAT-WSH-001`](../03-business-feature-inventory.md#feat-wsh-001), [`FR-WSH-001`](../04-functional-requirements.md#fr-wsh-001)).
 
@@ -157,7 +157,7 @@ sequenceDiagram
 
 ---
 
-### 3.5 WF-005: Promotional Coupon Engine & Pro-Rata Discount Distribution
+### 3.5 WF-011: Promotions & Coupon Redemption
 
 * **Scope:** Applying discount coupon codes, verifying non-stacking rules, and pro-rata line-item allocation ([`FEAT-PRM-001`](../03-business-feature-inventory.md#feat-prm-001), [`BR-PRM-001`](../05-business-rules.md#br-prm-001), [`BR-PRM-002`](../05-business-rules.md#br-prm-002)).
 
@@ -272,7 +272,7 @@ sequenceDiagram
 
 ---
 
-### 3.9 WF-009: Shipment Tracking, Delivery Updates & Automatic RTO Trigger
+### Supporting Flow: Shipment Tracking, Delivery Updates & Return-to-Origin (supports WF-008; no separate WF ID)
 
 * **Scope:** Carrier tracking status webhook ingestion, 3-attempt delivery tracking, and automatic RTO execution ([`FEAT-SHP-001`](../03-business-feature-inventory.md#feat-shp-001), [`BR-SHP-002`](../05-business-rules.md#br-shp-002)).
 
@@ -371,7 +371,101 @@ sequenceDiagram
 
 ---
 
-### 3.12 WF-014: Daily Sales Reconciliation & Financial Reporting
+### 3.11 WF-002: Product Catalog Management & Publishing
+
+* **Scope:** Create and validate product records, category/brand associations, variant/SKU attributes, media references, and publish/unpublish state; the public search flow is mapped separately to WF-004 ([`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001), [`FEAT-CAT-002`](../03-business-feature-inventory.md#feat-cat-002), [`FR-CAT-001`](../04-functional-requirements.md#fr-cat-001), [`FR-CAT-003`](../04-functional-requirements.md#fr-cat-003), [`BR-CAT-001`](../05-business-rules.md#br-cat-001)).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Merch as Merchandising / Catalog Staff
+  participant Admin as Admin API
+  participant Catalog as Catalog Domain
+  participant Media as Media/Object Storage
+  participant Events as Event Bus
+  participant Search as Search Index
+
+  Merch->>Admin: Create or update product / variant
+  Admin->>Catalog: Validate required fields, brand, category, SKU and variant attributes
+  Catalog->>Media: Verify approved media references
+  Media-->>Catalog: Media reference validation
+  alt Validation fails
+    Catalog-->>Merch: Field-level validation errors
+  else Validation succeeds
+    Catalog->>Catalog: Persist draft and audit change
+    Merch->>Catalog: Request publish
+    Catalog->>Catalog: Check publish prerequisites and status
+    Catalog->>Events: Publish catalog.product-published
+    Events-->>Search: Update searchable product document
+    Catalog-->>Merch: Publish result and version
+  end
+```
+
+---
+
+### 3.12 WF-003: Inventory Receiving & Stock Adjustment
+
+* **Scope:** Receive purchase/stock-in records, validate SKU and quantity, record warehouse custody and stock adjustments with audit reasons, and update inventory availability ([`FEAT-INV-001`](../03-business-feature-inventory.md#feat-inv-001), [`FR-INV-001`](../04-functional-requirements.md#fr-inv-001), [`FR-INV-003`](../04-functional-requirements.md#fr-inv-003), [`BR-INV-001`](../05-business-rules.md#br-inv-001), [`BR-INV-003`](../05-business-rules.md#br-inv-003)).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Operator as Warehouse Operator
+  participant WMS as Chellaa Inventory / Warehouse Domain
+  participant Catalog as Catalog Domain
+  participant Ledger as Stock Ledger
+  participant Audit as Audit Service
+  participant Events as Event Bus
+
+  Operator->>WMS: Submit receipt or stock adjustment
+  WMS->>Catalog: Validate active SKU / variant
+  Catalog-->>WMS: SKU validation result
+  WMS->>WMS: Validate quantity, warehouse, reason and serial/IMEI where applicable
+  alt Invalid SKU or adjustment data
+    WMS-->>Operator: Reject with validation reason
+  else Valid stock movement
+    WMS->>Ledger: Append idempotent stock movement
+    WMS->>Audit: Record actor, reason, source and before/after values
+    WMS->>Events: Publish inventory.received / inventory.adjusted
+    WMS-->>Operator: Receipt/adjustment reference
+  end
+```
+
+---
+
+### 3.13 WF-009: Order Cancellation & Inventory Release
+
+* **Scope:** Validate cancellation eligibility against order state, idempotently cancel eligible orders, release reserved inventory, and initiate the applicable payment/refund follow-up without treating shipment tracking as the cancellation workflow ([`FEAT-ORD-001`](../03-business-feature-inventory.md#feat-ord-001), [`FEAT-INV-002`](../03-business-feature-inventory.md#feat-inv-002), [`FR-ORD-002`](../04-functional-requirements.md#fr-ord-002), [`BR-ORD-002`](../05-business-rules.md#br-ord-002), [`BR-INV-002`](../05-business-rules.md#br-inv-002)).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Customer as Customer / Support Agent
+  participant Orders as Order Domain
+  participant Inventory as Inventory Domain
+  participant Payments as Payment Domain
+  participant Events as Event Bus
+
+  Customer->>Orders: Request cancellation (order ID, idempotency key)
+  Orders->>Orders: Validate order state and cancellation policy
+  alt Cancellation not permitted
+    Orders-->>Customer: Reject with current state and reason
+  else Cancellation permitted
+    Orders->>Orders: Record cancellation transition idempotently
+    Orders->>Inventory: Release unconsumed stock reservation
+    Inventory-->>Orders: Release result
+    opt Payment captured or payment outcome requires reconciliation
+      Orders->>Payments: Initiate policy-governed refund/reconciliation
+      Payments-->>Orders: Refund/reconciliation reference
+    end
+    Orders->>Events: Publish order.cancelled
+    Orders-->>Customer: Cancellation result and next-step status
+  end
+```
+
+---
+
+### 3.14 WF-014: Reporting and Daily Financial Reconciliation
 
 * **Scope:** Reconciling captured payment transactions, invoiced ledgers, and bank settlement batches ([`FEAT-PAY-002`](../03-business-feature-inventory.md#feat-pay-002), [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`BR-RPT-001`](../05-business-rules.md#br-rpt-001)).
 
@@ -391,7 +485,7 @@ sequenceDiagram
 
 ---
 
-### 3.13 WF-017: Verified-Buyer Review Submission & Moderation (ID Reconciled; Full Sequence Audit Pending)
+### 3.15 WF-017: Verified-Buyer Review Submission & Moderation
 
 * **Scope:** Enforcing verified-purchaser review gating, abuse filtering, and star rating aggregation ([`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001), [`BR-REV-001`](../05-business-rules.md#br-rev-001)).
 
@@ -424,7 +518,7 @@ sequenceDiagram
 
 ---
 
-### 3.14 WF-013: Customer Support Ticket Intake & Transit Damage Dispute
+### 3.16 WF-013: Customer Support Ticket Intake & Transit Damage Dispute
 
 * **Scope:** Customer support ticketing, transit dispute intake, and 2-hour critical SLA escalation ([`FEAT-SUP-001`](../03-business-feature-inventory.md#feat-sup-001), [`BR-SUP-001`](../05-business-rules.md#br-sup-001)).
 
@@ -445,7 +539,7 @@ sequenceDiagram
 
 ---
 
-### 3.15 WF-012: Transactional Notification Dispatch
+### 3.17 WF-012: Transactional Notification Dispatch
 
 * **Scope:** Multi-channel message queuing, TRAI DLT template validation, and dispatch bypass of promotional opt-outs ([`FEAT-NTF-001`](../03-business-feature-inventory.md#feat-ntf-001), [`BR-NTF-001`](../05-business-rules.md#br-ntf-001)).
 
@@ -465,7 +559,7 @@ sequenceDiagram
 
 ---
 
-### 3.17 WF-015: External Provider Failure and Recovery
+### 3.18 WF-015: External Provider Failure and Recovery
 
 * **Scope:** Detecting and containing external payment, shipping, and messaging provider failures without inventing automatic provider failover or unapproved retry/fallback policy ([`FEAT-INT-001`](../03-business-feature-inventory.md#feat-int-001), [`FR-INT-001`](../04-functional-requirements.md#fr-int-001), [`BR-INT-001`](../05-business-rules.md#br-int-001)).
 
@@ -494,7 +588,7 @@ sequenceDiagram
 ```
 
 ---
-### 3.16 WF-016: Staff RBAC Authentication, MFA & Cryptographic Audit
+### 3.19 WF-016: Staff RBAC Authentication, MFA & Cryptographic Audit
 
 * **Scope:** Administrative login, mandatory TOTP MFA, 15-minute inactivity expiry, and WORM SHA-256 hash chaining ([`FEAT-ADM-001`](../03-business-feature-inventory.md#feat-adm-001), [`FEAT-AUD-001`](../03-business-feature-inventory.md#feat-aud-001), [`BR-ADM-001`](../05-business-rules.md#br-adm-001), [`BR-ADM-002`](../05-business-rules.md#br-adm-002), [`BR-AUD-001`](../05-business-rules.md#br-aud-001)).
 
@@ -521,16 +615,16 @@ sequenceDiagram
 
 | Business Workflow | Mapped Business Features (`FEAT`) | Mapped Functional Requirements (`FR`) | Mapped Business Rules (`BR`) | Primary Clusters Involved |
 | :--- | :--- | :--- | :--- | :--- |
-| **`WF-001`** (Registration & Session) | [`FEAT-CUST-001`](../03-business-feature-inventory.md#feat-cust-001), [`FEAT-CART-001`](../03-business-feature-inventory.md#feat-cart-001) | [`FR-CUST-001`](../04-functional-requirements.md#fr-cust-001), [`FR-CART-001`](../04-functional-requirements.md#fr-cart-001) | [`BR-CUST-001`](../05-business-rules.md#br-cust-001), [`BR-CART-001`](../05-business-rules.md#br-cart-001) | Cluster 2 (Commerce), Cluster 5 (Platform) |
-| **`WF-002`** (Catalog Discovery & Search) | [`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001), [`FEAT-SRCH-001`](../03-business-feature-inventory.md#feat-srch-001) | [`FR-CAT-001`](../04-functional-requirements.md#fr-cat-001), [`FR-SRCH-001`](../04-functional-requirements.md#fr-srch-001) | [`BR-CAT-001`](../05-business-rules.md#br-cat-001), [`BR-SRCH-001`](../05-business-rules.md#br-srch-001) | Cluster 1 (Merchandising), Search Read Engine |
-| **`WF-003`** (Cart Addition & Quantity) | [`FEAT-CART-001`](../03-business-feature-inventory.md#feat-cart-001) | [`FR-CART-001`](../04-functional-requirements.md#fr-cart-001) | [`BR-CART-001`](../05-business-rules.md#br-cart-001), [`BR-CART-002`](../05-business-rules.md#br-cart-002) | Cluster 2 (Commerce) |
-| **`WF-004`** (Wishlist Management) | [`FEAT-WSH-001`](../03-business-feature-inventory.md#feat-wsh-001) | [`FR-WSH-001`](../04-functional-requirements.md#fr-wsh-001) | [`BR-CUST-001`](../05-business-rules.md#br-cust-001) | Cluster 2 (Commerce) |
-| **`WF-005`** (Promotions & Coupons) | [`FEAT-PRM-001`](../03-business-feature-inventory.md#feat-prm-001) | [`FR-PRM-001`](../04-functional-requirements.md#fr-prm-001), [`FR-PRM-002`](../04-functional-requirements.md#fr-prm-002) | [`BR-PRM-001`](../05-business-rules.md#br-prm-001), [`BR-PRM-002`](../05-business-rules.md#br-prm-002) | Cluster 2 (Commerce) |
-| **`WF-006`** (Checkout & 15-Min Hold) | [`FEAT-CHK-001`](../03-business-feature-inventory.md#feat-chk-001), [`FEAT-INV-002`](../03-business-feature-inventory.md#feat-inv-002) | [`FR-CHK-001`](../04-functional-requirements.md#fr-chk-001), [`002`](../04-functional-requirements.md#fr-chk-002), [`FR-INV-002`](../04-functional-requirements.md#fr-inv-002) | [`BR-CHK-001`](../05-business-rules.md#br-chk-001), [`002`](../05-business-rules.md#br-chk-002), [`BR-INV-001`](../05-business-rules.md#br-inv-001) | Cluster 2 (Commerce), Cluster 3 (Fulfillment) |
-| **`WF-007`** (Payment & Invoicing) | [`FEAT-PAY-001`](../03-business-feature-inventory.md#feat-pay-001), [`FEAT-FIN-001`](../03-business-feature-inventory.md#feat-fin-001) | [`FR-PAY-001`](../04-functional-requirements.md#fr-pay-001), [`FR-FIN-001`](../04-functional-requirements.md#fr-fin-001) | [`BR-PAY-001`](../05-business-rules.md#br-pay-001)–[`003`](../05-business-rules.md#br-pay-003), [`BR-FIN-001`](../05-business-rules.md#br-fin-001) | Cluster 4 (Finance), Cluster 2 (Commerce) |
-| **`WF-008`** (Warehouse Pick & Manifest) | [`FEAT-INV-003`](../03-business-feature-inventory.md#feat-inv-003), [`FEAT-SHP-001`](../03-business-feature-inventory.md#feat-shp-001) | [`FR-INV-003`](../04-functional-requirements.md#fr-inv-003), [`FR-SHP-001`](../04-functional-requirements.md#fr-shp-001) | [`BR-INV-002`](../05-business-rules.md#br-inv-002), [`BR-SHP-001`](../05-business-rules.md#br-shp-001) | Cluster 3 (Fulfillment), Cluster 2 (Commerce) |
-| **`WF-009`** (Tracking & Delivery RTO) | [`FEAT-SHP-001`](../03-business-feature-inventory.md#feat-shp-001) | [`FR-SHP-002`](../04-functional-requirements.md#fr-shp-002) | [`BR-SHP-001`](../05-business-rules.md#br-shp-001), [`BR-SHP-002`](../05-business-rules.md#br-shp-002) | Cluster 3 (Fulfillment), Cluster 2 (Commerce) |
-| **`WF-010`** (Returns & Diagnostic Gate) | [`FEAT-RET-001`](../03-business-feature-inventory.md#feat-ret-001), [`FEAT-FIN-002`](../03-business-feature-inventory.md#feat-fin-002) | [`FR-RET-001`](../04-functional-requirements.md#fr-ret-001)–[`003`](../04-functional-requirements.md#fr-ret-003) | [`BR-RET-001`](../05-business-rules.md#br-ret-001)–[`003`](../05-business-rules.md#br-ret-003), [`BR-FIN-002`](../05-business-rules.md#br-fin-002) | Cluster 3 (Fulfillment), Cluster 4 (Finance) |
+| **`WF-001`** (Customer Registration and Verification) | [`FEAT-CUST-001`](../03-business-feature-inventory.md#feat-cust-001), [`FEAT-CART-001`](../03-business-feature-inventory.md#feat-cart-001) | [`FR-CUST-001`](../04-functional-requirements.md#fr-cust-001), [`FR-CART-001`](../04-functional-requirements.md#fr-cart-001) | [`BR-CUST-001`](../05-business-rules.md#br-cust-001), [`BR-CART-001`](../05-business-rules.md#br-cart-001) | Cluster 2 (Commerce), Cluster 5 (Platform) |
+| **`WF-002`** (Product Catalog Management & Publishing) | [`FEAT-CAT-001`](../03-business-feature-inventory.md#feat-cat-001), [`FEAT-CAT-002`](../03-business-feature-inventory.md#feat-cat-002) | [`FR-CAT-001`](../04-functional-requirements.md#fr-cat-001), [`FR-CAT-003`](../04-functional-requirements.md#fr-cat-003) | [`BR-CAT-001`](../05-business-rules.md#br-cat-001) | Cluster 1 (Merchandising), Catalog / Media, Search Index consumers |
+| **`WF-003`** (Inventory Receiving & Stock Adjustment) | [`FEAT-INV-001`](../03-business-feature-inventory.md#feat-inv-001) | [`FR-INV-001`](../04-functional-requirements.md#fr-inv-001), [`FR-INV-003`](../04-functional-requirements.md#fr-inv-003) | [`BR-INV-001`](../05-business-rules.md#br-inv-001), [`BR-INV-003`](../05-business-rules.md#br-inv-003) | Cluster 3 (Fulfillment / Inventory), Audit |
+| **`WF-004`** (Product Discovery, Search & Filtering) | [`FEAT-SRCH-001`](../03-business-feature-inventory.md#feat-srch-001) | [`FR-SRCH-001`](../04-functional-requirements.md#fr-srch-001), [`FR-SRCH-002`](../04-functional-requirements.md#fr-srch-002) | [`BR-SRCH-001`](../05-business-rules.md#br-srch-001), [`BR-SRCH-002`](../05-business-rules.md#br-srch-002) | Search Read Engine, Catalog read model |
+| **`WF-005`** (Shopping Cart & Price/Stock Revalidation) | [`FEAT-CART-001`](../03-business-feature-inventory.md#feat-cart-001) | [`FR-CART-001`](../04-functional-requirements.md#fr-cart-001) | [`BR-CART-001`](../05-business-rules.md#br-cart-001), [`BR-CART-002`](../05-business-rules.md#br-cart-002) | Cluster 2 (Commerce), Inventory availability read |
+| **`WF-006`** (Checkout and Order Placement) | [`FEAT-CHK-001`](../03-business-feature-inventory.md#feat-chk-001), [`FEAT-INV-002`](../03-business-feature-inventory.md#feat-inv-002) | [`FR-CHK-001`](../04-functional-requirements.md#fr-chk-001), [`002`](../04-functional-requirements.md#fr-chk-002), [`FR-INV-002`](../04-functional-requirements.md#fr-inv-002) | [`BR-CHK-001`](../05-business-rules.md#br-chk-001), [`002`](../05-business-rules.md#br-chk-002), [`BR-INV-001`](../05-business-rules.md#br-inv-001) | Cluster 2 (Commerce), Cluster 3 (Fulfillment) |
+| **`WF-007`** (Payment Processing and Gateway Reconciliation) | [`FEAT-PAY-001`](../03-business-feature-inventory.md#feat-pay-001), [`FEAT-FIN-001`](../03-business-feature-inventory.md#feat-fin-001) | [`FR-PAY-001`](../04-functional-requirements.md#fr-pay-001), [`FR-FIN-001`](../04-functional-requirements.md#fr-fin-001) | [`BR-PAY-001`](../05-business-rules.md#br-pay-001)–[`003`](../05-business-rules.md#br-pay-003), [`BR-FIN-001`](../05-business-rules.md#br-fin-001) | Cluster 4 (Finance), Cluster 2 (Commerce) |
+| **`WF-008`** (Order Fulfillment, Packing and Dispatch) | [`FEAT-INV-003`](../03-business-feature-inventory.md#feat-inv-003), [`FEAT-SHP-001`](../03-business-feature-inventory.md#feat-shp-001) | [`FR-INV-003`](../04-functional-requirements.md#fr-inv-003), [`FR-SHP-001`](../04-functional-requirements.md#fr-shp-001) | [`BR-INV-002`](../05-business-rules.md#br-inv-002), [`BR-SHP-001`](../05-business-rules.md#br-shp-001) | Cluster 3 (Fulfillment), Cluster 2 (Commerce) |
+| **`WF-009`** (Order Cancellation & Inventory Release) | [`FEAT-ORD-001`](../03-business-feature-inventory.md#feat-ord-001), [`FEAT-INV-002`](../03-business-feature-inventory.md#feat-inv-002) | [`FR-ORD-002`](../04-functional-requirements.md#fr-ord-002), [`FR-INV-002`](../04-functional-requirements.md#fr-inv-002) | [`BR-ORD-002`](../05-business-rules.md#br-ord-002), [`BR-INV-002`](../05-business-rules.md#br-inv-002) | Cluster 2 (Commerce), Cluster 3 (Inventory) |
+| **`WF-010`** (Return, Replacement and Refund Processing) | [`FEAT-RET-001`](../03-business-feature-inventory.md#feat-ret-001), [`FEAT-FIN-002`](../03-business-feature-inventory.md#feat-fin-002) | [`FR-RET-001`](../04-functional-requirements.md#fr-ret-001)–[`003`](../04-functional-requirements.md#fr-ret-003) | [`BR-RET-001`](../05-business-rules.md#br-ret-001)–[`003`](../05-business-rules.md#br-ret-003), [`BR-FIN-002`](../05-business-rules.md#br-fin-002) | Cluster 3 (Fulfillment), Cluster 4 (Finance) |
 | **`WF-011`** (Promotions & Coupon Redemption) | [`FEAT-PRM-001`](../03-business-feature-inventory.md#feat-prm-001) | [`FR-PRM-001`](../04-functional-requirements.md#fr-prm-001), [`FR-PRM-002`](../04-functional-requirements.md#fr-prm-002) | [`BR-PRM-001`](../05-business-rules.md#br-prm-001), [`BR-PRM-002`](../05-business-rules.md#br-prm-002) | Cluster 2 (Commerce); price maintenance remains a supporting operation |
 | **`WF-012`** (Multi-Channel Notification Delivery) | [`FEAT-NTF-001`](../03-business-feature-inventory.md#feat-ntf-001) | [`FR-NTF-001`](../04-functional-requirements.md#fr-ntf-001) | [`BR-NTF-001`](../05-business-rules.md#br-ntf-001) | Cluster 5 (Platform); SMS, Email and WhatsApp Business API; fallback policy open |
 | **`WF-013`** (Customer Support Ticket Resolution) | [`FEAT-SUP-001`](../03-business-feature-inventory.md#feat-sup-001) | [`FR-SUP-001`](../04-functional-requirements.md#fr-sup-001) | [`BR-SUP-001`](../05-business-rules.md#br-sup-001) | Cluster 5 (Platform), Cluster 3 (Fulfillment) |
