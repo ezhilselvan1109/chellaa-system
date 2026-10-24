@@ -372,6 +372,23 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
+### ADQ-014: Hybrid Delivery Provider Model — Own Team, Direct Couriers and Aggregator
+
+* **Decision ID:** `ADQ-014`
+* **Linked BRD Dependency:** [`DEP-002: Shipping Operations Readiness`](../08-assumptions-dependencies-open-questions.md#dep-002)
+* **Supersedes / clarifies:** The provider-exclusion clauses in `ADQ-011`; retains Chellaa ownership of its Shipping Management System and canonical internal shipment lifecycle. `ADQ-012` (India-wide target) and `ADQ-013` (phased activation) remain in effect, with this decision adding a multi-state pilot and a hybrid provider model.
+* **Affected Business Domains:** Shipping & Delivery, Checkout Serviceability, Fulfillment, Customer Experience, Returns / Reverse Logistics, COD and Provider Settlement Reconciliation.
+* **Business Owner Decision:** **Option C — allow all three delivery channels: (1) Chellaa's own delivery team, (2) directly integrated courier partners, and (3) a shipping aggregator.** The target is India-wide delivery, with the initial pilot in selected areas across multiple states. COD and online payment must continue to follow the existing approved payment policies.
+* **Provider and rollout boundary:** This is permission to use all three channels, not selection of a named courier or aggregator, a signed contract, proof of PIN-code coverage, or authorization to enable an untested integration. Activate only validated PIN codes and provider lanes after operational readiness checks. Chellaa's internal Shipment ID remains canonical; provider AWB/booking references are additional identifiers.
+* **Payment-policy boundary:** Online payments remain Razorpay-only for UPI, cards and net banking under the existing decision. COD remains restricted to eligible orders up to ₹10,000, verified/eligible PIN codes, delivery OTP, and the ₹50 non-refundable convenience fee. Delivery provider choice does not change checkout payment eligibility or silently relax these rules.
+* **Implementation / readiness conditions:** Define provider-neutral shipment states/events; routing and fallback rules; direct courier and aggregator selection; contracts, rates, serviceability, SLAs, API credentials, booking/label/tracking/webhook behavior; idempotency and duplicate-event handling; pickup/failed-delivery/RTO/returns; COD collection, remittance, deductions and reconciliation; customer tracking and notifications; privacy/evidence retention; provider outage handling; and end-to-end tests for every enabled pilot lane.
+* **Business Owner Rationale & Conditions:** The owner selected the hybrid delivery model and multi-state pilot. No specific pilot states/PIN codes, courier/aggregator brand, contract, provider ranking/routing policy, fees, SLAs, or rollout dates were supplied.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**. `DEP-002` remains `OPEN`; this decision does not approve the BRD baseline or architecture.
+
+---
+
 ## 4. Executive Decision Ratification Record
 
 *(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
@@ -381,6 +398,6 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
 | **Owner Decision Date** | `2026-10-24` |
-| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` &nbsp; `[x] ADQ-014` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
