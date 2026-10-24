@@ -221,7 +221,8 @@ Every functional requirement specifies:
   * **Given** a customer with no active orders, **When** they confirm account anonymization, **Then** all PII fields in the customer record are scrambled within 24 hours, while statutory tax invoices retain the legally required audit snapshot.
 * **Priority:** `P1`
 * **Requirement Status:** `PROPOSED`
-* **Open Questions:** See [OQ-020](./08-assumptions-dependencies-open-questions.md#oq-020).
+* **Decision Status:** OQ-020 Option A is recorded (`CONFIRMED`): retain statutory financial records for eight financial years while supporting profile/marketing-data anonymization.
+* **Remaining Review:** This requirement remains `PROPOSED` pending Legal/Security review of export contents, identity verification, anonymization coverage, exceptions, retention mapping and acceptance evidence. OQ-020 itself is not an open question.
 * **Related Workflow IDs:** `WF-001`.
 
 ---
