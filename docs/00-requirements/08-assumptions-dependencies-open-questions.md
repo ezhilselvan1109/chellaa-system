@@ -352,11 +352,14 @@ The following 22 strategic commercial decisions must be formally reviewed and re
   * *Option A:* Out of scope for Phase 1 baseline; deferred to Phase 2.
   * *Option B:* In scope for Phase 1: Verified buyers only, with mandatory admin moderation before publication.
   * *Option C:* Open unmoderated reviews.
-* **Recommended Option:** **Option A (Deferred to Phase 2).** Focus initial baseline on core transaction reliability; integrate reviews in the frontend release.
-* **Impact of Delaying:** Removes review service scope from Phase 1.
+* **Selected Option:** **Option B — in scope for Phase 1: verified buyers only, with mandatory admin moderation before publication.**
+* **Decision Boundary:** A reviewer must have a completed, verified delivered order containing the reviewed SKU. Reviews enter an administrative moderation queue and are not published until approved.
+* **Still Open:** Detailed moderation criteria, moderator roles/permissions, appeal/rejection handling, photo-review policy, retention, abuse escalation, and review-edit/delete rules require product/security review. This selection does not approve the overall Phase 1 baseline.
+* **Impact:** Review submission, verified-purchase checks, moderation and rating aggregation are included in the proposed Phase 1 scope.
 * **Priority:** `P2`
-* **Decision Owner:** Product Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Product Lead.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option B selected; detailed policy and baseline approval remain open).
 
 ---
 
@@ -405,11 +408,13 @@ The following 22 strategic commercial decisions must be formally reviewed and re
   * *Option A:* SMS (for OTPs) and Email (for Invoices and Orders) only.
   * *Option B:* SMS, Email, and WhatsApp Business API for all order lifecycle events.
   * *Option C:* In-app push notifications only.
-* **Recommended Option:** **Option B (SMS for security OTPs; Email for legal tax invoices; WhatsApp for customer order tracking updates).** WhatsApp delivers the highest engagement and read rates for Indian consumers.
-* **Impact of Delaying:** Determines notification provider selection during Architecture Phase.
+* **Selected Option:** **Option B — SMS, Email, and WhatsApp Business API for all order lifecycle events.**
+* **Decision Boundary:** The selected channel scope applies to order lifecycle events. OTP/security messaging, tax invoices and other event-specific legal requirements must still use the channel(s) appropriate to their purpose; this selection does not by itself define a complete event-to-channel matrix.
+* **Still Open:** Per-event mandatory-channel matrix, preference/consent rules where applicable, retry and fallback behavior, delivery-time targets, template ownership, channel outage handling and channel-specific provider configuration. `DEP-003` remains `OPEN`; no provider registration or delivery tests are claimed.
 * **Priority:** `P1`
-* **Decision Owner:** Marketing Lead / Operations Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Decision Owner:** Business Owner / Operations / Marketing.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option B selected; delivery policy details and DEP-003 remain open).
 
 ---
 
@@ -461,11 +466,13 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Possible Options:**
   * *Option A:* Standard daily operational reports: Daily Sales (GMV/Net), Product Velocity, Inventory Low-Stock, and GST Tax Liability.
   * *Option B:* Option A plus real-time BI dashboards with predictive replenishment and customer cohort retention analysis.
-* **Recommended Option:** **Option A (Standard core operational and financial reports).** Advanced machine-learning BI can be layered on in subsequent phases.
-* **Impact of Delaying:** Defines reporting schema requirements.
+* **Selected Option:** **Option B — Option A standard daily operational reports plus real-time BI dashboards, predictive replenishment and customer cohort retention analysis.**
+* **Decision Boundary:** Advanced BI and predictive/retention analysis are included in the selected reporting scope. This is a business-scope selection, not proof that dashboards, models, data pipelines or reports have been implemented or validated.
+* **Still Open:** Exact KPI definitions, calculation/reconciliation rules, refresh latency, report cadence, role permissions, exports, retention, data sources, forecast methodology, acceptance thresholds and rollout sequencing require Finance/Product/Data review.
 * **Priority:** `P1`
-* **Decision Owner:** Business Owner / Finance Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Finance / Product / Data.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option B selected; detailed report specifications and baseline approval remain open).
 
 ---
 
@@ -478,11 +485,13 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Possible Options:**
   * *Option A:* Greenfield launch with no historical customer/order migration. New master catalog and opening stock are loaded through the standard bulk import capability.
   * *Option B:* Migrate specified historical data sets after source inventory, mapping, cleansing, privacy review and reconciliation are approved.
-* **Recommended Option:** Option A is a non-binding proposal only; the Business Owner must confirm whether legacy data exists and whether migration is required.
-* **Impact of Delaying:** Determines whether a distinct historical migration workstream and acceptance criteria are needed. It does not block documenting or validating the standard bulk catalog/inventory import.
+* **Selected Option:** **Option A — greenfield launch with no historical customer/order migration.** Load the new master catalog and opening stock using the standard bulk catalog/inventory import capability.
+* **Decision Boundary:** This excludes migration of legacy customer and order history from the current baseline. It does not remove or defer the separate bulk catalog/inventory import capability.
+* **Still Open:** The source of new catalog data, import template ownership, opening-stock reconciliation and import acceptance evidence remain operational tasks under `DEP-005` and related catalog/inventory requirements. Reopen historical migration only through change control if a concrete legacy dataset is identified and approved.
 * **Priority:** `P1`
-* **Decision Owner:** Enterprise Business Owner / Data Owner.
-* **Status:** `UNDER_REVIEW` (Historical migration decision remains open; bulk import is a separate capability).
+* **Decision Owner:** Business Owner / Data Owner / Merchandising.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option A selected; bulk-import readiness remains separate).
 
 ---
 
@@ -552,14 +561,14 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | **OQ-009** | Tax Structure & Display Prices | `P0` | `CONFIRMED` | Owner-selected Option A: GST-inclusive display |
 | **OQ-010** | Customer Verification Method | `P0` | `CONFIRMED` | Owner-selected Option A: mobile SMS OTP; email optional |
 | **OQ-011** | Guest Checkout Support | `P1` | `CONFIRMED` | Owner-selected Option B: guest checkout with phone-OTP auto-account |
-| **OQ-012** | Customer Reviews & Ratings | `P2` | `UNDER_REVIEW` | Deferred to Phase 2 (Frontend) |
+| **OQ-012** | Customer Reviews & Ratings | `P2` | `OWNER_DECISION_RECORDED` | Option B: verified buyers only; admin moderation required before publication |
 | **OQ-013** | Loyalty & Store Credit | `P2` | `CONFIRMED` | Out of scope for Phase 1 baseline |
 | **OQ-014** | Pre-orders & Backorders | `P1` | `CONFIRMED` | Out of scope (Strict non-negative stock) |
-| **OQ-015** | Notification Channels | `P1` | `UNDER_REVIEW` | SMS (OTP), Email (Invoice), WhatsApp (Order) |
+| **OQ-015** | Notification Channels | `P1` | `OWNER_DECISION_RECORDED` | Option B: SMS, Email and WhatsApp Business API for order lifecycle events; fallback/event matrix open |
 | **OQ-016** | Peak Traffic & Order Capacity | `P0` | `CONFIRMED` | Owner-selected Option B: 100 OPM sustained; 1,000 OPM peak |
 | **OQ-017** | Availability, RTO & RPO Targets | `P0` | `CONFIRMED` | Owner-selected Option A: 99.9% uptime; RPO ≤ 5m; RTO ≤ 2h |
-| **OQ-018** | Required Business Reports | `P1` | `UNDER_REVIEW` | Standard daily sales, velocity, GST reports |
-| **OQ-019** | Legacy Data Migration Scope | `P1` | `UNDER_REVIEW` | Greenfield launch with catalog import |
+| **OQ-018** | Required Business Reports | `P1` | `OWNER_DECISION_RECORDED` | Option B: standard reports + real-time BI, predictive replenishment and customer cohort retention |
+| **OQ-019** | Legacy Data Migration Scope | `P1` | `OWNER_DECISION_RECORDED` | Option A: no legacy customer/order history migration; bulk catalog/opening-stock import remains in scope |
 | **OQ-020** | Data Retention & Privacy (DPDPA)| `P0` | `CONFIRMED` | 8-year tax retention; anonymize profile PII |
 | **OQ-021** | Release Approval Governance | `P1` | `CONFIRMED` | Automated CI with manual release gate |
 | **OQ-022** | Operational Incident Protocols | `P1` | `CONFIRMED` | Automated Slack/SMS alerts for $> 2\%$ error |
