@@ -42,9 +42,9 @@ The table below confirms the creation, completeness, and review readiness of all
 | **BRD-DOC-06** | [06-business-workflows.md](./06-business-workflows.md) | 17 end-to-end business workflows (`WF-001` to `017`) with sequence and logic flowcharts. | `COMPLETE` |
 | **BRD-DOC-07** | [07-non-functional-requirements.md](./07-non-functional-requirements.md) | Measurable quality criteria (`NFR-xxx`) covering performance, scaling, security, observability, and RTO/RPO. | `COMPLETE` |
 | **BRD-DOC-08** | [08-assumptions-dependencies-open-questions.md](./08-assumptions-dependencies-open-questions.md) | 10 Assumptions (`ASM`), 6 Dependencies (`DEP`), and 22 Open Questions (`OQ-001` to `022`). | `COMPLETE` |
-| **BRD-DOC-09** | [09-requirements-traceability-matrix.md](./09-requirements-traceability-matrix.md) | End-to-end traceability matrix connecting objectives, features, rules, workflows, NFRs, and anti-scope. | `COMPLETE` |
+| **BRD-DOC-09** | [09-requirements-traceability-matrix.md](./09-requirements-traceability-matrix.md) | End-to-end traceability matrix connecting objectives, features, rules, workflows, NFRs, assumptions, dependencies, open questions and anti-scope. | `UPDATED; BIDIRECTIONAL SEMANTIC REVIEW PENDING` |
 | **BRD-DOC-10** | [10-glossary.md](./10-glossary.md) | Standardized domain dictionary establishing unified commercial and technical definitions. | `COMPLETE` |
-| **BRD-DOC-11** | [11-review-and-approval.md](./11-review-and-approval.md) | Quality assurance audit, scope verification, and formal executive sign-off checkpoint. | `COMPLETE` |
+| **BRD-DOC-11** | [11-review-and-approval.md](./11-review-and-approval.md) | Quality assurance audit, scope verification, and formal executive sign-off checkpoint. | `PENDING HUMAN SIGN-OFF` |
 
 ---
 
