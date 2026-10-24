@@ -611,7 +611,7 @@ graph LR
   * Map provider tracking/webhook events to validated internal shipment states with idempotency, audit history and duplicate-event handling.
 * **Important Business Rules:**
   * External AWB/booking reference is required only for lanes whose provider contract requires one; own-team deliveries must record their internal assignment and custody evidence (`BR-SHP-001`).
-  * Failed delivery attempts (up to 3 tries) must trigger customer communication before return-to-origin (RTO) (`BR-SHP-002`).
+  * Failed delivery attempts, retry eligibility, customer communications and return/RTO behavior must follow the approved policy for the selected delivery lane (`BR-SHP-002`).
 * **Dependencies:** `FEAT-INT-001`, `FEAT-ORD-001`.
 * **Priority:** `P0`
 * **Status:** `CONFIRMED`
