@@ -69,15 +69,15 @@ pie title Previous Draft Counts — Coverage Reconciliation Pending
 
 | Baseline Element Category | Total Baseline Count | Architecturally Addressed Count | Coverage % | Primary Architecture Specification Mappings |
 | :--- | :---: | :---: | :---: | :--- |
-| **Business Objectives (`OBJ`)** | 10 | 10 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md) |
-| **Stakeholder Personas (`ACT`)** | 14 | 14 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md) |
-| **Business Features (`FEAT`)** | 41 | 41 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md) |
-| **Functional Requirements (`FR`)** | 56 | 56 explicit crosswalk rows below | **100% ID mapped; semantic verification pending** |
-| **Business Rules (`BR`)** | 55 | 55 explicit crosswalk rows below | **100% ID mapped; semantic verification pending** |
-| **Business Workflows (`WF`)** | 17 | **PENDING** | **Not yet verified** | [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
-| **Non-Functional Requirements (`NFR`)**| 18 | 18 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md), [`ARCH-09`](./arch-09-observability-and-audit-draft.md), [`ARCH-10`](./arch-10-deployment-and-infrastructure-draft.md) |
-| **Assumptions (`ASM`)** | 10 | 10 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md) |
-| **Dependencies (`DEP`)** | 6 | 6 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md) |
+| **Business Objectives (`OBJ`)** | 10 | ID inventory present; semantic mapping pending | **Not verified** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md) |
+| **Stakeholder Personas (`ACT`)** | 14 | ID inventory present; semantic mapping pending | **Not verified** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md) |
+| **Business Features (`FEAT`)** | 41 | 41 IDs enumerated; semantic mapping pending | **ID inventory only** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md) |
+| **Functional Requirements (`FR`)** | 56 | 56 explicit crosswalk rows below | **ID inventory mapped; semantic verification pending** |
+| **Business Rules (`BR`)** | 55 | 55 explicit crosswalk rows below | **ID inventory mapped; semantic verification pending** |
+| **Business Workflows (`WF`)** | 17 | 17 unique IDs present in ARCH-04 matrix and sequence headings; one extra WF-008 supporting-flow heading is not a separate workflow | **ID/title inventory reconciled; semantic crosswalk review pending** | [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
+| **Non-Functional Requirements (`NFR`)**| 18 | 18 IDs enumerated after correcting NFR-OBS-001 mapping; semantic mapping pending | **ID inventory only** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md), [`ARCH-09`](./arch-09-observability-and-audit-draft.md), [`ARCH-10`](./arch-10-deployment-and-infrastructure-draft.md) |
+| **Assumptions (`ASM`)** | 10 | 10 source IDs indexed in Section 5.3; semantic mapping pending | **ID inventory only** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md) |
+| **Dependencies (`DEP`)** | 6 | 6 source IDs indexed in Section 5.4; readiness remains open where source says OPEN | **ID inventory only** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md) |
 | **Open Questions (`OQ`)** | 22 | 22 source questions indexed below | **ID inventory mapped; source decision status remains authoritative** |
 | **Technical Decisions (`AD`)** | 12 | 12 architecture decision records | **Inventory presence only; authorization is separate** |
 
@@ -149,7 +149,7 @@ Every one of the 41 Business Features must map to its implementing Service Clust
 | **`NFR-SEC-001`** Zero Raw PAN Storage | 100% PCI-DSS SAQ-A compliance | [`ARCH-05`](./arch-05-data-architecture-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md) (Client-side tokenization). |
 | **`NFR-SEC-002`** Identity Segregation | Customer vs Staff isolated | [`ARCH-07`](./arch-07-security-and-identity-draft.md), [`ARCH-11`](./arch-11-architecture-decision-records-draft.md) (`ADR-008` Segregated IAM). |
 | **`NFR-SEC-003`** PII Encryption at Rest | AES-256 field encryption | [`ARCH-05`](./arch-05-data-architecture-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md) (AWS KMS master key). |
-| **`NFR-OPS-001`** Distributed Tracing Standard | W3C `traceparent` on 100% calls | [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md), [`ARCH-09`](./arch-09-observability-and-audit-draft.md) (OpenTelemetry). |
+| **`NFR-OBS-001`** Distributed Tracing Standard | W3C `traceparent` on 100% calls | [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md), [`ARCH-09`](./arch-09-observability-and-audit-draft.md) (OpenTelemetry). |
 | **`NFR-OBS-002`** RED Metric Monitoring | Prometheus scrape & alerts | [`ARCH-09`](./arch-09-observability-and-audit-draft.md) (Rate, Errors, Duration dashboards). |
 | **`NFR-BCM-001`** Disaster Recovery Targets | RTO ≤ 2 hours; RPO ≤ 5 minutes (owner-selected targets; NFR approval/evidence gate remains open) | [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md), [`ARCH-10`](./arch-10-deployment-and-infrastructure-draft.md), [`ARCH-11`](./arch-11-architecture-decision-records-draft.md) (`ADR-012`); recovery drills remain unverified. |
 | **`NFR-REL-001`** Automated Release Verification & Zero-Downtime Deployment | 100% automated test pass; zero dropped HTTP connections during deployment | [`ARCH-09`](./arch-09-observability-and-audit-draft.md), [`ARCH-10`](./arch-10-deployment-and-infrastructure-draft.md), [`ARCH-11`](./arch-11-architecture-decision-records-draft.md); execution evidence required. |
@@ -283,7 +283,35 @@ Every one of the 41 Business Features must map to its implementing Service Clust
 | **BR-ADV-001** — Product Bundle Availability Governed by Lowest Component ATS | FR-ADV-001 | [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md), [ARCH-06](./arch-06-api-and-event-contracts-draft.md) |
 | **BR-ADV-002** — Back-in-Stock Notification Throttling | FR-ADV-002 | [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md), [ARCH-06](./arch-06-api-and-event-contracts-draft.md) |
 
-### 5.3 Open Questions (OQ): 22 source IDs indexed
+### 5.3 Assumptions (ASM): 10 source IDs indexed
+
+| ASM ID | Source assumption | Source status | Architecture trace |
+| :--- | :--- | :--- | :--- |
+| **ASM-001** | Primary operational country is India | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md); preserve India-only scope as a recorded input without upgrading source status |
+| **ASM-002** | Transaction currency is INR exclusively for Phase 1 | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md); source status remains authoritative |
+| **ASM-003** | Retail display prices are tax-inclusive | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md); Legal/Tax review remains open |
+| **ASM-004** | Four regional warehouses; location-agnostic/configuration-driven design | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md); exact sites and serviceability unvalidated |
+| **ASM-005** | Pre-orders and backorders out of scope for baseline release | `CONFIRMED` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md) |
+| **ASM-006** | Digital customer identity primarily tied to mobile phone numbers | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-07](./arch-07-security-and-identity-draft.md); source status remains authoritative |
+| **ASM-007** | Seven-calendar-day return window for consumer electronics | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md); detailed policy/legal review remains open |
+| **ASM-008** | External payment gateway handles cardholder credential entry | `CONFIRMED` | [ARCH-05](./arch-05-data-architecture-draft.md), [ARCH-07](./arch-07-security-and-identity-draft.md) |
+| **ASM-009** | Chellaa-owned Shipping Management System with permitted own-team, direct-courier and aggregator lanes | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-08](./arch-08-resilience-and-fault-tolerance-draft.md); provider/lane readiness remains open |
+| **ASM-010** | Restricted COD for eligible orders and verified PIN codes | `PROPOSED` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md); finance/risk validation remains open |
+
+### 5.4 Dependencies (DEP): 6 source IDs indexed
+
+| DEP ID | Source dependency | Source status | Architecture trace |
+| :--- | :--- | :--- | :--- |
+| **DEP-001** | Razorpay merchant agreement, production credentials, settlement/refund/webhook readiness | `OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-04](./arch-04-service-interactions-draft.md), [ARCH-07](./arch-07-security-and-identity-draft.md), [ARCH-08](./arch-08-resilience-and-fault-tolerance-draft.md) |
+| **DEP-002** | Shipping operations, provider contracts, serviceability and end-to-end readiness | `OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-08](./arch-08-resilience-and-fault-tolerance-draft.md) |
+| **DEP-003** | SMS DLT registration and WhatsApp Business API readiness | `OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-06](./arch-06-api-and-event-contracts-draft.md), [ARCH-08](./arch-08-resilience-and-fault-tolerance-draft.md) |
+| **DEP-004** | Enterprise GSTIN and invoicing numbering scheme | `OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md) |
+| **DEP-005** | Master electronics catalog and brand specifications | `OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md) |
+| **DEP-006** | Physical warehouse infrastructure and barcode hardware | `OPEN` | [ARCH-01](./arch-01-architecture-overview-draft.md), [ARCH-02](./arch-02-domain-decomposition-draft.md), [ARCH-05](./arch-05-data-architecture-draft.md) |
+
+> These are source-ID indexes and architecture destinations, not proof that a dependency is satisfied or an assumption approved. Keep source lifecycle status unchanged until its required validation is recorded.
+
+### 5.5 Open Questions (OQ): 22 source IDs indexed
 
 | OQ ID | Source question | Architecture trace |
 | :--- | :--- | :--- |
@@ -310,7 +338,7 @@ Every one of the 41 Business Features must map to its implementing Service Clust
 | **OQ-021** | Software Release and Deployment Approval Governance | [ARCH-11](./arch-11-architecture-decision-records-draft.md), [ARCH-12](./arch-12-master-traceability-matrix-draft.md); source OQ/ADQ register remains authoritative |
 | **OQ-022** | Operational Monitoring and Incident Escalation Protocols | [ARCH-11](./arch-11-architecture-decision-records-draft.md), [ARCH-12](./arch-12-master-traceability-matrix-draft.md); source OQ/ADQ register remains authoritative |
 
-### 5.4 Executive Decisions (ADQ): 19 recorded decisions indexed
+### 5.6 Executive Decisions (ADQ): 19 recorded decisions indexed
 
 | ADQ ID | Recorded decision | Architecture trace |
 | :--- | :--- | :--- |
@@ -338,7 +366,7 @@ Every one of the 41 Business Features must map to its implementing Service Clust
 
 The checklist below governs the quality gate audit for `ARCH-12`:
 
-- [x] 1. **Identifier inventory and explicit crosswalks:** 41 FEAT IDs, 56 FR IDs, 55 BR IDs, 17 WF IDs, 18 NFR IDs, 10 ASM IDs, 6 DEP IDs, 22 OQ IDs, and 19 ADQ IDs are enumerated in the architecture set. FR/BR crosswalk rows are explicit in Sections 5.1–5.2; semantic correctness and reverse-link verification remain pending independent review.
+- [x] 1. **Identifier inventory and explicit crosswalks:** Source inventories are 41 FEAT, 56 FR, 55 BR, 17 WF, 18 NFR, 10 ASM, 6 DEP, 22 OQ and 19 ADQ IDs. ARCH-12 enumerates these IDs; FR/BR crosswalk rows are explicit in Sections 5.1–5.2. This verifies identifier presence, not semantic correctness or reverse-link completeness.
 - [ ] 2. **Bidirectional semantic traceability:** Independently verify each crosswalk row against its source requirement and reverse links; do not claim zero semantic orphans until that review is complete.
 - [x] 3. **Single-Retailer Anti-Scope Preserved:** Zero third-party marketplace, vendor commission, or split payout mappings present.
 - [ ] 4. **Identifier Integrity and Link Audit:** Explicit FR/BR/OQ/ADQ source IDs are enumerated in the crosswalks. Independent validation of every source-to-architecture link and semantic mapping remains pending; no zero-orphan claim is made.
