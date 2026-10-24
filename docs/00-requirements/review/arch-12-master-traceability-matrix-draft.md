@@ -30,8 +30,8 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
-| **1. Draft Completion** | **`COMPLETED`** | Complete bidirectional traceability mapping all 260 baseline BRD elements across ARCH-01 to ARCH-11 is fully articulated. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% mathematical coverage of all 41 Features, 56 FRs, 55 BRs, 16 Workflows, and 18 NFRs verified with zero unmapped items. |
+| **1. Draft Completion** | **`PENDING_RECONCILIATION`** | The prior draft count of 260 elements predates the addition of `WF-017`; totals and bidirectional mappings must be recalculated against the current baseline before completion can be claimed. |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Current source inventory has 41 Features, 56 FRs, 55 BRs, 17 Workflows and 18 NFRs; all mapping rows and totals require re-verification. Do not claim 100% coverage until the audit is complete. |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO and Principal Solution Architect. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to executive sign-off in Document 11 Section 7. |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -49,15 +49,15 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 
 ## 2. Traceability Methodology & Coverage Summary
 
-This Master Architecture Requirements Traceability Matrix verifies that **100% of the 260 formal baseline requirements** established in the Phase 1 Business Requirements Document (Docs 00–11) are concretely addressed, allocated, and constrained across the technical architecture specifications:
+This Master Architecture Requirements Traceability Matrix is intended to verify bidirectional coverage of the Phase 1 BRD. The previous claim of 260 elements and 100% coverage is not current: `WF-017` has since been added, and the full count and mappings remain under reconciliation.
 
 ```mermaid
-pie title Phase 1 BRD Requirements Architectural Coverage (100% Allocated)
+pie title Previous Draft Counts — Coverage Reconciliation Pending
   "Business Features (41)" : 41
   "Functional Requirements (56)" : 56
   "Business Rules (55)" : 55
   "Non-Functional Requirements (18)" : 18
-  "Business Workflows (16)" : 16
+  "Business Workflows (17)" : 17
   "Stakeholder Personas (14)" : 14
   "Business Objectives (10)" : 10
   "Assumptions & Dependencies (16)" : 16
@@ -74,7 +74,7 @@ pie title Phase 1 BRD Requirements Architectural Coverage (100% Allocated)
 | **Business Features (`FEAT`)** | 41 | 41 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md) |
 | **Functional Requirements (`FR`)**| 56 | 56 | **100.0%** | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
 | **Business Rules (`BR`)** | 55 | 55 | **100.0%** | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-05`](./arch-05-data-architecture-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md) |
-| **Business Workflows (`WF`)** | 16 | 16 | **100.0%** | [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
+| **Business Workflows (`WF`)** | 17 | **PENDING** | **Not yet verified** | [`ARCH-04`](./arch-04-service-interactions-draft.md), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
 | **Non-Functional Requirements (`NFR`)**| 18 | 18 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-07`](./arch-07-security-and-identity-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md), [`ARCH-09`](./arch-09-observability-and-audit-draft.md), [`ARCH-10`](./arch-10-deployment-and-infrastructure-draft.md) |
 | **Assumptions (`ASM`)** | 10 | 10 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-02`](./arch-02-domain-decomposition-draft.md) |
 | **Dependencies (`DEP`)** | 6 | 6 | **100.0%** | [`ARCH-01`](./arch-01-architecture-overview-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md) |
@@ -116,7 +116,7 @@ Every one of the 41 Business Features is mapped to its implementing Service Clus
 | **`FEAT-RET-001`** 7-Day Returns & Diagnostic Gate | 13. Returns & Refunds | Cluster 3: Fulfillment | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md) (`WF-010`), [`ARCH-05`](./arch-05-data-architecture-draft.md) |
 | **`FEAT-NTF-001`** Transactional Multi-Channel Alerts | 14. Notifications | Cluster 5: Platform | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md) (`WF-015`), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
 | **`FEAT-SUP-001`** Support Ticketing & Transit Claims | 15. Customer Support | Cluster 5: Platform | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md) (`WF-014`), [`ARCH-07`](./arch-07-security-and-identity-draft.md) |
-| **`FEAT-REV-001`** Verified Reviews & Rating Aggregate | 16. Reviews & Ratings | Cluster 5: Platform | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md) (`WF-013`), [`ARCH-05`](./arch-05-data-architecture-draft.md) |
+| **`FEAT-REV-001`** Verified Reviews & Rating Aggregate | 16. Reviews & Ratings | Cluster 5: Platform | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md) (`WF-017`; workflow reconciliation pending), [`ARCH-05`](./arch-05-data-architecture-draft.md) |
 | **`FEAT-RPT-001`** Commercial KPI Reports & BI Views | 17. Reporting & Analytics | Cluster 5: Platform | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-04`](./arch-04-service-interactions-draft.md) (`WF-012`), [`ARCH-11`](./arch-11-architecture-decision-records-draft.md) (`ADR-011`) |
 | **`FEAT-DAT-001`** Asynchronous Bulk Data Exchange | 18. Bulk Data Exchange | Cluster 1: Merchandising | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-03`](./arch-03-service-decomposition-draft.md), [`ARCH-05`](./arch-05-data-architecture-draft.md) |
 | **`FEAT-INT-001`** Gateway Proxy & Circuit Breakers | 19. External Integrations| Cluster 5: Platform | [`ARCH-02`](./arch-02-domain-decomposition-draft.md), [`ARCH-08`](./arch-08-resilience-and-fault-tolerance-draft.md), [`ARCH-06`](./arch-06-api-and-event-contracts-draft.md) |
@@ -151,8 +151,8 @@ Every one of the 41 Business Features is mapped to its implementing Service Clus
 
 The checklist below governs the quality gate audit for `ARCH-12`:
 
-- [x] 1. **100% Mathematical Requirements Coverage:** Verified that all 260 baseline BRD elements are mapped to concrete architecture specifications.
-- [x] 2. **Bidirectional Traceability:** Forward mapping (BRD $\rightarrow$ Architecture) and backward mapping (Architecture $\rightarrow$ BRD) verified with zero unmapped orphans.
+- [ ] 1. **Mathematical Requirements Coverage:** Recalculate the baseline element total after adding `WF-017` and verify each architecture mapping against source documents.
+- [ ] 2. **Bidirectional Traceability:** Re-run forward and backward mapping checks; do not claim zero unmapped orphans until evidence supports it.
 - [x] 3. **Single-Retailer Anti-Scope Preserved:** Zero third-party marketplace, vendor commission, or split payout mappings present.
 - [x] 4. **Identifier Integrity:** 100% of referenced identifiers trace directly to baseline BRD documents with zero invented IDs.
 - [x] 5. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
