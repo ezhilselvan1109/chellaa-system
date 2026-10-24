@@ -56,8 +56,8 @@ These selections resolve the associated business choices; they do **not** approv
 
 ### Questions still requiring business-owner/domain-lead resolution
 
-- `OQ-004` — Payment gateway selection (currently `OPEN`).
-- `OQ-005` — Courier/logistics partner selection (currently `OPEN`).
+- `OQ-004` — Payment gateway selection (`CONFIRMED`: Razorpay only; single-gateway approach).
+- `OQ-005` — Courier/logistics partner selection (`CONFIRMED`: Option B, Shiprocket multi-carrier aggregator).
 - `OQ-007` — Warehouse launch topology (currently `UNDER_REVIEW`).
 - `OQ-012` — Customer reviews/ratings scope and moderation (currently `UNDER_REVIEW`).
 - `OQ-015` — Mandatory notification channels (currently `UNDER_REVIEW`).
@@ -70,8 +70,8 @@ The document lists confirmed questions including `OQ-011`, `OQ-013`, `OQ-014`, `
 
 Document 08 lists these six dependencies as `OPEN`:
 
-1. `DEP-001` — Payment gateway merchant agreement.
-2. `DEP-002` — Courier logistics partner agreement.
+1. `DEP-001` — Razorpay merchant agreement, production credentials, settlement/refund configuration, and webhook setup.
+2. `DEP-002` — Shiprocket partner agreement, API credentials, serviceability validation, COD terms, and logistics SLAs.
 3. `DEP-003` — SMS DLT / WhatsApp Business registration.
 4. `DEP-004` — Enterprise GSTIN and invoice-numbering/legal-tax validation.
 5. `DEP-005` — Approved electronics catalog and brand specifications.
