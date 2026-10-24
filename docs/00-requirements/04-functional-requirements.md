@@ -1361,7 +1361,7 @@ Every functional requirement specifies:
 
 ### <a id="fr-ntf-001"></a>FR-NTF-001: Multi-Channel Event-Driven Notification Delivery
 * **Requirement ID:** `FR-NTF-001`
-* **Requirement Title:** Event-Driven Asynchronous Notification Relay with Multi-Channel Fallback
+* **Requirement Title:** Event-Driven Asynchronous Notification Delivery
 * **Feature ID:** `FEAT-NTF-001`
 * **Business Objective:** `OBJ-006`, `OBJ-007`
 * **Requirement Statement:** The system must ingest domain events asynchronously and support the selected SMS, Email and WhatsApp Business API channels for order lifecycle notifications. The event-to-channel matrix, retry policy and fallback behavior must be specified before implementation; no automatic WhatsApp-to-SMS fallback timing is approved by OQ-015.
@@ -1377,10 +1377,10 @@ Every functional requirement specifies:
 * **Alternative Scenarios:**
   * A channel delivery failure is recorded and escalated according to the retry/fallback policy, which remains to be specified.
 * **Exception and Failure Scenarios:**
-  * All channels fail: System retries dispatch with exponential backoff and logs an operational alert.
+  * All configured channels fail: System records the failure and raises an operational alert; retry timing and fallback behavior remain open until the notification policy is approved.
 * **Business Rules:** `BR-NTF-001`.
 * **Inputs and Business Information Required:** Event type, recipient phone/email, template parameters (Order ID, tracking URL, OTP code).
-* **Expected Business Outcomes:** 99.9% delivery rate for mission-critical transactional alerts.
+* **Expected Business Outcomes:** Auditable, reliable transactional notification delivery across the selected channel scope. A numeric delivery-rate target remains open.
 * **Dependencies:** `DEP-003`, `FEAT-INT-001`.
 * **Acceptance Criteria:**
   * **Given** a channel delivery failure, **When** the failure is recorded, **Then** the system retains an auditable failure status and applies the retry/fallback behavior only after that policy is approved.
