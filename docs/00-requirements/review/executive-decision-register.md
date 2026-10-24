@@ -11,7 +11,7 @@
 | **Creation Date** | 2026-10-23 |
 | **Author Roles** | Senior Business Analyst, Solution Architect & Architecture Governance Lead |
 | **Target Reviewer** | Enterprise Business Owner |
-| **Governance Status** | **`PENDING_EXECUTIVE_RATIFICATION`** (Decisions Pending Formal Human Selection) |
+| **Governance Status** | **`OWNER_DECISIONS_RECORDED_PENDING_PHASE1_APPROVAL`** (Business Owner selections recorded; baseline approval remains pending) |
 | **Phase 1 Baseline Status** | **`PENDING_APPROVAL`** (Maintained strictly per governance constraints) |
 
 ---
@@ -31,14 +31,14 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 | Decision ID | Linked BRD ID | Strategic Decision Area | Technical Team Proposal (NON-BINDING) | Business Owner Decision | Current Status |
 | :---: | :---: | :--- | :--- | :---: | :---: |
-| **`ADQ-001`** | [`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001) | Operating Country & Geographic Scope | Option A: Domestic India Only at Launch | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-002`** | [`OQ-002`](../08-assumptions-dependencies-open-questions.md#oq-002) | Transaction Currencies & Language Scope | Option A: Single INR (₹) & English Only | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-003`** | [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006) | Cash on Delivery (COD) Policy & Safeguards | Option B: Restricted COD (₹10,000 Cap + OTP) | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-004`** | [`OQ-008`](../08-assumptions-dependencies-open-questions.md#oq-008) | Electronics Return & Inspection Policy | Option B: 7-Day Window + Diagnostic Gating | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-005`** | [`OQ-009`](../08-assumptions-dependencies-open-questions.md#oq-009) | Tax Presentation & Catalog Pricing | Option A: Indian GST 100% Tax-Inclusive MRP | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-006`** | [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) | Customer Registration & Auth Identifier | Option A: Mobile-First with SMS OTP | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-007`** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) | Peak Festive Surge Capacity Target | Option B: 100 OPM Sustained / 1,000 OPM Peak | *(Pending Owner)* | **`OPEN`** |
-| **`ADQ-008`** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) | Platform Availability SLA & DR Targets | Option A: 99.9% Uptime, RPO $\le 5\text{m}$, RTO $\le 2\text{h}$ | *(Pending Owner)* | **`OPEN`** |
+| **`ADQ-001`** | [`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001) | Operating Country & Geographic Scope | Option A: Domestic India Only at Launch | **Option A — Domestic India Only at Launch** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-002`** | [`OQ-002`](../08-assumptions-dependencies-open-questions.md#oq-002) | Transaction Currencies & Language Scope | Option A: Single INR (₹) & English Only | **Option A — Single INR (₹) & English Only** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-003`** | [`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006) | Cash on Delivery (COD) Policy & Safeguards | Option B: Restricted COD (₹10,000 Cap + OTP) | **Option B — Restricted COD (₹10,000 cap, delivery OTP, ₹50 non-refundable fee)** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-004`** | [`OQ-008`](../08-assumptions-dependencies-open-questions.md#oq-008) | Electronics Return & Inspection Policy | Option B: 7-Day Window + Diagnostic Gating | **Option B — 7-day return/refund or replacement with technician diagnostic gate** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-005`** | [`OQ-009`](../08-assumptions-dependencies-open-questions.md#oq-009) | Tax Presentation & Catalog Pricing | Option A: Indian GST 100% Tax-Inclusive MRP | **Option A — GST-inclusive storefront pricing with tax breakdown** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-006`** | [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) | Customer Registration & Auth Identifier | Option A: Mobile-First with SMS OTP | **Option A — Mobile-first with SMS OTP; email optional** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-007`** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) | Peak Festive Surge Capacity Target | Option B: 100 OPM Sustained / 1,000 OPM Peak | **Option B — 100 orders/min sustained; 1,000 orders/min peak** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-008`** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) | Platform Availability SLA & DR Targets | Option A: 99.9% Uptime, RPO $\le 5\text{m}$, RTO $\le 2\text{h}$ | **Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours** | **`OWNER_DECISION_RECORDED`** |
 
 ---
 
