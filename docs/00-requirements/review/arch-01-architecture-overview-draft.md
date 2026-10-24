@@ -442,7 +442,7 @@ The following engineering principles govern the Chellaa technical architecture. 
 ## 11. Open Decisions and Architectural Risks
 
 ### 11.1 Strategic Business Decisions (`ADQ-001` through `ADQ-008`)
-The following commercial decisions remain strictly **`OPEN`** in [`executive-decision-register.md`](./executive-decision-register.md) awaiting Enterprise Business Owner ratification:
+The following owner selections are recorded. Operational evidence, unresolved policy details, and formal baseline/architecture gates remain open; do not describe a recorded selection as an unresolved business choice:
 * **`ADQ-001` Operating Country Scope ([`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001)):** Domestic India only is recorded for launch; cross-border trade is out of initial scope. Operational rollout remains subject to readiness checks.
 * **`ADQ-002` Currency Architecture ([`OQ-002`](../08-assumptions-dependencies-open-questions.md#oq-002)):** INR only is recorded for launch; multi-currency support is out of initial scope.
 * **`ADQ-003` Cash on Delivery (COD) Policy ([`OQ-006`](../08-assumptions-dependencies-open-questions.md#oq-006)):** Restricted COD is recorded (up to ₹10,000, eligible/verified PIN code, delivery OTP, ₹50 non-refundable convenience fee); operational validation remains open.
@@ -456,7 +456,7 @@ The following commercial decisions remain strictly **`OPEN`** in [`executive-dec
 * **`RISK-01`: Premature Microservice Decomposition (High):** Carving into 15+ microservices creates operational drag, distributed transaction bugs, and latency. *Mitigation:* Evaluate Coarse-Grained Clusters (4–6) as the primary baseline (`AD-001`).
 * **`RISK-02`: Flash-Sale Inventory Contention (Critical):** 1,000 OPM contending on identical SKUs causes database connection pool exhaustion. *Mitigation:* Evaluate in-memory distributed holds in Redis via Lua scripts (`AD-002`).
 * **`RISK-03`: Late Payment Webhook Ambiguity (High):** Gateway confirms payment after 15-minute hold expires and stock has been reallocated. *Mitigation:* Implement strict dual-path recovery: reallocate if stock exists; automated gateway source refund if depleted (`AD-003`, `BR-PAY-003`).
-* **`RISK-04`: Third-Party Provider Outages (High):** Payment gateway, courier, or SMS API downtime blocks checkout. *Mitigation:* Resilience4j circuit breakers, automated failover, and asynchronous retry queues.
+* **`RISK-04`: Third-Party Provider Outages (High):** Payment gateway, courier, or SMS API downtime blocks checkout. *Mitigation:* circuit breakers, durable work queues, reconciliation, and operator-visible incidents; retry timing and fallback policy remain open. Do not assume automatic payment-gateway failover.
 
 ---
 
@@ -470,7 +470,7 @@ The formal promotion of `ARCH-01` to `docs/01-architecture/ARCH-01-architecture-
 * [ ] 4. **Actor & Dependency Traceability:** All actors (`ACT-001`–`014`) and external dependencies (`DEP-001`–`006`) trace 100% to source BRD documents.
 * [ ] 5. **C4 Context Agreement:** C4 Level 1 diagram and narrative perfectly agree on interactions, protocols, and boundaries.
 * [ ] 6. **Quantitative Governance Preserved:** Performance metrics explicitly differentiate confirmed, proposed, and open targets.
-* [ ] 7. **Zero Premature Vendor Commitments:** No specific cloud vendor, payment provider, or courier locked in before ADR evaluation.
+* [ ] 7. **Zero Premature Vendor Commitments:** Preserve the recorded Razorpay-only payment decision; do not invent a named courier/aggregator or enable shipping lanes until the OQ-005 decision conflict is resolved and readiness is verified.
 * [ ] 8. **Relative Link Integrity:** 100% of internal Markdown links and anchors validate with zero broken references.
 
 ---
