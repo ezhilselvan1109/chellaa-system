@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Multi-AZ cloud topology, VPC subnets, PITR backup strategy, CI/CD pipelines, and secrets governance are fully articulated. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% bidirectional traceability established to disaster recovery NFRs ([`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001)) and surge capacity ([`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | 100% bidirectional traceability established to disaster recovery NFRs ([`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001)) and surge capacity ([`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001)). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Cloud Architect, and SRE Lead. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of RTO/RPO disaster recovery SLA targets ([`ADQ-008`](./executive-decision-register.md#adq-008)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -199,3 +199,13 @@ The checklist below governs the quality gate audit for `ARCH-10`:
 - [x] 6. **Single-Retailer Anti-Scope Preserved:** Zero multi-tenant cloud isolation or third-party seller hosting concepts present.
 - [x] 7. **100% Traceability:** Mapped to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
+
+
+---
+
+## Cross-document reconciliation note (2026-10-24)
+
+- Canonical workflow identifiers and titles are defined by `docs/00-requirements/06-business-workflows.md` (WF-001–WF-017). Stale mappings must not be treated as valid merely because a document previously claimed coverage.
+- Recorded decisions are inputs, not implementation approval: online payments use Razorpay only; notifications use SMS, Email and WhatsApp Business API while channel/fallback policy remains open; reviews require verified buyers and admin moderation; advanced reporting is selected while specifications remain open; legacy customer/order history migration is out of scope while catalog and opening-stock import remain in scope; statutory financial records are retained for eight financial years subject to Legal/Security review of anonymization details.
+- **Shipping decision conflict:** Current OQ-005 / ADQ-014 describes a hybrid provider model, while a separate owner instruction recorded in project context selects Chellaa's own Shipping Management System and excludes aggregators. This conflict is unresolved; no named courier/aggregator integration or provider-routing policy is approved by this note. Resolve before architecture sign-off.
+- This draft remains non-binding. Phase 1 review is `PENDING_APPROVAL`, requirements baseline is `NOT_APPROVED`, and architecture implementation authorization is `NOT_GRANTED`. No promotion to `docs/01-architecture/` is authorized by this note.
