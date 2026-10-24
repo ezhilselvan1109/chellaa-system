@@ -355,6 +355,23 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
+### ADQ-013: India-Wide Delivery Rollout Method — Phased PIN-Code Activation
+
+* **Decision ID:** `ADQ-013`
+* **Linked BRD Dependency:** [`DEP-002: Shipping Operations Readiness`](../08-assumptions-dependencies-open-questions.md#dep-002)
+* **Related Decision:** `ADQ-012` — India-wide intended delivery scope using Chellaa's own delivery team.
+* **Affected Business Domains:** Shipping & Delivery, Fulfillment, Warehouse Operations, Workforce Planning, Checkout Serviceability, Customer Support, Reverse Logistics.
+* **Business Owner Decision:** **Option B — activate serviceable PIN codes in phases, according to operational readiness.** The India-wide coverage goal remains; not all Indian PIN codes are assumed to be serviceable at launch.
+* **Operating rule:** A PIN code can be enabled for checkout only after its serviceability and local operating capacity are recorded and the applicable readiness gate is passed. COD eligibility is checked separately. Unsupported or not-yet-enabled PIN codes must not be accepted for delivery.
+* **Minimum readiness gate:** Confirm the serviceable PIN-code list, warehouse/fulfillment path, trained delivery staffing and backup, vehicle/run capacity, hours and delivery promise, fee and COD policy, customer notifications and proof of delivery, failed-delivery and reverse-logistics procedures, customer support and incident escalation, plus end-to-end test evidence and Operations Lead review.
+* **Expansion control:** Review service performance and operational risks before each expansion. Numeric targets, review windows, pilot locations and rollout-wave sequence remain to be agreed; this decision does not invent them.
+* **Business Owner Rationale & Conditions:** The owner selected phased activation based on readiness. No initial pilot PIN codes, wave count, target metrics, headcount, or launch dates were supplied.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**. DEP-002 remains `OPEN`; this decision does not approve the BRD baseline or architecture.
+
+---
+
 ## 4. Executive Decision Ratification Record
 
 *(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
@@ -364,6 +381,6 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
 | **Owner Decision Date** | `2026-10-24` |
-| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
