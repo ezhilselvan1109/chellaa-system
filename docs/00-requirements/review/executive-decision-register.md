@@ -336,6 +336,7 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 * **Decision Owner:** EZHIL SELVAN P. — Founder (selection recorded 2026-10-24).
 * **Decision Date:** `2026-10-24`
 * **Status:** **`OWNER_DECISION_RECORDED`**. Partner agreement, API credentials, commercial terms, and integration validation remain open dependencies; this is not Phase 1 or architecture approval.
+* **Supersession note:** The earlier exclusion of a shipping aggregator and the earlier limitation of direct-carrier integrations are superseded for the delivery-provider mix by `ADQ-014`. Chellaa's own Shipping Management System remains in scope; provider selection and readiness remain open.
 
 ---
 
