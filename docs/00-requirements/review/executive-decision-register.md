@@ -18,7 +18,7 @@
 
 ## 1. Purpose and Governance Instructions
 
-This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the eleven recorded commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
+This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the recorded commercial, regulatory, and operational decision history (ADQ-001 through ADQ-015, including explicitly superseded historical decisions) that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
 
 ### Mandatory Governance Rules Observed:
 1. **Non-Binding Proposals:** All proposals presented by the engineering team are explicitly designated as **`NON-BINDING RECOMMENDATIONS`**. Engineering has provided technical analysis and operational recommendations, but engineering **cannot** decide commercial policy on behalf of the business.
@@ -42,9 +42,13 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **`ADQ-009`** | [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) | Mandatory Customer Payment Methods | Option B: UPI, cards, net banking, and EMI/BNPL | **Option C — Option A payment methods plus COD under OQ-006 policy** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-010`** | [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) | Payment Gateway Provider | Option B: Dual gateway | **Single gateway — Razorpay only (single-gateway approach / Option A)** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-011`** | [`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005) | Shipping Management Approach | Option B: Multi-carrier aggregator | **Option A — build Chellaa's own Shipping Management System; own delivery team or separately decided direct-carrier integrations; no aggregator/courier partner selected** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-012`** | [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) | India-Wide Delivery Target | India-wide intended delivery | **India-wide target; exact serviceability is phased and validated** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-013`** | [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) | Delivery Rollout Method | Activate areas in phases | **Phased PIN-code activation after readiness validation** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-014`** | [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) | Delivery Provider Model | Hybrid provider model | **Own team + direct couriers + shipping aggregator permitted; Chellaa owns canonical shipment lifecycle** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-015`** | [`OQ-007`](../08-assumptions-dependencies-open-questions.md#oq-007) | Initial Warehouse Topology | Single central vs multiple regional warehouses | **Four initial warehouse locations with regional inventory; exact sites and PIN codes pending validation; central design remains location-agnostic** | **`OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN`** |
 ---
 
-## 3. Detailed Decision Sheets (ADQ-001 through ADQ-011)
+## 3. Detailed Decision Sheets (ADQ-001 through ADQ-015; superseded history retained)
 
 ---
 
@@ -390,6 +394,23 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
+### ADQ-015: Four Initial Warehouses with Regional Inventory (Location-Agnostic Design)
+
+* **Decision ID:** `ADQ-015`
+* **Linked BRD Open Question:** [`OQ-007: Warehouse Topology at Launch`](../08-assumptions-dependencies-open-questions.md#oq-007)
+* **Related Dependency:** [`DEP-002: Shipping Operations Readiness`](../08-assumptions-dependencies-open-questions.md#dep-002)
+* **Business Owner Planning Decision:** **Four initial warehouse locations with regional inventory.**
+* **Central-design constraint:** The architecture and domain model must be generic and configuration-driven. Do not hard-code city names, exact warehouse addresses, PIN codes, or specific providers into services or routing logic. Candidate city examples discussed during planning are not validated launch sites.
+* **Still unvalidated:** Actual addresses, legal entity/GST registrations and state tax implications, lease/ownership, staffing, storage capacity, warehouse operating hours, SKU stock distribution, transfer processes, barcode hardware, serviceable PIN codes, and delivery-lane capacity.
+* **Affected Business Domains:** Inventory, Warehouse Operations, Fulfillment Routing, Shipping, Tax and Invoicing.
+* **Implementation / readiness conditions:** Model Warehouse as configurable data; scope stock by warehouse and SKU/variant; record inventory movements and transfers; allocate order lines only to eligible locations; support routing based on stock, serviceability, capacity, cost and delivery promise; preserve an auditable allocation decision; validate cross-warehouse/split-shipment rules before enabling them.
+* **Decision boundary:** This records the planned count and regional inventory model. It does not validate any particular site or mean all four warehouses are operational. DEP-002 remains open until the applicable operational evidence is validated.
+* **Decision Owner:** Business Owner / Operations Lead.
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN`**. Phase 1 baseline remains `PENDING_APPROVAL`; architecture authorization remains `NOT_GRANTED`.
+
+---
+
 ## 4. Executive Decision Ratification Record
 
 *(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
@@ -399,6 +420,6 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
 | **Owner Decision Date** | `2026-10-24` |
-| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` &nbsp; `[x] ADQ-014` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` &nbsp; `[x] ADQ-014` &nbsp; `[x] ADQ-015` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
