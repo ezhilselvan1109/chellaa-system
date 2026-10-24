@@ -21,7 +21,7 @@
 | **Target Promotion Path** | `docs/01-architecture/ARCH-04-service-interactions.md` (Deferred pending formal executive sign-off) |
 | **Author Roles** | Principal Integration & API Architect, Distributed Systems Engineer & Solution Architect |
 | **Target Reviewers** | Chief Technology Officer, Backend Engineering Leads, QA Automation Lead & Lead Business Analyst |
-| **Upstream Baseline Documents** | [`06-business-workflows.md`](../06-business-workflows.md) (`WF-001`–`016`), [`04-functional-requirements.md`](../04-functional-requirements.md), [`05-business-rules.md`](../05-business-rules.md) |
+| **Upstream Baseline Documents** | [`06-business-workflows.md`](../06-business-workflows.md) (`WF-001`–`017`), [`04-functional-requirements.md`](../04-functional-requirements.md), [`05-business-rules.md`](../05-business-rules.md) |
 | **Upstream Architecture Artifacts** | [`arch-01-architecture-overview-draft.md`](./arch-01-architecture-overview-draft.md), [`arch-02-domain-decomposition-draft.md`](./arch-02-domain-decomposition-draft.md), [`arch-03-service-decomposition-draft.md`](./arch-03-service-decomposition-draft.md), [`architecture-decision-analysis.md`](./architecture-decision-analysis.md) (`AD-004`) |
 
 ### 1.1 Document Lifecycle & Governance Checkpoint
@@ -30,8 +30,8 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
-| **1. Draft Completion** | **`COMPLETED`** | Sequence diagrams, synchronous RPC calls, asynchronous CloudEvents, and failure compensation paths for all 16 business workflows are fully articulated. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% bidirectional traceability established to all 16 Business Workflows ([`WF-001`](../06-business-workflows.md#wf-001) through [`WF-016`](../06-business-workflows.md#wf-016)) and related functional rules. |
+| **1. Draft Completion** | **`PENDING_RECONCILIATION`** | Existing sequence diagrams require ID/title reconciliation against the current 17-workflow requirements inventory; the current draft does not yet demonstrate complete coverage. |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Workflow mappings and acceptance coverage must be rechecked against all 17 workflows (`WF-001` through `WF-017`) before any coverage percentage is claimed. |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Integration Architect, and Backend Engineering Leads. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of late payment workflows ([`ADQ-003`](./executive-decision-register.md#adq-003)) and reverse logistics policies ([`ADQ-004`](./executive-decision-register.md#adq-004)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -44,7 +44,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | `0.1.0-PLAN` | 2026-10-18 | Principal Software Architect | Preliminary workflow interaction index in [`phase-2-architecture-planning.md`](./phase-2-architecture-planning.md). |
 | `0.2.0-DEC` | 2026-10-18 | Distributed Systems Architect | Saga orchestration analysis (`AD-004`) in [`architecture-decision-analysis.md`](./architecture-decision-analysis.md). |
 | `0.3.0-REG` | 2026-10-24 | Architecture Governance Lead | Detailed specification plan, sequence validation rules, and acceptance gates in [`phase-2-document-status-register.md`](./phase-2-document-status-register.md). |
-| `1.0.0-DRAFT` | 2026-10-24 | Principal Integration Architect | Comprehensive `ARCH-04` draft: Sequence diagrams, RPC contracts, event streams, and compensation mechanics for all 16 business workflows (`WF-001`–`WF-016`). |
+| `1.0.0-DRAFT` | 2026-10-24 | Principal Integration Architect | `ARCH-04` review update: the source requirements now contain 17 workflows; the sequence diagrams and mapping table require a full identifier and coverage reconciliation. |
 
 ---
 
@@ -58,7 +58,7 @@ This document specifies the runtime dynamic interactions across the 5 Coarse-Gra
 
 ---
 
-## 3. End-to-End Sequence Diagrams for All 16 Business Workflows
+## 3. Existing End-to-End Sequence Diagrams — Coverage Reconciliation Required
 
 ---
 
@@ -387,7 +387,7 @@ sequenceDiagram
 
 ---
 
-### 3.13 WF-013: Verified Customer Review Submission & Moderation
+### 3.13 WF-017: Verified-Buyer Review Submission & Moderation (ID Reconciled; Full Sequence Audit Pending)
 
 * **Scope:** Enforcing verified-purchaser review gating, abuse filtering, and star rating aggregation ([`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001), [`BR-REV-001`](../05-business-rules.md#br-rev-001)).
 
@@ -511,10 +511,10 @@ sequenceDiagram
 
 The checklist below governs the quality gate audit for `ARCH-04`:
 
-- [x] 1. **Complete 16-Workflow Coverage:** Detailed dynamic sequence diagrams articulated for all 16 business workflows (`WF-001` through `WF-016`).
+- [ ] 1. **Complete Workflow Coverage:** Reconcile sequence diagrams and mappings against all 17 business workflows (`WF-001` through `WF-017`).
 - [x] 2. **Explicit Synchronous vs Asynchronous Boundary:** Sequence diagrams distinguish synchronous client/RPC blocking calls from asynchronous Kafka CloudEvents.
 - [x] 3. **Semantic Compensation Paths:** Explicit rollback and compensation branches documented for checkout hold expiration, payment failure, and reverse diagnostic rejection.
 - [x] 4. **Single-Retailer Anti-Scope Preserved:** Zero third-party marketplace, vendor commission, or split payout interactions present.
-- [x] 5. **Mermaid Syntax & Delimiter Balance:** All 16 diagrams validate with balanced delimiters and standard sequence syntax.
-- [x] 6. **100% Requirements Traceability:** All sequence flows map to declared BRD feature, functional requirement, and business rule identifiers.
+- [ ] 5. **Mermaid Syntax & Delimiter Balance:** Revalidate all diagrams after workflow ID and coverage remediation.
+- [ ] 6. **Requirements Traceability:** Verify every sequence flow against the current BRD feature, functional requirement, business rule and workflow identifiers before claiming complete coverage.
 - [x] 7. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
