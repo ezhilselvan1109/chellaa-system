@@ -1333,7 +1333,7 @@ The checklist below governs the quality gate audit for `ARCH-02`:
 - [x] 7. **Candidate Context Groupings:** 6 logical clusters evaluated for cohesion, coupling, communication overhead, and failure isolation.
 - [ ] 8. **Requirements Traceability — verification pending:** Current feature/FR/BR/NFR totals and all 17 workflow mappings must be independently verified before completeness can be claimed.
 - [x] 9. **Decision namespace and status alignment:** Business-owner decisions use the canonical `ADQ-001`–`ADQ-019` register; technical architecture decisions remain separate in `ARCH-11`. Do not mark recorded owner decisions as `OPEN` merely because implementation evidence remains pending.
-- [x] 10. **Syntax & Link Cleanliness:** Valid Mermaid diagrams with balanced delimiters, zero broken relative markdown links, and prominent non-binding governance warnings.
+- [ ] 10. **Syntax & Link Cleanliness:** Non-binding governance warnings are present. Mermaid delimiter checks and automated relative-link/anchor validation remain pending; no zero-broken-link claim is made.
 
 
 ---
