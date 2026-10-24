@@ -89,7 +89,7 @@ All outbound integration calls through Cluster 19 (*External Integrations*) use 
 | Integration Partner | Target Endpoint | Sliding Window Size | Failure Rate Threshold | Slow Call Threshold ($\ge 3\text{s}$) | Wait Duration in Open State | Permitted Half-Open Calls |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Razorpay / Cashfree** ([`DEP-001`](../08-assumptions-dependencies-open-questions.md#dep-001)) | Payment Intent Session API | 30 calls | **50%** | **40%** | 15 seconds | 5 calls |
-| **Shiprocket / Delhivery** ([`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002)) | Consignment Booking / AWB API | 20 calls | **50%** | **50%** | 30 seconds | 3 calls |
+| **Shipping provider adapter (only if later authorized)** ([`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002)) | Booking / tracking API | **TBD** | **TBD** | **TBD** | **TBD** | **TBD** | OQ-005 provider-model conflict; no named external lane approved |
 | **Telecom SMS / WhatsApp** ([`DEP-003`](../08-assumptions-dependencies-open-questions.md#dep-003)) | OTP & Alert Dispatch API | 50 calls | **40%** | **30%** | 20 seconds | 10 calls |
 
 ---
@@ -166,7 +166,7 @@ The FMEA matrix below analyzes critical failure modes across the Chellaa platfor
 | :--- | :--- | :--- | :--- | :--- |
 | **1. Flash Sale Hold Contention** (*Cluster 3: Inventory*) | 1,000 OPM contending on single high-demand SKU. | Potential DB connection pool exhaustion and lock wait timeouts. | PostgreSQL `lock_wait_time > 500ms` | Redis atomic Lua hold scripts; conditional SQL decrements; fail-fast when $\text{ATS} = 0$ ([`AD-002`](./architecture-decision-analysis.md#ad-002)). |
 | **2. Razorpay API Outage** (*Cluster 4: Finance*) | Third-party payment gateway network partition. | Customers cannot complete online card/UPI payments. | Gateway `HTTP 5xx > 50%` over 30 calls | Circuit breaker opens; Storefront prompts customer to try alternate payment gateway or retry in 60s. |
-| **3. Courier Aggregator Down** (*Cluster 3: Fulfillment*) | Shiprocket API timeout during shipping manifest. | Picked parcels cannot generate thermal labels or AWBs. | Shiprocket `Timeout > 5s` | Async consignment retry queue; failover to secondary direct courier adapter (Delhivery direct API). |
+| **External shipping lane unavailable** (*Fulfillment*) | Approved external lane, if any, is unavailable. | Shipment booking or tracking may be delayed. | Provider-specific threshold is TBD until lane selection. | Persist eligible work, expose an incident and reconcile status; no automatic secondary-carrier failover is assumed. |
 | **4. Telecom SMS Gateway Down** (*Cluster 5: Platform*) | Telecom DLT SMS gateway provider failure. | Customers do not receive login OTPs or order confirmation texts. | SMS delivery receipt `failure_rate > 30%` | Fallback routing to WhatsApp Business API or transactional email channel. |
 | **5. PDF Invoice Generation Crash** (*Cluster 4: Finance*) | Memory spike during complex invoice PDF rendering. | Worker pod OOM crashes during batch dispatch. | Pod memory $> 90\%$ | Isolated worker process; sequential invoice number already locked in DB; pod restarts and retries PDF render. |
 | **6. Elasticsearch Node Failure** (*Search Engine*) | Hardware crash on search read replica node. | Catalog search queries degraded or timing out. | OpenSearch cluster status `RED` | Gateway circuit-breaks search to direct PostgreSQL read replica with basic text matching ([`AD-010`](./architecture-decision-analysis.md#ad-010)). |
