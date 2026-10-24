@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`PENDING_RECONCILIATION`** | Existing sequence diagrams require ID/title reconciliation against the current 17-workflow requirements inventory; the current draft does not yet demonstrate complete coverage. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Workflow mappings and acceptance coverage must be rechecked against all 17 workflows (`WF-001` through `WF-017`) before any coverage percentage is claimed. |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Integration Architect, and Backend Engineering Leads. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of late payment workflows ([`ADQ-003`](./executive-decision-register.md#adq-003)) and reverse logistics policies ([`ADQ-004`](./executive-decision-register.md#adq-004)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
