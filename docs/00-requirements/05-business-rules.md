@@ -500,29 +500,29 @@ $$\text{Line Discount}_i = \text{Total Discount} \times \left( \frac{\text{Line 
 
 ### 2.11 Shipping, Logistics & Delivery
 
-#### BR-SHP-001: Mandatory Air Waybill (AWB) for Dispatch
-* **Rule Statement:** An order cannot transition to `DISPATCHED` status unless it is linked to a verified, carrier-assigned Air Waybill (AWB) tracking number and courier carrier code.
-* **Business Rationale:** Ensures 100% of dispatched parcels are physically trackable, preventing untraceable shipments and delivery disputes.
+#### BR-SHP-001: Mandatory Internal Shipment ID and Custody Record for Dispatch
+* **Rule Statement:** An order cannot transition to `DISPATCHED` unless it is linked to a unique internal Shipment ID, a completed packing check, a delivery run/associate assignment, and an auditable warehouse-to-delivery-team custody handover. An external AWB or carrier code is not required for the in-house model.
+* **Business Rationale:** Ensures every dispatched parcel is traceable inside Chellaa's system and prevents unassigned or unaccounted parcel movement.
 * **Applicable Domain:** Shipping & Logistics
-* **Trigger / Condition:** Warehouse operator marks order as dispatched.
-* **Expected Outcome:** System verifies presence of valid AWB. If absent, transition is blocked.
-* **Exceptions:** None.
+* **Trigger / Condition:** Warehouse operator marks a packed order ready for dispatch or confirms handover.
+* **Expected Outcome:** System validates shipment identity, packing/serial checks, assignment, and handover acknowledgements. If any required record is absent, dispatch transition is blocked.
+* **Exceptions:** An authorized supervisor may resolve a documented operational exception; all overrides require a reason and audit event. No silent bypass is permitted.
 * **Related Requirements:** [FR-SHP-001](./04-functional-requirements.md#fr-shp-001).
 * **Severity / Strictness:** High.
-* **Status:** `CONFIRMED`
+* **Status:** `PROPOSED` (aligned to the in-house shipping decision; requires domain-owner confirmation).
 * **Decision Owner:** Logistics Operations Lead.
 
-#### BR-SHP-002: Multi-Attempt Delivery & RTO Protocol
-* **Rule Statement:** Couriers must attempt delivery up to a maximum of 3 consecutive calendar days. If delivery fails on all 3 attempts, the courier initiates Return to Origin (RTO), and the order transitions to `RTO_IN_TRANSIT`.
-* **Business Rationale:** Standard domestic courier operating procedure; allows customers multiple chances to receive parcels while bounding carrier warehouse holding costs.
+#### BR-SHP-002: Multi-Attempt In-House Delivery and Return-to-Warehouse Protocol
+* **Rule Statement:** Chellaa's delivery team may attempt delivery on up to three consecutive calendar days. If all three attempts fail, the system creates a return-to-warehouse task and the associate must hand the parcel back into recorded warehouse custody. The system must not imply a courier-initiated RTO event.
+* **Business Rationale:** Provides bounded retry opportunities while preserving parcel custody and preventing shipments from remaining unowned after repeated failure.
 * **Applicable Domain:** Shipping & Delivery
-* **Trigger / Condition:** Inbound tracking event indicating failed delivery attempt.
-* **Expected Outcome:** Customer is alerted via SMS/WhatsApp after each failed attempt to reschedule. On 3rd failure, return shipment is automatically booked.
-* **Exceptions:** Customer explicitly requests hold-at-carrier-hub (max 48 hours).
+* **Trigger / Condition:** An authenticated Delivery Associate records a failed delivery attempt with a standardized reason code.
+* **Expected Outcome:** Customer is notified after each failed attempt and Support may coordinate an approved retry. After the third failed attempt, further delivery attempts are blocked unless an authorized supervisor records an exception; return-to-warehouse is assigned and audited.
+* **Exceptions:** Supervisor-authorized exception with reason and expiry; it must not silently reset attempt history.
 * **Related Requirements:** [FR-SHP-001](./04-functional-requirements.md#fr-shp-001), [FR-SHP-002](./04-functional-requirements.md#fr-shp-002).
 * **Severity / Strictness:** Medium.
-* **Status:** `CONFIRMED`
-* **Decision Owner:** Logistics Lead.
+* **Status:** `PROPOSED` (aligned to the in-house shipping decision; requires domain-owner confirmation).
+* **Decision Owner:** Logistics Operations Lead.
 
 ---
 
