@@ -62,17 +62,17 @@ The source inventories and current architecture crosswalk were checked at identi
 
 | Identifier family | Source inventory | Architecture crosswalk / presence result | Status |
 | :--- | ---: | ---: | :--- |
-| Business features (`FEAT`) | 41 | 41/41 present | Identifier coverage verified |
-| Functional requirements (`FR`) | 56 | 56/56 explicitly listed in ARCH-12 crosswalk | Explicit mapping documented; semantic/reverse review pending |
-| Business rules (`BR`) | 55 | 55/55 explicitly listed in ARCH-12 crosswalk | Explicit mapping documented; semantic/reverse review pending |
-| Business workflows (`WF`) | 17 | 17/17 unique sequence IDs and 17/17 matrix rows in ARCH-04 | Identifier/title alignment verified |
-| Non-functional requirements (`NFR`) | 18 | 18/18 present | Identifier coverage verified |
-| Assumptions (`ASM`) | 10 | 10/10 present | Identifier coverage verified |
-| Dependencies (`DEP`) | 6 | 6/6 present | Identifier coverage verified |
-| Open questions (`OQ`) | 22 | 22/22 indexed in ARCH-12 and the updated requirements RTM | Identifier coverage verified |
-| Executive decisions (`ADQ`) | 19 | 19/19 indexed in ARCH-12 | Identifier coverage verified |
+| Business features (`FEAT`) | 41 | 41/41 unique IDs present in ARCH-12 | Identifier inventory verified; semantic mapping pending |
+| Functional requirements (`FR`) | 56 | 56/56 unique IDs listed in ARCH-12 FR crosswalk | Explicit mapping documented; semantic/reverse review pending |
+| Business rules (`BR`) | 55 | 55/55 unique IDs listed in ARCH-12 BR crosswalk | Explicit mapping documented; semantic/reverse review pending |
+| Business workflows (`WF`) | 17 | 17/17 unique IDs in ARCH-04 sequence headings and 17/17 rows in its workflow matrix | Identifier/title alignment verified; semantic source mapping pending |
+| Non-functional requirements (`NFR`) | 18 | 18/18 unique IDs present after correcting `NFR-OPS-001` to canonical `NFR-OBS-001` | Identifier inventory verified; semantic mapping pending |
+| Assumptions (`ASM`) | 10 | 10/10 explicitly indexed in ARCH-12 Section 5.3 | Source statuses retained; semantic mapping pending |
+| Dependencies (`DEP`) | 6 | 6/6 explicitly indexed in ARCH-12 Section 5.4 | All six remain `OPEN` in the source register; presence is not readiness evidence |
+| Open questions (`OQ`) | 22 | 22/22 indexed in ARCH-12 and the requirements RTM | Identifier inventory verified; source decision status remains authoritative |
+| Executive decisions (`ADQ`) | 19 | 19/19 indexed in ARCH-12 | Identifier inventory verified; decision authority remains separate |
 
-The requirements RTM now explicitly indexes all 10 assumptions, 6 dependencies and 22 open questions. Its missing `BR-CAT-003` and `NFR-AVL-001` references were added. ARCH-12 now includes explicit requirement-level FR/BR crosswalk tables and OQ/ADQ indexes.
+The source inventories were recalculated by extracting unique IDs from the current baseline documents on this branch. ARCH-04 contains 18 workflow-related headings because the shipment-tracking supporting flow is associated with `WF-008`; there are 17 unique canonical workflow IDs, and the workflow matrix has 17 distinct rows. ARCH-12 now explicitly indexes all 10 assumptions and all 6 dependencies rather than claiming unshown coverage. Its NFR crosswalk was corrected from the nonexistent `NFR-OPS-001` to canonical `NFR-OBS-001`. These are identifier-level checks only; semantic/reverse traceability remains open.
 
 **Important limitation:** Identifier presence and table enumeration do not prove every mapping is semantically correct. ARCH-04's workflow matrix directly maps only a subset of the full FR/BR inventories. Independent bidirectional source-to-architecture verification remains pending. No overall “100% semantic traceability” or “zero orphaned requirements” claim is made.
 
@@ -82,7 +82,10 @@ The requirements RTM now explicitly indexes all 10 assumptions, 6 dependencies a
 - Replaced a specific `SHIPROCKET` partner-code assumption with provider-neutral integration codes.
 - Updated ARCH-01 planning-target status and shipping-readiness language; corrected stale claims that owner-selected throughput/availability targets await ratification.
 - Corrected ARCH-02's business-decision namespace collision and made technical/legal readiness boundaries explicit.
-- Corrected ARCH-12 workflow mapping labels and added explicit FR/BR/OQ/ADQ crosswalks.
+- Corrected ARCH-04 workflow-matrix titles to match Document 06, restricted its payment actor to Razorpay, and preserved the extra shipment-tracking flow as supporting WF-008 work rather than a new workflow.
+- Removed unapproved notification cross-channel fallback assumptions in ARCH-02 and ARCH-08; channel fallback order/timing remains open under OQ-015 / DEP-003.
+- Removed Cashfree as a second payment-gateway option in ARCH-04, ARCH-07 and ARCH-08; Razorpay is the only recorded online gateway, with DEP-001 readiness still open.
+- Corrected ARCH-12's NFR crosswalk from the nonexistent `NFR-OPS-001` to source-defined `NFR-OBS-001`; added explicit ASM-001–010 and DEP-001–006 source-index tables, preserving source statuses.
 - Corrected the invalid `FR-OBS-001` reference to `FR-OPS-001`.
 - Updated Document 09 with assumption/dependency/open-question crosswalks and corrected missing `BR-CAT-003` and `NFR-AVL-001` RTM references.
 - Updated Document 11 to remove an unsupported 100% traceability claim and stale “decision still proposed” descriptions; the formal approval fields remain blank.
