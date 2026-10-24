@@ -18,7 +18,7 @@
 
 ## 1. Purpose and Governance Instructions
 
-This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the recorded commercial, regulatory, and operational decision history (ADQ-001 through ADQ-015, including explicitly superseded historical decisions) that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
+This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the recorded commercial, regulatory, and operational decision history (ADQ-001 through ADQ-019, including explicitly superseded historical decisions) that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
 
 ### Mandatory Governance Rules Observed:
 1. **Non-Binding Proposals:** All proposals presented by the engineering team are explicitly designated as **`NON-BINDING RECOMMENDATIONS`**. Engineering has provided technical analysis and operational recommendations, but engineering **cannot** decide commercial policy on behalf of the business.
@@ -46,9 +46,13 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **`ADQ-013`** | [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) | Delivery Rollout Method | Activate areas in phases | **Phased PIN-code activation after readiness validation** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-014`** | [`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002) | Delivery Provider Model | Hybrid provider model | **Own team + direct couriers + shipping aggregator permitted; Chellaa owns canonical shipment lifecycle** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-015`** | [`OQ-007`](../08-assumptions-dependencies-open-questions.md#oq-007) | Initial Warehouse Topology | Single central vs multiple regional warehouses | **Four initial warehouse locations with regional inventory; exact sites and PIN codes pending validation; central design remains location-agnostic** | **`OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN`** |
+| **`ADQ-016`** | [`OQ-012`](../08-assumptions-dependencies-open-questions.md#oq-012) | Reviews & Ratings Scope | Verified-buyer reviews with mandatory moderation | **Option B — Phase 1 reviews by verified buyers only; admin moderation before publication** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-017`** | [`OQ-015`](../08-assumptions-dependencies-open-questions.md#oq-015) | Transactional Notification Channels | SMS, Email and WhatsApp Business API | **Option B — SMS, Email and WhatsApp Business API for order lifecycle events** | **`OWNER_DECISION_RECORDED; CHANNEL_POLICY_DETAILS_OPEN`** |
+| **`ADQ-018`** | [`OQ-018`](../08-assumptions-dependencies-open-questions.md#oq-018) | Executive Reporting Scope | Standard reports plus advanced BI | **Option B — standard reports plus real-time BI, predictive replenishment and customer cohort retention analysis** | **`OWNER_DECISION_RECORDED; REPORT_SPECIFICATIONS_OPEN`** |
+| **`ADQ-019`** | [`OQ-019`](../08-assumptions-dependencies-open-questions.md#oq-019) | Legacy Historical Data Migration | Greenfield vs historical migration | **Option A — no legacy customer/order history migration; new catalog and opening stock import remains in scope** | **`OWNER_DECISION_RECORDED`** |
 ---
 
-## 3. Detailed Decision Sheets (ADQ-001 through ADQ-015; superseded history retained)
+## 3. Detailed Decision Sheets (ADQ-001 through ADQ-019; superseded history retained)
 
 ---
 
@@ -411,6 +415,55 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
+### ADQ-016: Verified-Buyer Reviews with Mandatory Administrative Moderation
+
+* **Decision ID:** `ADQ-016`
+* **Linked BRD Open Question:** [`OQ-012`](../08-assumptions-dependencies-open-questions.md#oq-012)
+* **Affected Requirement IDs:** [`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001), [`FR-REV-001`](../04-functional-requirements.md#fr-rev-001), [`BR-REV-001`](../05-business-rules.md).
+* **Business Owner Selection:** **Option B — include product reviews and ratings in Phase 1 for verified buyers only, with mandatory admin moderation before publication.**
+* **Still Open:** Detailed moderation criteria, moderator roles/permissions, appeals/rejection handling, photo-review policy, retention, abuse escalation, and review-edit/delete rules. These details must not be inferred from this selection.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** **`OWNER_DECISION_RECORDED`**. This records the scope selection only; Phase 1 baseline approval remains pending.
+
+---
+
+### ADQ-017: SMS, Email and WhatsApp Business API for Order Lifecycle Events
+
+* **Decision ID:** `ADQ-017`
+* **Linked BRD Open Question:** [`OQ-015`](../08-assumptions-dependencies-open-questions.md#oq-015)
+* **Affected Requirement IDs:** [`FEAT-NTF-001`](../03-business-feature-inventory.md), [`FR-NTF-001`](../04-functional-requirements.md#fr-ntf-001), [`BR-NTF-001`](../05-business-rules.md).
+* **Business Owner Selection:** **Option B — SMS, Email and WhatsApp Business API for all order lifecycle events.**
+* **Still Open:** Exact event-to-channel matrix, which channels are mandatory per event, retries, fallback order/timing, consent/preference handling where applicable, delivery targets, template ownership and provider configuration. `DEP-003` remains `OPEN`; no provider registration or channel tests are claimed.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** **`OWNER_DECISION_RECORDED; CHANNEL_POLICY_DETAILS_OPEN`**. Phase 1 baseline approval remains pending.
+
+---
+
+### ADQ-018: Standard Reports Plus Real-Time BI, Predictive Replenishment and Cohort Retention
+
+* **Decision ID:** `ADQ-018`
+* **Linked BRD Open Question:** [`OQ-018`](../08-assumptions-dependencies-open-questions.md#oq-018)
+* **Affected Requirement IDs:** [`FEAT-RPT-001`](../03-business-feature-inventory.md), [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001), [`BR-RPT-001`](../05-business-rules.md).
+* **Business Owner Selection:** **Option B — standard daily operational/financial reports plus real-time BI dashboards, predictive replenishment and customer cohort retention analysis.**
+* **Still Open:** KPI definitions and formulas, data sources, refresh latency, report cadence, permissions, exports, retention, predictive methodology, acceptance thresholds and validation evidence. The selected scope does not claim any dashboard, model, pipeline or report has been implemented or tested.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** **`OWNER_DECISION_RECORDED; REPORT_SPECIFICATIONS_OPEN`**. Phase 1 baseline approval remains pending.
+
+---
+
+### ADQ-019: Greenfield Launch — No Legacy Customer or Order History Migration
+
+* **Decision ID:** `ADQ-019`
+* **Linked BRD Open Question:** [`OQ-019`](../08-assumptions-dependencies-open-questions.md#oq-019)
+* **Affected Requirement IDs:** [`FEAT-DAT-001`](../03-business-feature-inventory.md), [`FR-DAT-001`](../04-functional-requirements.md#fr-dat-001).
+* **Business Owner Selection:** **Option A — do not migrate legacy customer/order history for the initial launch. Load the new master catalog and opening stock using the standard bulk import capability.**
+* **Boundary:** This decision excludes historical customer/order migration from the current baseline; it does not remove bulk catalog/inventory import.
+* **Still Open:** New catalog source ownership, import template/data quality, opening-stock reconciliation and operational import evidence remain separate tasks under `DEP-005` and inventory readiness.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** **`OWNER_DECISION_RECORDED`**. Phase 1 baseline approval remains pending.
+
+---
+
 ## 4. Executive Decision Ratification Record
 
 *(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
@@ -420,6 +473,6 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
 | **Owner Decision Date** | `2026-10-24` |
-| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` &nbsp; `[x] ADQ-014` &nbsp; `[x] ADQ-015` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` &nbsp; `[x] ADQ-014` &nbsp; `[x] ADQ-015`<br>`[x] ADQ-016` &nbsp; `[x] ADQ-017` &nbsp; `[x] ADQ-018` &nbsp; `[x] ADQ-019` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
