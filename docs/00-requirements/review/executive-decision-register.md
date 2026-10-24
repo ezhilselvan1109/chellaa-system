@@ -18,7 +18,7 @@
 
 ## 1. Purpose and Governance Instructions
 
-This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the eight fundamental commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
+This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the nine recorded commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
 
 ### Mandatory Governance Rules Observed:
 1. **Non-Binding Proposals:** All proposals presented by the engineering team are explicitly designated as **`NON-BINDING RECOMMENDATIONS`**. Engineering has provided technical analysis and operational recommendations, but engineering **cannot** decide commercial policy on behalf of the business.
@@ -39,10 +39,10 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **`ADQ-006`** | [`OQ-010`](../08-assumptions-dependencies-open-questions.md#oq-010) | Customer Registration & Auth Identifier | Option A: Mobile-First with SMS OTP | **Option A — Mobile-first with SMS OTP; email optional** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-007`** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) | Peak Festive Surge Capacity Target | Option B: 100 OPM Sustained / 1,000 OPM Peak | **Option B — 100 orders/min sustained; 1,000 orders/min peak** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-008`** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) | Platform Availability SLA & DR Targets | Option A: 99.9% Uptime, RPO $\le 5\text{m}$, RTO $\le 2\text{h}$ | **Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours** | **`OWNER_DECISION_RECORDED`** |
-
+| **`ADQ-009`** | [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) | Mandatory Customer Payment Methods | Option B: UPI, cards, net banking, and EMI/BNPL | **Option C — Option A payment methods plus COD under OQ-006 policy** | **`OWNER_DECISION_RECORDED`** |
 ---
 
-## 3. Detailed Decision Sheets (ADQ-001 through ADQ-008)
+## 3. Detailed Decision Sheets (ADQ-001 through ADQ-009)
 
 ---
 
@@ -280,6 +280,33 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ---
 
+### ADQ-009: Mandatory Customer Payment Methods
+
+* **Decision ID:** `ADQ-009`
+* **Linked BRD Open Question:** [`OQ-003: Required Customer Payment Methods`](../08-assumptions-dependencies-open-questions.md#oq-003)
+* **Affected Business Domains:** Checkout, Payments, Financial Reconciliation.
+* **Affected Requirement IDs:** `FEAT-PAY-001`, `FR-PAY-001`, `BR-PAY-001`.
+* **Business Question:** Which customer payment methods are mandatory for the production launch?
+
+#### Available Options and Consequences
+
+1. **Option A:** UPI (Intent + QR), Credit Cards, Debit Cards, and Net Banking.
+2. **Option B:** Option A plus Buy-Now-Pay-Later (BNPL) and Card EMI options.
+3. **Option C:** Option A plus Cash on Delivery (COD).
+
+* **Technical Team Proposal:** **`NON-BINDING PROPOSAL: Option B (UPI, Cards, Net Banking, and Bank EMI)`.**
+* **Business Owner Decision Record:**
+  * [ ] **Option A:** UPI, Cards, Net Banking.
+  * [ ] **Option B:** Option A plus BNPL and Card EMI.
+  * [x] **Option C:** Option A plus COD.
+* **COD Policy Dependency:** COD is governed by `ADQ-003` / `OQ-006`: restricted COD up to ₹10,000, delivery OTP, and ₹50 non-refundable convenience fee.
+* **Business Owner Rationale & Conditions:** None supplied.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**. This is a business decision record, not Phase 1 baseline approval or technical architecture approval.
+
+---
+
 ## 4. Executive Decision Ratification Record
 
 *(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
@@ -289,6 +316,6 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
 | **Owner Decision Date** | `2026-10-24` |
-| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
