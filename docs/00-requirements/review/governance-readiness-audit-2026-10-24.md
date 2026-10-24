@@ -52,9 +52,10 @@ The Open Questions summary in Document 08 now reflects the explicit owner select
 - `OQ-016`: Option B — 100 orders/minute sustained and 1,000 orders/minute peak.
 - `OQ-017`: Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours.
 - `OQ-004`: Razorpay only; single-gateway approach.
-- `OQ-005`: Option A — build Chellaa's own Shipping Management System; own delivery team or optional direct-carrier integrations by separate decision. No shipping aggregator or courier partner selected.
-- `ADQ-012`: India-wide initial delivery scope using Chellaa's own team. This defines intended geographic scope only; actual serviceable PIN codes, staffing/fleet, warehouse topology, hours/fees/SLAs, and reverse-logistics capacity remain unresolved. Reassess `ASM-004` (single central warehouse) without presuming a multi-warehouse decision.
-- `ADQ-013`: Phased rollout — enable PIN codes only after area-specific operational readiness checks. Pilot locations, rollout-wave sequence, numeric go/no-go thresholds and review windows remain open.
+- `OQ-005` / `ADQ-011`: Chellaa owns its Shipping Management System and internal shipment lifecycle; the earlier no-aggregator restriction is superseded by `ADQ-014`.
+- `ADQ-012`: India-wide delivery remains the target. Actual serviceable PIN codes, staffing/capacity, warehouse topology, hours/fees/SLAs, and reverse-logistics capacity remain unresolved. Reassess `ASM-004` (single central warehouse) without presuming a multi-warehouse decision.
+- `ADQ-013`: Phased rollout remains in effect, with the initial pilot in selected areas across multiple states. Pilot states/PIN codes, rollout-wave sequence, numeric go/no-go thresholds and review windows remain open.
+- `ADQ-014`: Hybrid delivery model selected — own delivery team, direct courier partners, and shipping aggregator are all permitted. No provider brand, contract, or integration has been selected/validated. Existing Razorpay online-payment and restricted COD rules remain unchanged.
 
 These selections resolve the associated business choices; they do **not** approve the entire BRD baseline.
 
@@ -73,7 +74,7 @@ The document lists confirmed questions including `OQ-011`, `OQ-013`, `OQ-014`, `
 Document 08 lists these six dependencies as `OPEN`:
 
 1. `DEP-001` — Razorpay merchant agreement, production credentials, settlement/refund configuration, and webhook setup.
-2. `DEP-002` — In-house shipping operations readiness. Proposed role model, workflows, shipment lifecycle, proof of delivery, three-attempt retry/return-to-warehouse, COD custody/reconciliation, exception handling, readiness checklist, and test evidence are defined in Document 08 and aligned to WF-008 / FR-SHP-001 / FR-SHP-002. The owner has selected India-wide intended delivery scope through Chellaa's own team (`ADQ-012`) and phased PIN-code activation based on readiness (`ADQ-013`); neither decision proves every PIN code is serviceable. DEP-002 remains `OPEN` until pilot/rollout PIN codes, area readiness gates, expansion thresholds, warehouse topology, staffing/capacity, fleet, hours/fees/SLAs, SOPs, reverse logistics, and test evidence are confirmed. Reassess `ASM-004` (single central warehouse) explicitly. No external courier partner or aggregator is selected; direct carrier integration requires a separate decision.
+2. `DEP-002` — Hybrid shipping operations readiness. The proposed role model, canonical internal shipment lifecycle, own-team workflow, direct courier/aggregator integration paths, tracking, proof of delivery, failed-delivery/RTO, COD custody/remittance/reconciliation, exception handling, readiness checklist, and test evidence are defined in Document 08 and aligned to WF-008 / FR-SHP-001 / FR-SHP-002. `ADQ-012` keeps India-wide target scope, `ADQ-013` selects phased activation with a multi-state pilot, and `ADQ-014` permits own-team delivery, direct courier partners, and a shipping aggregator. DEP-002 remains `OPEN` until pilot PIN codes, providers/contracts/API credentials, provider-lane readiness, expansion thresholds, warehouse topology, staffing/capacity, fleet, hours/fees/SLAs, SOPs, reverse logistics, COD remittance controls, and end-to-end test evidence are confirmed. Reassess `ASM-004` explicitly. No named provider has been selected or validated.
 3. `DEP-003` — SMS DLT / WhatsApp Business registration.
 4. `DEP-004` — Enterprise GSTIN and invoice-numbering/legal-tax validation.
 5. `DEP-005` — Approved electronics catalog and brand specifications.
