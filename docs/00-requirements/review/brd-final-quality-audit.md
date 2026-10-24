@@ -1,5 +1,8 @@
 # Phase 1 BRD Final Quality Audit & Remediation Verification Report
 
+> **HISTORICAL SNAPSHOT — DO NOT USE AS THE CURRENT CLOSURE VERDICT.** This report is dated 2026-10-18 and predates later owner decisions and requirement changes recorded on 2026-10-24. Its open-question counts and review conclusions have not been recalculated for the current baseline. Use [Phase 1 Baseline Closure Audit — 2026-10-24](./phase-1-baseline-closure-audit-2026-10-24.md) for the current reconciliation work. This historical report does not approve the requirements baseline.
+
+
 | Document Attribute | Details |
 | :--- | :--- |
 | **Audit Document ID** | `BRD-FINAL-AUDIT-01` |
