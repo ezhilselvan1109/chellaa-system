@@ -467,7 +467,7 @@ The formal promotion of `ARCH-01` to `docs/01-architecture/ARCH-01-architecture-
 * [ ] 1. **Executive Sign-Off Verified:** Formal human written approval executed in Section 7 of [`docs/00-requirements/11-review-and-approval.md`](../11-review-and-approval.md).
 * [ ] 2. **Strategic Decisions Ratified:** Decisions `ADQ-001` through `ADQ-008` officially ratified in [`executive-decision-register.md`](./executive-decision-register.md).
 * [ ] 3. **Single-Retailer Adherence:** Verification that zero multi-vendor, marketplace, or commission mechanisms exist in any specification.
-* [ ] 4. **Actor & Dependency Traceability:** All actors (`ACT-001`–`014`) and external dependencies (`DEP-001`–`006`) trace 100% to source BRD documents.
+* [ ] 4. **Actor & Dependency Traceability:** All actors (`ACT-001`–`014`) and external dependencies (`DEP-001`–`006`) must trace to source BRD documents; the cross-document link audit remains pending.
 * [ ] 5. **C4 Context Agreement:** C4 Level 1 diagram and narrative perfectly agree on interactions, protocols, and boundaries.
 * [ ] 6. **Quantitative Governance Preserved:** Performance metrics explicitly differentiate confirmed, proposed, and open targets.
 * [ ] 7. **Zero Premature Vendor Commitments:** Preserve Razorpay-only online payments. The hybrid delivery model is recorded in `ADQ-014`; do not enable a named external provider lane until its contract, serviceability and end-to-end readiness evidence are verified under `DEP-002`.
@@ -481,7 +481,7 @@ The formal promotion of `ARCH-01` to `docs/01-architecture/ARCH-01-architecture-
 | :---: | :--- | :--- | :---: | :--- |
 | **`OBJ-001`**–[`010`](../00-business-overview.md#obj-010) | Enterprise commercial vision & KPIs | Section 2.2, Section 5.1 | `CONFIRMED` | Fully addressed in system purpose. |
 | **`01-business-scope.md`** | In-scope capabilities and marketplace ban | Section 2.3, Section 5.5 | `CONFIRMED` | Strict single-retailer boundary enforced. |
-| **`ACT-001`**–[`014`](../02-stakeholders-and-actors.md#act-014) | 14 system personas and external actors | Section 3, Section 4 | `CONFIRMED` | 100% mapped in context diagram & matrix. |
+| **`ACT-001`**–[`014`](../02-stakeholders-and-actors.md#act-014) | 14 system personas and external actors | Section 3, Section 4 | `CONFIRMED` | Mapped in the context diagram and matrix; independent link/coverage validation remains pending. |
 | **`FEAT-001`**–`041` | 41 business features across 18 domains | Section 6 Capability Map | `CONFIRMED` | Fully allocated across capability areas. |
 | **`FR-CUST-001`**–`004` | Customer account lifecycle & addresses | Section 6 (Area 01), Section 7 (Sc 1) | `CONFIRMED` | Mobile-first OTP signup flow mapped. |
 | **`FR-CAT-001`**–`003` | Product, specifications & brand catalog | Section 6 (Area 03), Section 7 (Sc 2) | `CONFIRMED` | Multi-variant modeling mapped. |
@@ -495,12 +495,12 @@ The formal promotion of `ARCH-01` to `docs/01-architecture/ARCH-01-architecture-
 | **`FR-SEC-001`**, `002` | Authentication hashing & staff RBAC | Section 6 (Area 02), Section 8 | `CONFIRMED` | bcrypt/Argon2id and MFA enforced. |
 | **`FR-AUD-001`**, `002` | Append-only WORM audit logging | Section 6 (Area 18), Section 7 (Sc 12) | `CONFIRMED` | SHA-256 hash chaining enforced. |
 | **`NFR-PERF-001`**–`003` | Storefront latencies ($p95 \le 200/1000\text{ms}$) | Section 8 Quality Attributes | `PROPOSED` | Benchmark load testing required in Phase 2. |
-| **`NFR-SCL-001`**, `002` | Throughput (100 sustained / 1,000 peak) | Section 8 Quality Attributes | `PROVISIONAL` | Owner decision recorded in `ADQ-007`; performance sizing and verification evidence remain open. |
-| **`NFR-AVL-001`**, `002` | Platform uptime (99.9%) & circuit breakers | Section 8, Section 9 | `PROVISIONAL` | Owner decision recorded in `ADQ-008`; availability/DR implementation and recovery evidence remain open. |
+| **`NFR-SCL-001`**, `002` | Throughput (100 sustained / 1,000 peak) | Section 8 Quality Attributes | `OWNER_DECISION_RECORDED; EVIDENCE_OPEN` | Owner-selected target; capacity sizing and load-test evidence remain open. |
+| **`NFR-AVL-001`**, `002` | Platform uptime (99.9%) & circuit breakers | Section 8, Section 9 | `OWNER_DECISION_RECORDED; EVIDENCE_OPEN` | Uptime target recorded; availability/DR implementation and recovery evidence remain open. |
 | **`NFR-SEC-001`**–`003` | Zero PAN, salted hashing, AES-256 PII | Section 8, Section 10 | `CONFIRMED` | Built into architectural invariants. |
 | **`ASM-001`**–[`010`](../08-assumptions-dependencies-open-questions.md#asm-010) | Single-retailer & operational assumptions | Section 1.3, Section 8 | `OPERATIONAL` | Uses the recorded four-warehouse regional inventory planning model; actual sites and serviceability remain open (`OQ-007` / `ADQ-015`). |
-| **`DEP-001`**–[`006`](../08-assumptions-dependencies-open-questions.md#dep-006) | Gateway, Courier, SMS, Tax, CDN, Vault | Section 3, Section 9 | `INTEGRATION` | Provider selection open in `OQ-004`/`005`. |
-| **`OQ-001`**–[`022`](../08-assumptions-dependencies-open-questions.md#oq-022) | 22 Strategic commercial decisions | Section 11.1, Decision Register | `OPEN` | Tracked in `executive-decision-register.md`. |
+| **`DEP-001`**–[`006`](../08-assumptions-dependencies-open-questions.md#dep-006) | Gateway, Shipping, Messaging, Tax, CDN, Vault | Section 3, Section 9 | `OPEN_READINESS` | Razorpay-only online gateway and hybrid shipping provider mix are recorded; merchant onboarding, named shipping providers, sites, contracts and end-to-end readiness remain open (`ADQ-010`, `ADQ-014`, `DEP-001`, `DEP-002`). |
+| **`OQ-001`**–[`022`](../08-assumptions-dependencies-open-questions.md#oq-022) | 22 open-question records, including recorded selections and follow-up details | Section 11.1, Decision Register | `MIXED; SEE SOURCE REGISTER` | Do not label every OQ unresolved: selected business decisions are recorded while detailed policies and readiness dependencies remain open. |
 
 ---
 
@@ -516,12 +516,12 @@ This checklist tracks the document's progression across the 6 formal governance 
 * [x] 5. Quantitative quality attributes separated into confirmed, proposed, and provisional.
 
 ### Stage 2: Requirements Traceability Audit (`PENDING_RECONCILIATION`)
-* [x] 1. 100% of cited requirement identifiers exist in baseline BRD documents (Docs 00–11).
+* [x] 1. The cited source identifiers were reconciled against the BRD; semantic coverage and link integrity remain under review.
 * [x] 2. All 14 system actors (`ACT-001` through `ACT-014`) mapped accurately to Document 02.
 * [x] 3. All 6 external dependencies (`DEP-001` through `DEP-006`) reconciled with Document 08.
 * [x] 4. Catalog capacity reconciled: 50,000 SKUs baseline (`NFR-SCL-002`) vs 100,000 stress proposal.
 * [x] 5. 8 Financial Years statutory financial retention confirmed (`BR-DAT-001`, `OQ-020`).
-* [x] 6. 100% of internal Markdown links and anchors validated with zero broken links.
+* [ ] 6. Internal Markdown link and anchor validation remains pending; do not claim zero broken links until an automated check is run and reviewed.
 
 ### Stage 3: Technical Architecture & Security Peer Review (`PENDING_REVIEW`)
 * [ ] 1. Does the C4 Level 1 context diagram accurately isolate the enterprise trust boundary?
