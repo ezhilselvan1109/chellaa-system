@@ -831,7 +831,7 @@ $$\text{ATS}_{\text{bundle}} = \min(\text{ATS}_{\text{item}_1}, \text{ATS}_{\tex
 | **BR-FIN-002** | Monotonic Sequential Invoice Numbering | Statutory Invoicing | Critical | `CONFIRMED` |
 | **BR-FIN-003** | Invoice Immutability & Credit Note Mandate | Statutory Invoicing | Critical | `CONFIRMED` |
 | **BR-NTF-001** | Transactional Message Precedence over Opt-outs | Notifications | High | `CONFIRMED` |
-| **BR-REV-001** | Verified-Buyer Gate for Customer Reviews | Reviews & Ratings | Medium | `PROPOSED` (OQ-012) |
+| **BR-REV-001** | Verified-Buyer Gate for Customer Reviews | Reviews & Ratings | Medium | `CONFIRMED` (OQ-012 Option B; detail policies open) |
 | **BR-SUP-001** | Support Ticket Response SLA (2 Hours Critical) | Customer Support | Medium | `CONFIRMED` |
 | **BR-RPT-001** | Reconciled Sales Reporting Constraint | Reporting & Analytics| High | `CONFIRMED` |
 | **BR-SEC-001** | Zero Raw Cardholder Data Storage (PCI-DSS) | Security & Privacy | Critical | `CONFIRMED` |
