@@ -338,36 +338,40 @@ sequenceDiagram
 
 ---
 
-### 3.11 WF-011: Price Management & Minimum Margin Alert
+### 3.11 WF-011: Promotions & Coupon Redemption
 
-* **Scope:** Administrative price updates, MRP ceiling validation, and below-cost warning gating ([`FEAT-PRC-001`](../03-business-feature-inventory.md#feat-prc-001), [`BR-PRC-001`](../05-business-rules.md#br-prc-001), [`BR-PRC-002`](../05-business-rules.md#br-prc-002)).
+* **Scope:** Validate promotion eligibility and coupon rules, calculate discounts, enforce redemption limits, and bind the accepted discount to the order without treating administrative price maintenance as this workflow ([`FEAT-PRM-001`](../03-business-feature-inventory.md#feat-prm-001), [`FR-PRM-001`](../04-functional-requirements.md#fr-prm-001), [`FR-PRM-002`](../04-functional-requirements.md#fr-prm-002), [`BR-PRM-001`](../05-business-rules.md#br-prm-001), [`BR-PRM-002`](../05-business-rules.md#br-prm-002)).
 
 ```mermaid
 sequenceDiagram
   autonumber
-  actor Staff as Finance Officer (ACT-007)
-  participant APIGW as API Gateway
-  participant Commerce as Commerce Cluster (04. Pricing Domain)
-  participant EventBus as Event Bus (Kafka)
-  participant Search as Elasticsearch Read Engine
+  actor Customer as Customer
+  participant Checkout as Checkout / Commerce
+  participant Promo as Promotion and Coupon Domain
+  participant Inventory as Inventory Domain
+  participant Orders as Order Domain
 
-  Staff->>APIGW: PUT /api/v1/admin/pricing (SKU, MRP, SellingPrice, CostPrice)
-  APIGW->>Commerce: Verify Staff Role (finance:write)
-  alt SellingPrice > MRP
-    Commerce-->>Staff: 400 Bad Request ("Selling price cannot exceed MRP")
-  else SellingPrice < CostPrice & No Admin Override Flag
-    Commerce-->>Staff: 400 Bad Request ("Selling price below cost requires override")
-  else Pricing Valid
-    Commerce->>Commerce: Update PriceRecord Aggregate
-    Commerce->>EventBus: Publish price.updated
-    EventBus->>Search: Ingest New Selling Price into Search Index
-    Commerce-->>Staff: 200 OK (Price Updated)
+  Customer->>Checkout: Apply coupon / request order quote
+  Checkout->>Promo: Validate code, window, eligibility and redemption limits
+  alt Coupon invalid or ineligible
+    Promo-->>Checkout: Rejection reason
+    Checkout-->>Customer: Show validation result; retain no discount
+  else Coupon eligible
+    Promo-->>Checkout: Discount calculation and rule version
+    Checkout->>Inventory: Revalidate availability and price
+    Inventory-->>Checkout: Current stock and price result
+    Checkout->>Orders: Create order with immutable discount snapshot
+    Orders->>Promo: Record/commit redemption idempotently
+    Promo-->>Orders: Redemption result
+    Orders-->>Customer: Order confirmation and price breakdown
   end
 ```
 
+* **Boundary:** Administrative product-price maintenance remains a supporting operation governed by `FR-PRC-001` and `BR-PRC-001`/`BR-PRC-002`; it is not misidentified as `WF-011`.
+
 ---
 
-### 3.12 WF-012: Daily Sales Reconciliation & Financial Reporting
+### 3.12 WF-014: Daily Sales Reconciliation & Financial Reporting
 
 * **Scope:** Reconciling captured payment transactions, invoiced ledgers, and bank settlement batches ([`FEAT-PAY-002`](../03-business-feature-inventory.md#feat-pay-002), [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`BR-RPT-001`](../05-business-rules.md#br-rpt-001)).
 
@@ -420,7 +424,7 @@ sequenceDiagram
 
 ---
 
-### 3.14 WF-014: Customer Support Ticket Intake & Transit Damage Dispute
+### 3.14 WF-013: Customer Support Ticket Intake & Transit Damage Dispute
 
 * **Scope:** Customer support ticketing, transit dispute intake, and 2-hour critical SLA escalation ([`FEAT-SUP-001`](../03-business-feature-inventory.md#feat-sup-001), [`BR-SUP-001`](../05-business-rules.md#br-sup-001)).
 
@@ -441,7 +445,7 @@ sequenceDiagram
 
 ---
 
-### 3.15 WF-015: Transactional Notification Dispatch
+### 3.15 WF-012: Transactional Notification Dispatch
 
 * **Scope:** Multi-channel message queuing, TRAI DLT template validation, and dispatch bypass of promotional opt-outs ([`FEAT-NTF-001`](../03-business-feature-inventory.md#feat-ntf-001), [`BR-NTF-001`](../05-business-rules.md#br-ntf-001)).
 
@@ -461,6 +465,35 @@ sequenceDiagram
 
 ---
 
+### 3.17 WF-015: External Provider Failure and Recovery
+
+* **Scope:** Detecting and containing external payment, shipping, and messaging provider failures without inventing automatic provider failover or unapproved retry/fallback policy ([`FEAT-INT-001`](../03-business-feature-inventory.md#feat-int-001), [`FR-INT-001`](../04-functional-requirements.md#fr-int-001), [`BR-INT-001`](../05-business-rules.md#br-int-001)).
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Caller as Calling Domain Service
+  participant Adapter as Provider Adapter
+  participant Guard as Circuit Breaker / Health Monitor
+  participant Queue as Durable Work Queue
+  participant Ops as Operations / Support
+
+  Caller->>Adapter: Request provider operation
+  Adapter->>Guard: Record outcome and evaluate health
+  alt Provider operation succeeds
+    Adapter-->>Caller: Provider result
+  else Timeout or provider error
+    Adapter->>Guard: Record failure
+    Guard-->>Adapter: Current circuit state / policy
+    Adapter->>Queue: Persist retryable work or reconciliation item
+    Adapter->>Ops: Emit incident / degraded-provider signal
+    Note over Queue,Ops: Retry timing, exhaustion, manual intervention, and any alternate-lane use require approved policy; no automatic payment-gateway failover is assumed
+  end
+  Ops->>Guard: Restore / validate provider health
+  Guard-->>Ops: Health evidence for controlled recovery
+```
+
+---
 ### 3.16 WF-016: Staff RBAC Authentication, MFA & Cryptographic Audit
 
 * **Scope:** Administrative login, mandatory TOTP MFA, 15-minute inactivity expiry, and WORM SHA-256 hash chaining ([`FEAT-ADM-001`](../03-business-feature-inventory.md#feat-adm-001), [`FEAT-AUD-001`](../03-business-feature-inventory.md#feat-aud-001), [`BR-ADM-001`](../05-business-rules.md#br-adm-001), [`BR-ADM-002`](../05-business-rules.md#br-adm-002), [`BR-AUD-001`](../05-business-rules.md#br-aud-001)).
@@ -499,11 +532,10 @@ sequenceDiagram
 | **`WF-009`** (Tracking & Delivery RTO) | [`FEAT-SHP-001`](../03-business-feature-inventory.md#feat-shp-001) | [`FR-SHP-002`](../04-functional-requirements.md#fr-shp-002) | [`BR-SHP-001`](../05-business-rules.md#br-shp-001), [`BR-SHP-002`](../05-business-rules.md#br-shp-002) | Cluster 3 (Fulfillment), Cluster 2 (Commerce) |
 | **`WF-010`** (Returns & Diagnostic Gate) | [`FEAT-RET-001`](../03-business-feature-inventory.md#feat-ret-001), [`FEAT-FIN-002`](../03-business-feature-inventory.md#feat-fin-002) | [`FR-RET-001`](../04-functional-requirements.md#fr-ret-001)–[`003`](../04-functional-requirements.md#fr-ret-003) | [`BR-RET-001`](../05-business-rules.md#br-ret-001)–[`003`](../05-business-rules.md#br-ret-003), [`BR-FIN-002`](../05-business-rules.md#br-fin-002) | Cluster 3 (Fulfillment), Cluster 4 (Finance) |
 | **`WF-011`** (Price Updates & Alerts) | [`FEAT-PRC-001`](../03-business-feature-inventory.md#feat-prc-001) | [`FR-PRC-001`](../04-functional-requirements.md#fr-prc-001) | [`BR-PRC-001`](../05-business-rules.md#br-prc-001), [`BR-PRC-002`](../05-business-rules.md#br-prc-002) | Cluster 2 (Commerce), Search Read Engine |
-| **`WF-012`** (Sales Reconciliation) | [`FEAT-PAY-002`](../03-business-feature-inventory.md#feat-pay-002), [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001) | [`FR-PAY-003`](../04-functional-requirements.md#fr-pay-003), [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001) | [`BR-RPT-001`](../05-business-rules.md#br-rpt-001) | Cluster 4 (Finance), Cluster 5 (Platform) |
-| **`WF-013`** (Verified Reviews) | [`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001) | [`FR-REV-001`](../04-functional-requirements.md#fr-rev-001) | [`BR-REV-001`](../05-business-rules.md#br-rev-001) | Cluster 5 (Platform), Cluster 2 (Commerce) |
-| **`WF-014`** (Customer Support) | [`FEAT-SUP-001`](../03-business-feature-inventory.md#feat-sup-001) | [`FR-SUP-001`](../04-functional-requirements.md#fr-sup-001) | [`BR-SUP-001`](../05-business-rules.md#br-sup-001) | Cluster 5 (Platform), Cluster 3 (Fulfillment) |
-| **`WF-015`** (Notifications Dispatch) | [`FEAT-NTF-001`](../03-business-feature-inventory.md#feat-ntf-001) | [`FR-NTF-001`](../04-functional-requirements.md#fr-ntf-001) | [`BR-NTF-001`](../05-business-rules.md#br-ntf-001) | Cluster 5 (Platform) |
+| **`WF-014`** (Reporting and Daily Financial Reconciliation) | [`FEAT-RPT-001`](../03-business-feature-inventory.md#feat-rpt-001), [`FEAT-PAY-002`](../03-business-feature-inventory.md#feat-pay-002) | [`FR-RPT-001`](../04-functional-requirements.md#fr-rpt-001), [`FR-PAY-003`](../04-functional-requirements.md#fr-pay-003) | [`BR-RPT-001`](../05-business-rules.md#br-rpt-001), [`BR-PAY-003`](../05-business-rules.md#br-pay-003) | Cluster 4 (Finance), Cluster 5 (Platform) |
+| **`WF-015`** (External Provider Failure and Recovery) | [`FEAT-INT-001`](../03-business-feature-inventory.md#feat-int-001), [`FEAT-OPS-001`](../03-business-feature-inventory.md#feat-ops-001) | [`FR-INT-001`](../04-functional-requirements.md#fr-int-001) | [`BR-INT-001`](../05-business-rules.md#br-int-001) | Provider adapters, durable work queue, operations; recovery/fallback policy requires approval |
 | **`WF-016`** (Staff IAM & WORM Audit) | [`FEAT-ADM-001`](../03-business-feature-inventory.md#feat-adm-001), [`FEAT-AUD-001`](../03-business-feature-inventory.md#feat-aud-001) | [`FR-SEC-001`](../04-functional-requirements.md#fr-sec-001), [`FR-AUD-001`](../04-functional-requirements.md#fr-aud-001) | [`BR-ADM-001`](../05-business-rules.md#br-adm-001), [`BR-AUD-001`](../05-business-rules.md#br-aud-001) | Cluster 5 (Platform) |
+| **`WF-017`** (Verified-Buyer Review Submission & Moderation) | [`FEAT-REV-001`](../03-business-feature-inventory.md#feat-rev-001) | [`FR-REV-001`](../04-functional-requirements.md#fr-rev-001) | [`BR-REV-001`](../05-business-rules.md#br-rev-001) | Cluster 5 (Platform), order-verification call to Cluster 2 (Commerce); moderation policy details open |
 
 ---
 
@@ -511,10 +543,20 @@ sequenceDiagram
 
 The checklist below governs the quality gate audit for `ARCH-04`:
 
-- [ ] 1. **Complete Workflow Coverage:** Reconcile sequence diagrams and mappings against all 17 business workflows (`WF-001` through `WF-017`).
+- [x] 1. **Workflow ID Coverage:** The workflow matrix and sequence diagrams now identify WF-001 through WF-017; WF-015 outage recovery and WF-011 promotion redemption were added/corrected. Semantic source-to-feature/FR/BR completeness remains a separate review gate.
 - [x] 2. **Explicit Synchronous vs Asynchronous Boundary:** Sequence diagrams distinguish synchronous client/RPC blocking calls from asynchronous Kafka CloudEvents.
 - [x] 3. **Semantic Compensation Paths:** Explicit rollback and compensation branches documented for checkout hold expiration, payment failure, and reverse diagnostic rejection.
 - [x] 4. **Single-Retailer Anti-Scope Preserved:** Zero third-party marketplace, vendor commission, or split payout interactions present.
-- [ ] 5. **Mermaid Syntax & Delimiter Balance:** Revalidate all diagrams after workflow ID and coverage remediation.
+- [ ] 5. **Mermaid Syntax & Delimiter Balance:** Syntax validation still required in repository CI or a Mermaid renderer.
 - [ ] 6. **Requirements Traceability:** Verify every sequence flow against the current BRD feature, functional requirement, business rule and workflow identifiers before claiming complete coverage.
 - [x] 7. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
+
+
+---
+
+## Cross-document reconciliation note (2026-10-24)
+
+- Canonical workflow identifiers and titles are defined by `docs/00-requirements/06-business-workflows.md` (WF-001–WF-017). Do not infer workflow meaning from an old identifier or copy stale mapping labels.
+- Recorded business decisions are inputs, not implementation approval. Online payment gateway: Razorpay only. Notification channels: SMS, Email and WhatsApp Business API; channel/fallback policy remains open. Reviews: verified buyers with admin moderation; detailed policy remains open. Advanced reporting is selected while specifications remain open. Legacy customer/order history migration is out of scope; catalog and opening-stock import remain in scope. Statutory financial records are retained for eight financial years, subject to Legal/Security review of anonymization details.
+- **Shipping decision conflict:** The current OQ-005 / ADQ-014 decision register describes a hybrid provider model, while a separate owner instruction recorded in project context selects Chellaa's own Shipping Management System and excludes aggregators. This conflict is unresolved; no named courier/aggregator integration or provider-routing policy is approved by this note. Resolve the source decision before architecture sign-off.
+- This draft remains non-binding. Phase 1 review is `PENDING_APPROVAL`, the requirements baseline is `NOT_APPROVED`, and architecture implementation authorization is `NOT_GRANTED`. This note does not authorize promotion to `docs/01-architecture/`.
