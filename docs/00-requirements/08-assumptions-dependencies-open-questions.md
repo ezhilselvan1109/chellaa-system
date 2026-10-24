@@ -51,6 +51,60 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | <a id="dep-005"></a>**DEP-005** | Master Electronics Catalog & Brand Specifications | Business Merchandising | High-resolution photography, accurate technical specification sheets, and manufacturer warranty terms. | `FEAT-CAT-001`, `FR-CAT-001` | Inaccurate product descriptions leading to customer disputes and elevated return rates. | Establish structured ingestion spreadsheet templates for supplier distributors. | Merchandising Lead | `OPEN` |
 | <a id="dep-006"></a>**DEP-006** | Physical Warehouse Infrastructure & Barcode Hardware | Physical Operations | Physical fulfillment center equipped with labeled bin locations, packaging benches, and handheld barcode scanners. | `FEAT-INV-001`, `FR-INV-001` | Software inventory tracking disconnected from physical reality; picking errors. | Define standardized SKU barcode symbologies (Code 128 / EAN-13) before inwarding stock. | Warehouse Lead | `OPEN` |
 
+### DEP-002 Operating Model and Readiness Definition
+
+**Decision boundary:** Chellaa owns the Shipping Management System and the internal shipment lifecycle. No shipping aggregator or courier partner is selected. Physical delivery is planned around Chellaa's own delivery team. A direct carrier integration may be added only through a separately recorded business decision and must not be assumed by the initial implementation.
+
+#### A. Proposed internal roles
+
+| Role | Core responsibility | Required control |
+| :--- | :--- | :--- |
+| Shipping Operations Lead | Owns service coverage, daily capacity, delivery SLAs, exception escalation, and readiness sign-off. | Reviews daily shipment, failed-delivery, return, and COD reconciliation reports. |
+| Dispatcher / Route Coordinator | Groups ready shipments by service area and capacity, assigns delivery runs, and records dispatch/return handovers. | Every shipment and delivery run has an accountable assignee and auditable assignment history. |
+| Warehouse Fulfillment Specialist | Picks, scans, packs, verifies serial/IMEI where applicable, seals parcels, and hands parcels to the internal delivery team. | SKU/order match and package handover scan are mandatory; no dispatch without a unique internal Shipment ID. |
+| Delivery Associate | Receives assigned parcels, attempts delivery, records milestone scans, captures proof of delivery, and returns failed/undelivered parcels and COD cash. | Must authenticate to the delivery workflow; cannot mark delivered without required proof and delivery OTP where policy requires it. |
+| Customer Support Agent | Handles customer questions, rescheduling requests, delivery exceptions, address issues before dispatch, and return initiation. | Changes are logged; delivery address is immutable after the existing cutoff rules apply. |
+| COD / Finance Reconciler | Reconciles COD due, cash/approved payment evidence collected, receipts, handovers, shortages, and refunds. | Daily per-associate reconciliation with variance reason and supervisor review; no silent balance adjustments. |
+| Shipping Supervisor (may be the Operations Lead at launch) | Approves exceptions, reviews incidents, and signs off unresolved cash/parcel discrepancies. | Separation of duties is preferred; where one person holds multiple roles at launch, record the combined-role risk and compensating review. |
+
+These are proposed responsibilities, not a claim that staff have already been hired or assigned. Headcount, shifts, delivery radius, and launch PIN-code coverage remain to be defined using forecast order volume and actual geography.
+
+#### B. End-to-end operating workflows
+
+1. **Coverage and checkout eligibility:** Operations maintains an internal service-area/PIN-code coverage registry, including COD eligibility. Checkout uses that registry to allow or reject delivery and calculate the applicable delivery fee/estimate. Do not use a third-party carrier serviceability API unless separately approved.
+2. **Shipment creation:** After an order is confirmed and released for fulfillment, the system creates one unique internal Shipment ID linked to the order, frozen delivery address, package contents, declared value, and COD amount if applicable. Repeated requests must be idempotent and must not create duplicate active shipments.
+3. **Pick, pack, and quality check:** Warehouse staff pick by bin, scan each SKU/variant, verify quantity and serial/IMEI for applicable electronics, record package weight/dimensions, pack and seal the parcel, and record the packing operator and timestamp. Any mismatch or damage blocks dispatch and opens an exception.
+4. **Dispatch planning and handover:** Dispatcher groups ready shipments by service area and capacity, assigns a delivery run and Delivery Associate, and records parcel count plus Shipment IDs. Both warehouse handover and associate receipt are scanned/acknowledged. The system moves the shipment to ASSIGNED then OUT_FOR_DELIVERY only when the associate starts the run.
+5. **Customer notification:** Send order/shipment confirmation and the internal tracking page/link after shipment creation; notify the customer when out for delivery and after every failed attempt. Show a customer-safe status timeline; never expose internal staff notes or sensitive proof-of-delivery data.
+6. **Delivery attempt and proof:** Associate records attempt timestamp, outcome, and standardized reason. On successful handover, capture the required delivery OTP, recipient confirmation, and timestamp; photo/signature or GPS evidence may be captured only after privacy, retention, device, and consent requirements are defined. Mark DELIVERED only after mandatory evidence passes validation; start the 7-calendar-day return window from the verified delivery timestamp.
+7. **Failed delivery / rescheduling:** On a failed attempt, record a reason (for example customer unavailable, address unclear, access blocked, or customer reschedule request), notify Support/customer, and queue a permitted retry. Apply the existing maximum of three consecutive calendar-day attempts. After the third unsuccessful attempt, escalate to the Operations Lead and return the parcel to the warehouse; mark the internal return-to-warehouse/RTO state and record receipt. Do not claim an external carrier RTO event.
+8. **COD collection and reconciliation:** For eligible COD orders (order value up to ₹10,000, verified eligible PIN code, ₹50 non-refundable convenience fee, and delivery OTP), the associate records the amount due, amount collected, payment mode permitted by the approved policy, receipt/reference, and timestamp. At shift end, the associate hands over cash and/or collection evidence against the assigned manifest. Finance reconciles shipment-level collection against order-level COD due daily; shortages, excess, missing receipts, and disputed collections become tracked incidents with owner and resolution evidence. COD order completion must not silently imply finance reconciliation is complete.
+9. **Cancellation and parcel return:** Before dispatch, cancellation follows existing order cancellation and inventory-release rules. After dispatch, the customer cannot bypass the existing cutoff; Support guides refusal/return under the approved policy. Returned parcels are scanned into warehouse custody, condition/serial/IMEI is verified, and the order/return workflow receives a linked custody event.
+10. **Exception management:** Lost/damaged parcel, wrong parcel, failed scan, missed run, delivery dispute, OTP failure, COD variance, or system outage creates an exception with unique ID, severity, owner, timestamps, customer communication, and resolution evidence. Only authorized roles may override a blocked transition, with reason and audit log.
+
+#### C. Minimum shipment lifecycle and audit events
+
+Proposed happy path: CREATED → READY_FOR_DISPATCH → ASSIGNED → OUT_FOR_DELIVERY → DELIVERED.
+
+Alternative transitions: DELIVERY_ATTEMPT_FAILED → ASSIGNED for an approved retry; RETURN_TO_WAREHOUSE after the retry limit or authorized return; CANCELLED only when permitted by order state. Exact persisted enum names must be aligned across the BRD before implementation. Every transition records Shipment ID, prior/new state, actor, timestamp, source (staff UI/mobile workflow/system), reason code where relevant, and correlation to the order. Corrections are append-only audit events, not silent history edits.
+
+#### D. DEP-002 readiness checklist and evidence
+
+DEP-002 remains OPEN until the Operations Lead records evidence for all applicable items:
+
+- [ ] Approved launch service area/PIN-code list, service hours, delivery fee policy, and COD eligibility rules.
+- [ ] Named role owners and backup coverage; staffing and shift/capacity plan based on expected volume (no headcount is assumed here).
+- [ ] Approved pick-pack-handover, dispatch assignment, proof-of-delivery, failed-attempt, rescheduling, return-to-warehouse, and parcel custody SOPs.
+- [ ] Approved COD cash custody, receipt, end-of-shift handover, daily reconciliation, variance escalation, and audit procedure.
+- [ ] Shipment state machine, transition permissions, idempotency, audit events, customer-safe tracking view, and notification triggers reviewed against order/return rules.
+- [ ] End-to-end test evidence for prepaid and COD orders, delivery OTP success/failure, three failed attempts, cancellation cutoff, return receipt, damaged/wrong parcel, duplicate commands, and COD variance.
+- [ ] Operational dashboard and daily reports for assigned/in-transit/delivered/failed/returned shipments, delivery success rate, on-time delivery, first-attempt success, loss/damage, and COD variance.
+- [ ] Documented incident escalation and service-continuity procedure for unavailable devices, network outages, absent associates, vehicle/run failure, and lost parcels.
+- [ ] Any direct carrier integration is either explicitly out of launch scope or separately approved with named partner, commercial/legal review, API/security validation, and failure handling.
+- [ ] Operations Lead confirms readiness with links to SOPs, test evidence, staffing/coverage plan, and unresolved risks.
+
+**Not yet decided:** launch city/area and PIN codes, delivery hours, delivery-fee schedule, staffing/headcount, vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, and whether/when to integrate directly with any carrier. These must not be invented in implementation.
+
 ---
 
 ## 4. Open Questions Register
