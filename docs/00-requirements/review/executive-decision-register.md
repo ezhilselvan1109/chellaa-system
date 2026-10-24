@@ -22,7 +22,7 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 ### Mandatory Governance Rules Observed:
 1. **Non-Binding Proposals:** All proposals presented by the engineering team are explicitly designated as **`NON-BINDING RECOMMENDATIONS`**. Engineering has provided technical analysis and operational recommendations, but engineering **cannot** decide commercial policy on behalf of the business.
-2. **Zero Fabricated Selections:** Decision fields are deliberately left unselected (`[ ]`) and pending (`OPEN`). AI agents and technical leads are strictly prohibited from selecting options, populating reviewer names, or forging ratification dates.
+2. **No Inferred Selections or Fabricated Records:** AI agents and technical leads must not infer business selections or invent reviewer details, dates, signatures, or authorization hashes. Explicit selections and dates supplied by the authorized Business Owner may be transcribed accurately.
 3. **Formal Resolution Required:** Each decision must be reviewed, an option selected, and commercial conditions documented by the authorized Enterprise Business Owner prior to formal Phase 1 closure and Phase 2 architecture authorization.
 
 ---
@@ -66,13 +66,13 @@ This decision register is prepared specifically for the **Enterprise Business Ow
   * *Rationale:* Allows the enterprise to master single-warehouse physical operations, domestic courier integrations, and national statutory GST compliance before absorbing cross-border friction.
 
 #### Business Owner Decision Record:
-* [ ] **Option A: Domestic India Only at Launch**
+* [x] **Option A: Domestic India Only at Launch**
 * [ ] **Option B: India Primary with Cross-Border Shipping**
 * [ ] **Option C: Global International Retail Launch**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -96,13 +96,13 @@ This decision register is prepared specifically for the **Enterprise Business Ow
   * *Rationale:* Preserves backend architectural simplicity and accounting integrity during launch; multi-lingual localization can be introduced cleanly in subsequent frontend iterations without database restructuring.
 
 #### Business Owner Decision Record:
-* [ ] **Option A: Single Currency (INR) and English Only**
+* [x] **Option A: Single Currency (INR) and English Only**
 * [ ] **Option B: Single Currency (INR) with Regional Indian Languages**
 * [ ] **Option C: Multi-Currency with Real-Time Conversion**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -127,12 +127,12 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 #### Business Owner Decision Record:
 * [ ] **Option A: 100% Prepaid Only (Zero COD)**
-* [ ] **Option B: Restricted COD (Max ₹10,000 + Delivery OTP + Non-Refundable Fee)**
+* [x] **Option B: Restricted COD (Max ₹10,000 + Delivery OTP + Non-Refundable Fee)**
 * [ ] **Option C: Unrestricted COD**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner / Finance Lead
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -157,12 +157,12 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 #### Business Owner Decision Record:
 * [ ] **Option A: 7-Day Replacement Only (No Refunds)**
-* [ ] **Option B: 7-Day Return/Refund Gated on Technician Diagnostic Inspection**
+* [x] **Option B: 7-Day Return/Refund Gated on Technician Diagnostic Inspection**
 * [ ] **Option C: 14-Day Open Return Policy with Instant Pickup Refund**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -184,12 +184,12 @@ This decision register is prepared specifically for the **Enterprise Business Ow
   * *Rationale:* Enforces statutory compliance with Indian consumer protection laws and avoids checkout abandonment caused by surprise tax additions.
 
 #### Business Owner Decision Record:
-* [ ] **Option A: 100% Tax-Inclusive Storefront Pricing (Reverse Extraction Invoicing)**
+* [x] **Option A: 100% Tax-Inclusive Storefront Pricing (Reverse Extraction Invoicing)**
 * [ ] **Option B: Tax-Exclusive Storefront Pricing (Tax Added at Checkout)**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner / Finance Lead
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -213,13 +213,13 @@ This decision register is prepared specifically for the **Enterprise Business Ow
   * *Rationale:* Delivers highest customer conversion rates in the Indian market while guaranteeing verified phone numbers for courier dispatch handshakes.
 
 #### Business Owner Decision Record:
-* [ ] **Option A: Mobile-First with SMS OTP (Email Optional)**
+* [x] **Option A: Mobile-First with SMS OTP (Email Optional)**
 * [ ] **Option B: Email Mandatory with Password (Mobile Optional)**
 * [ ] **Option C: Both Mobile (SMS OTP) and Email Mandatory**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner / Product Lead
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -244,12 +244,12 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 
 #### Business Owner Decision Record:
 * [ ] **Option A: 20 OPM Baseline / 200 OPM Peak Surge**
-* [ ] **Option B: 100 OPM Baseline / 1,000 OPM Peak Surge**
+* [x] **Option B: 100 OPM Baseline / 1,000 OPM Peak Surge**
 * [ ] **Option C: 500 OPM Baseline / 5,000 OPM Peak Surge**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner / Technical Lead
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
@@ -271,24 +271,24 @@ This decision register is prepared specifically for the **Enterprise Business Ow
   * *Rationale:* Provides excellent enterprise-grade disaster recovery and availability for a single-retailer D2C business model with sensible infrastructure expenditure.
 
 #### Business Owner Decision Record:
-* [ ] **Option A: 99.9% Uptime SLA, RPO $\le 5\text{ min}$, RTO $\le 2\text{ hours}$ (Single-Region Multi-AZ)**
+* [x] **Option A: 99.9% Uptime SLA, RPO $\le 5\text{ min}$, RTO $\le 2\text{ hours}$ (Single-Region Multi-AZ)**
 * [ ] **Option B: 99.99% Uptime SLA, RPO $= 0$, RTO $\le 15\text{ min}$ (Multi-Region Active-Active)**
-* **Business Owner Rationale & Conditions:** *(To be documented by Business Owner)*
-* **Decision Owner:** Enterprise Business Owner
-* **Decision Date:** `YYYY-MM-DD` *(Pending)*
-* **Status:** **`OPEN`**
+* **Business Owner Rationale & Conditions:** None supplied by the Business Owner.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit Business Owner selection recorded 2026-10-24).
+* **Decision Date:** `2026-10-24`
+* **Status:** **`OWNER_DECISION_RECORDED`**
 
 ---
 
 ## 4. Executive Decision Ratification Record
 
-*(This section must be completed and signed by the authorized Enterprise Business Owner. Engineering leads and AI agents are strictly forbidden from populating signatures or dates).*
+*(Record only details explicitly supplied by the authorized Enterprise Business Owner. Do not invent a signature or authorization hash; a date may be recorded when the owner explicitly supplies it.)*
 
 | Field | Business Owner Record |
 | :--- | :--- |
-| **Enterprise Business Owner Name** | *(To be populated by Business Owner)* |
-| **Corporate Title** | *(To be populated by Business Owner)* |
-| **Ratification Date** | `YYYY-MM-DD` |
-| **Decisions Ratified** | `[ ] ADQ-001` &nbsp; `[ ] ADQ-002` &nbsp; `[ ] ADQ-003` &nbsp; `[ ] ADQ-004`<br>`[ ] ADQ-005` &nbsp; `[ ] ADQ-006` &nbsp; `[ ] ADQ-007` &nbsp; `[ ] ADQ-008` |
-| **Executive Comments & Provisos** | |
-| **Formal Signature / Authorization Hash** | |
+| **Enterprise Business Owner Name** | EZHIL SELVAN P. |
+| **Corporate Title** | Founder |
+| **Owner Decision Date** | `2026-10-24` |
+| **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008` |
+| **Executive Comments & Provisos** | None supplied. |
+| **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
