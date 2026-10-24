@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Multi-AZ cloud topology, VPC subnets, PITR backup strategy, CI/CD pipelines, and secrets governance are fully articulated. |
-| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | 100% bidirectional traceability established to disaster recovery NFRs ([`NFR-BCM-001`](../07-non-functional-requirements.md#nfr-bcm-001)) and surge capacity ([`NFR-SCL-001`](../07-non-functional-requirements.md#nfr-scl-001)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | previous coverage claim withdrawn; verify the current source requirements and all 17 workflow mappings before claiming completeness|
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Lead Cloud Architect, and SRE Lead. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of RTO/RPO disaster recovery SLA targets ([`ADQ-008`](./executive-decision-register.md#adq-008)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
