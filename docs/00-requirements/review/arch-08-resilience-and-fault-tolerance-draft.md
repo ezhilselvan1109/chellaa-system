@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Circuit breaking thresholds, late webhook recovery state machines, retry policies, DLQ topologies, and FMEA tables are fully articulated. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% bidirectional traceability established to availability NFRs ([`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001), [`002`](../07-non-functional-requirements.md#nfr-avl-002)) and resilience rules ([`BR-INT-001`](../05-business-rules.md#br-int-001), [`BR-PAY-002`](../05-business-rules.md#br-pay-002)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** | Previous coverage claims are withdrawn until the current source requirements and all 17 workflow mappings are independently reverified. | 100% bidirectional traceability established to availability NFRs ([`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001), [`002`](../07-non-functional-requirements.md#nfr-avl-002)) and resilience rules ([`BR-INT-001`](../05-business-rules.md#br-int-001), [`BR-PAY-002`](../05-business-rules.md#br-pay-002)). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, SRE Lead, and Principal Distributed Systems Architect. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of late payment refund workflows ([`ADQ-003`](./executive-decision-register.md#adq-003)) and carrier dispute SLAs ([`ADQ-004`](./executive-decision-register.md#adq-004)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -197,3 +197,13 @@ The checklist below governs the quality gate audit for `ARCH-08`:
 - [x] 6. **Single-Retailer Anti-Scope Preserved:** Zero multi-tenant or third-party seller recovery workflows present.
 - [x] 7. **100% Traceability:** Mapped to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
+
+
+---
+
+## Cross-document reconciliation note (2026-10-24)
+
+- Canonical workflow identifiers and titles are defined by `docs/00-requirements/06-business-workflows.md` (WF-001–WF-017). Stale mappings must not be treated as valid merely because a document previously claimed coverage.
+- Recorded decisions are inputs, not implementation approval: online payments use Razorpay only; notifications use SMS, Email and WhatsApp Business API while channel/fallback policy remains open; reviews require verified buyers and admin moderation; advanced reporting is selected while specifications remain open; legacy customer/order history migration is out of scope while catalog and opening-stock import remain in scope; statutory financial records are retained for eight financial years subject to Legal/Security review of anonymization details.
+- **Shipping decision conflict:** Current OQ-005 / ADQ-014 describes a hybrid provider model, while a separate owner instruction recorded in project context selects Chellaa's own Shipping Management System and excludes aggregators. This conflict is unresolved; no named courier/aggregator integration or provider-routing policy is approved by this note. Resolve before architecture sign-off.
+- This draft remains non-binding. Phase 1 review is `PENDING_APPROVAL`, requirements baseline is `NOT_APPROVED`, and architecture implementation authorization is `NOT_GRANTED`. No promotion to `docs/01-architecture/` is authorized by this note.
