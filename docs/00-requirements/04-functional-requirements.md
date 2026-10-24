@@ -1119,20 +1119,20 @@ Every functional requirement specifies:
 
 ### <a id="fr-shp-001"></a>FR-SHP-001: In-House Shipment Creation, Dispatch Assignment & Shipping Label
 * **Requirement ID:** `FR-SHP-001`
-* **Requirement Title:** Internal Shipment Lifecycle, Shipment ID and Dispatch Manifest
+* **Requirement Title:** Provider-Neutral Shipment Lifecycle, Shipment ID and Dispatch Manifest
 * **Feature ID:** `FEAT-SHP-001`
 * **Business Objective:** `OBJ-006`
-* **Requirement Statement:** The system must create a unique internal Shipment ID for each eligible confirmed order, preserve a snapshot of the delivery address and package contents, support packing checks, generate an internal shipment/packing label with a scannable Shipment ID, assign the shipment to a delivery run and internal Delivery Associate, and audit every custody handover. The initial design must not depend on a third-party shipping aggregator or courier API.
-* **Description:** Provides shipment traceability and dispatch control for Chellaa's own delivery operations. External carrier booking/AWB generation is excluded unless approved through a separate decision.
+* **Requirement Statement:** The system must create a unique internal Shipment ID for each eligible confirmed order, preserve a snapshot of the delivery address and package contents, support packing checks, generate an internal shipment/packing label with a scannable Shipment ID, and audit every custody handover. It must support own-team fulfilment and provider-neutral adapters for approved direct courier partners and a shipping aggregator. External AWB/booking references remain secondary to the internal Shipment ID.
+* **Description:** Provides a canonical shipment record across Chellaa's own delivery operations, direct courier partners and an approved shipping aggregator. Provider-specific booking/AWB generation is performed only for enabled and validated provider lanes.
 * **Primary Actor:** System, Fulfillment Specialist, Dispatcher / Route Coordinator, Delivery Associate.
 * **Preconditions:** Order is confirmed and released for fulfillment; inventory is allocated; destination is within the approved internal service area.
 * **Trigger:** Order is released for fulfillment or shipment is ready for dispatch.
 * **Main Success Scenario:**
   1. System creates an idempotent Shipment ID and links it to the order, immutable address snapshot, package items, declared value, and COD due where applicable.
   2. Warehouse user scans order items and records package checks, weight/dimensions, packing operator, and timestamps.
-  3. System generates an internal label/manifest reference with a scannable Shipment ID; this is not represented as an external AWB.
-  4. Dispatcher assigns the shipment to a delivery run and authenticated Delivery Associate.
-  5. Warehouse and Delivery Associate acknowledge parcel custody; the system records both sides of the handover and the shipment state transition.
+  3. System generates an internal label/manifest reference with a scannable Shipment ID; when an approved external provider is selected, its label/AWB/reference is stored separately and linked to the internal Shipment ID.
+  4. Dispatcher or configured routing rules assign the shipment to an enabled own-team, direct-courier, or aggregator lane and record the applicable custody/pickup evidence.
+  5. The system records the internal Shipment ID, selected lane, provider booking reference if applicable, manifest, custody handover evidence, actor and timestamp.
 * **Alternative Scenarios:**
   * Shipment creation request is retried: return the existing active Shipment ID rather than creating a duplicate.
   * Direct carrier integration is later approved: add a separately scoped adapter and carrier-specific identifiers without replacing the internal Shipment ID.
@@ -1153,17 +1153,17 @@ Every functional requirement specifies:
 
 ### <a id="fr-shp-002"></a>FR-SHP-002: Internal Delivery Tracking, Proof of Delivery & Customer Alerts
 * **Requirement ID:** `FR-SHP-002`
-* **Requirement Title:** Internal Shipment Milestones, Delivery Attempts and Proof of Delivery
+* **Requirement Title:** Unified Shipment Milestones, Provider Tracking Events and Proof of Delivery
 * **Feature ID:** `FEAT-SHP-001`
 * **Business Objective:** `OBJ-006`
-* **Requirement Statement:** The system must record authenticated internal shipment milestone events, delivery attempts, standardized failure reasons, rescheduling, proof of delivery, return-to-warehouse events, and customer alerts. It must not require third-party courier webhooks; direct carrier webhook/API ingestion is optional only after a separate decision.
-* **Description:** Gives customers and operations staff visibility of shipments handled by Chellaa's own delivery team and provides auditable delivery evidence and exception handling.
+* **Requirement Statement:** The system must record authenticated own-team shipment milestone events and support validated API/webhook tracking updates from approved direct courier partners and a shipping aggregator. It must deduplicate external events, map provider-specific states/reasons to the common internal shipment lifecycle, and retain provider references, delivery attempts, proof of delivery, rescheduling, returns/RTO events, and customer alerts. Provider-specific integrations may be enabled only after their contracts, credentials, mapping, failure handling and end-to-end tests are approved.
+* **Description:** Gives customers and operations staff a unified view of shipments across own-team, direct-courier and aggregator lanes, while preserving auditable delivery evidence and provider-specific exception details.
 * **Primary Actor:** Delivery Associate, Dispatcher / Route Coordinator, Shipping Operations Lead, Customer Support Agent, System.
 * **Preconditions:** Shipment has a valid internal Shipment ID and an assigned delivery run/associate.
 * **Trigger:** Internal staff scan/action records a shipment milestone or delivery attempt.
 * **Main Success Scenario:**
-  1. System records shipment event with Shipment ID, actor, timestamp, state, and optional location/reason metadata.
-  2. System validates allowed state transitions and appends the event to the shipment timeline.
+  1. System records own-team or provider shipment events with internal Shipment ID, provider reference where applicable, actor/source, timestamp, state, and optional location/reason metadata.
+  2. System deduplicates external events, maps provider-specific statuses to approved internal states, validates allowed transitions, and appends the event to the shipment timeline.
   3. On out-for-delivery, system sends a customer notification with the customer-safe tracking link.
   4. On successful delivery, system validates required delivery OTP and records recipient confirmation and proof metadata before marking the order/shipment delivered.
   5. System sends delivery confirmation and starts the 7-calendar-day return eligibility window from the verified delivery timestamp.
