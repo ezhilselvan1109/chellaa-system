@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Database engine topologies, schema isolation boundaries, outbox tables, master entity catalogs, and consistency models are fully articulated. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% bidirectional traceability established to all data consistency rules ([`BR-INV-001`](../05-business-rules.md#br-inv-001), [`BR-PAY-001`](../05-business-rules.md#br-pay-001), [`BR-FIN-001`](../05-business-rules.md#br-fin-001), [`NFR-INT-001`](../07-non-functional-requirements.md#nfr-int-001)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, Principal Database Architect, and SRE Lead. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of data retention policies ([`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020)) and zero overselling guarantees ([`NFR-INT-001`](../07-non-functional-requirements.md#nfr-int-001)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -65,7 +65,7 @@ flowchart TD
     ACID Transactional Master")]
     
     PG_Replica[("PostgreSQL Read Replicas
-    Reporting & BI Queries (WF-012)")]
+    Reporting & BI Queries (WF-014)")]
 
     Redis_Cluster[("Redis 7.x Cluster (In-Memory)
     15-Min TTL Stock Holds
@@ -261,5 +261,15 @@ The checklist below governs the quality gate audit for `ARCH-05`:
 - [x] 4. **Transactional Outbox CDC:** Debezium CDC pattern and outbox table schema specified for guaranteed reliable event publishing.
 - [x] 5. **Zero Overselling Concurrency Invariant:** Atomic hold reservation query specified to eliminate overselling during flash sales.
 - [x] 6. **Statutory Compliance Rules:** Gapless invoice sequence counters, 8-year WORM retention, and zero PAN storage enforced at the schema level.
-- [x] 7. **100% Traceability:** All data components map to declared BRD requirement identifiers.
+- [ ] 7. **Traceability verification pending:** All data components map to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
+
+
+---
+
+## Cross-document reconciliation note (2026-10-24)
+
+- Canonical workflow identifiers and titles are defined by `docs/00-requirements/06-business-workflows.md` (WF-001–WF-017). Do not infer workflow meaning from an old identifier or copy stale mapping labels.
+- **Recorded decision alignment (2026-10-24):** Owner-selected inputs are India domestic launch, INR/English, Razorpay-only online payments; restricted COD up to ₹10,000 with eligible/verified PIN codes, delivery OTP and ₹50 non-refundable fee; four planned regional warehouses with configurable/location-agnostic records; hybrid shipping lanes (own team, direct couriers, aggregator) with canonical internal Shipment ID; SMS, Email and WhatsApp Business API for order lifecycle events; verified-buyer reviews with mandatory pre-publication admin moderation; standard reports plus real-time BI, predictive replenishment and customer cohort retention; no legacy customer/order history migration while catalog/opening-stock import remains in scope; eight-financial-year statutory financial retention while supporting appropriate profile/marketing-data anonymization. 100 orders/minute sustained, 1,000 peak, 99.9% uptime, RPO ≤ 5 minutes and RTO ≤ 2 hours are recorded targets. **Readiness boundary:** site/PIN validation and shipping readiness (DEP-002), payment onboarding (DEP-001), notification provider readiness (DEP-003), detailed review/notification/reporting policies, Legal/Security retention details, capacity tests and recovery drills remain open. These decisions do not authorize implementation or document promotion.
+- **Shipping decision alignment (ADQ-014 supersedes ADQ-011 provider-exclusion clauses):** Chellaa owns its Shipping Management System and canonical internal Shipment ID. The recorded provider model permits Chellaa's own delivery team, directly integrated courier partners, and a shipping aggregator. This does not select a named provider, establish a contract, validate a PIN code, or authorize an untested lane. `DEP-002` remains `OPEN`; each lane requires documented operational readiness and end-to-end evidence before activation.
+- This draft remains non-binding. Phase 1 review is `PENDING_APPROVAL`, the requirements baseline is `NOT_APPROVED`, and architecture implementation authorization is `NOT_GRANTED`. This note does not authorize promotion to `docs/01-architecture/`.

@@ -194,7 +194,7 @@ The 41 business features in [`03-business-feature-inventory.md`](../03-business-
 * **Incoming Interactions:** Calculate tax breakdown during checkout, issue invoice upon order confirmation, issue credit note upon return inspection approval.
 * **Outgoing Interactions:** Emits `invoice.generated`, `credit_note.generated`; stores invoice PDFs in object storage (`DEP-005`).
 * **Transactional Consistency Requirements:** Gapless sequential numbering for tax invoices; immutable once issued ([`BR-FIN-001`](../05-business-rules.md#br-fin-001), [`BR-FIN-002`](../05-business-rules.md#br-fin-002)).
-* **Security Boundaries:** Tamper-evident financial records; 8-year audit retention ([`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020)).
+* **Security Boundaries:** Tamper-evident financial records retained for eight financial years with appropriate profile/marketing-data anonymization; OQ-020 Option A is recorded and Legal/Security implementation details remain open.
 * **Dependencies:** [`DEP-004`](../08-assumptions-dependencies-open-questions.md#dep-004) (GST Schedules), [`DEP-005`](../08-assumptions-dependencies-open-questions.md#dep-005) (Object storage), [`OQ-001`](../08-assumptions-dependencies-open-questions.md#oq-001).
 * **Candidate Reasons to Merge or Separate:**
   * *Merge:* Can be combined with Payments into a *Finance & Invoicing* cluster.
@@ -330,7 +330,7 @@ The 41 business features in [`03-business-feature-inventory.md`](../03-business-
 * **Outgoing Interactions:** Tamper-detection verification alerts; operational health dashboards.
 * **Transactional Consistency Requirements:** Append-only ledger with cryptographic SHA-256 hash chaining ([`FR-AUD-002`](../04-functional-requirements.md#fr-aud-002)).
 * **Security Boundaries:** Strict immutability; audit logs cannot be updated or deleted by any user or administrator.
-* **Dependencies:** [`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020) (8-year retention policy).
+* **Dependencies:** [`OQ-020`](../08-assumptions-dependencies-open-questions.md#oq-020) (eight-financial-year retention decision recorded; anonymization and legal/technical details remain open).
 * **Candidate Reasons to Merge or Separate:**
   * *Merge:* Can be implemented as a shared library publishing directly to an immutable log storage tier.
   * *Separate:* Standalone audit service guarantees separation of duties between operators and audit verifiers.

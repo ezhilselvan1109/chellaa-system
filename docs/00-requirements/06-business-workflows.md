@@ -47,6 +47,7 @@ Workflows distinguish clearly between:
 | **WF-014** | Daily Financial Reconciliation & Reports | Finance Officer, System | Reconciling gateway settlements and GMV |
 | **WF-015** | External Provider Outage Recovery | System, SRE Operations | Handling payment/courier service failures |
 | **WF-016** | Administrative Access & Privileged Audit | System Admin, Auditor | Enforcing RBAC and logging sensitive actions |
+| **WF-017** | Verified-Buyer Review Submission & Moderation | Customer, Moderator, System | Verify purchase, moderate review, publish approved ratings |
 
 ---
 
@@ -130,7 +131,7 @@ sequenceDiagram
 * **Expected Final Business State:** Product is `PUBLISHED`; SKUs are active; Search indices updated; Audit log written.
 * **Dependencies:** `FEAT-CAT-001`, `FEAT-BRD-001`, `FEAT-CTG-001`.
 * **Related Functional Requirements:** `FR-CAT-001`, `FR-CAT-002`.
-* **Unresolved Decisions:** None.
+* **Unresolved Decisions:** None recorded for the catalog-authoring workflow; catalog data readiness remains a separate operational dependency.
 
 ```mermaid
 flowchart TD
@@ -603,48 +604,44 @@ flowchart TD
 
 ### WF-012: Multi-Channel Notification Delivery
 * **Workflow ID:** `WF-012`
-* **Workflow Name:** Event-Driven Transactional Notification Relay & Channel Fallback
+* **Workflow Name:** Event-Driven Transactional Notification Delivery
 * **Business Objective:** `OBJ-006`, `OBJ-007`
 * **Trigger:** Domain event published (e.g., `OrderConfirmedEvent`, `ShipmentDispatchedEvent`, `OTPRequestedEvent`).
 * **Participating Actors:** System (Automated), `ACT-013` (Messaging Gateway), `ACT-009` (Customer).
 * **Preconditions:** Event contains recipient contact information.
 * **Main Success Path:**
   1. System listens to domain event and matches event type to registered notification template.
-  2. System resolves customer preferred channels (SMS for OTPs; Email + WhatsApp for Orders).
-  3. System renders template by injecting contextual parameters (Customer Name, Order Number, Live Tracking URL).
-  4. System dispatches request to primary channel gateway (e.g., WhatsApp Business API).
-  5. Gateway confirms successful delivery; system updates notification delivery log with timestamp.
+  2. System applies the approved event-to-channel matrix. The selected scope includes SMS, Email and WhatsApp Business API for order lifecycle events; per-event mandatory channels remain to be specified.
+  3. System renders the approved template using contextual parameters (Customer Name, Order Number, Tracking URL).
+  4. System dispatches through the configured channel gateway(s) selected by the approved policy.
+  5. Gateway responses and delivery timestamps are recorded per channel in the notification log.
 * **Alternative Paths:**
-  * **WhatsApp Fallback to SMS:** WhatsApp gateway returns "User Not on WhatsApp" or delivery times out after 60 seconds; system automatically falls back to standard SMS route to ensure critical message delivery (`FR-NTF-001`).
+  * A channel failure is recorded and handled according to the retry/fallback policy once that policy is approved; this workflow does not assume a particular channel order or timeout.
 * **Failure Paths:**
-  * **Gateway Network Error:** Gateway API returns HTTP 500; system queues message for automatic retry using exponential backoff (retries at 1m, 5m, 15m).
+  * **Gateway Network Error:** The gateway failure is logged and escalated/retried according to the policy to be specified. Retry intervals, fallback order and timing remain open under OQ-015.
 * **Business Rules Applied:** `BR-NTF-001`.
 * **Expected Final Business State:** Notification delivered; Delivery audit record saved.
 * **Dependencies:** `FEAT-NTF-001`, `FEAT-INT-001`.
 * **Related Functional Requirements:** `FR-NTF-001`.
-* **Unresolved Decisions:** See [OQ-015](./08-assumptions-dependencies-open-questions.md#oq-015).
+* **Unresolved Decisions:** OQ-015 channel selection is recorded; event-to-channel mapping, retries, fallback behavior and provider readiness remain open.
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant EventBus as Domain Event Bus
     participant NotifEngine as Notification Orchestrator
-    participant WAGateway as WhatsApp Gateway
-    participant SMSGateway as SMS Gateway
+    participant ChannelPolicy as Approved Channel Policy
+    participant Gateways as Configured Messaging Gateways
     actor Customer as Customer
 
-    EventBus->>NotifEngine: Publish OrderDispatchedEvent (Order, AWB, Phone)
-    NotifEngine->>NotifEngine: Render Template with Tracking URL
-    NotifEngine->>WAGateway: Dispatch WhatsApp Message
-    alt WhatsApp Delivery Success
-        WAGateway-->>Customer: Deliver WhatsApp Tracking Card
-        WAGateway-->>NotifEngine: Ack: Delivered (200 OK)
-    else WhatsApp User Not Found / Timeout
-        WAGateway-->>NotifEngine: Error: Undeliverable on WhatsApp
-        NotifEngine->>SMSGateway: Fallback: Dispatch Standard SMS
-        SMSGateway-->>Customer: Deliver SMS Tracking Alert
-        SMSGateway-->>NotifEngine: Ack: SMS Delivered
-    end
+    EventBus->>NotifEngine: Publish order lifecycle event
+    NotifEngine->>NotifEngine: Resolve template and recipient
+    NotifEngine->>ChannelPolicy: Resolve applicable channel set
+    ChannelPolicy-->>NotifEngine: SMS / Email / WhatsApp policy
+    NotifEngine->>Gateways: Dispatch via configured channel(s)
+    Gateways-->>NotifEngine: Per-channel delivery result
+    NotifEngine->>NotifEngine: Record status and apply approved retry/fallback policy
+    Gateways-->>Customer: Deliver notification where successful
 ```
 
 ---
@@ -690,9 +687,9 @@ flowchart TD
 
 ### WF-014: Reporting and Daily Financial Reconciliation
 * **Workflow ID:** `WF-014`
-* **Workflow Name:** Daily Gateway Settlement Reconciliation, GMV & Sales Reporting
+* **Workflow Name:** Gateway Settlement Reconciliation and Business Reporting
 * **Business Objective:** `OBJ-008`, `OBJ-009`
-* **Trigger:** Scheduled daily 02:00 AM batch job or manual finance audit.
+* **Trigger:** Settlement reconciliation or report generation is requested or scheduled according to the approved operational cadence; exact run times remain open.
 * **Participating Actors:** `ACT-007` (Finance Officer), `ACT-001` (Business Owner), System.
 * **Preconditions:** Transaction logs and payment gateway settlement files available.
 * **Main Success Path:**
@@ -700,28 +697,28 @@ flowchart TD
   2. System automatically matches each gateway settlement record against internal Order ID and payment transaction ID (`FEAT-PAY-002`).
   3. System compares collected net funds minus gateway processing fee against bank deposit credit.
   4. System verifies that issued tax invoices match confirmed orders and credit notes match refunds (`BR-FIN-003`).
-  5. System compiles daily Executive Commercial Summary (GMV, Net Sales, Refunds, Gateway Fees, Net Profit Margin).
-  6. Finance Officer reviews automated reconciliation dashboard: 100% match achieved; day is closed.
+  5. System compiles the selected standard reports (sales/GMV and net sales, product velocity, low stock and GST tax liability) and supports the selected real-time BI, predictive replenishment and customer cohort retention scope as those specifications are defined.
+  6. Finance Officer reviews reconciliation exceptions and report outputs against approved calculation and acceptance rules; no assumption of a 100% match is made when discrepancies exist.
 * **Alternative Paths:**
-  * **Scheduled Executive Digest:** System formats executive summary and delivers encrypted PDF report to Business Owner’s email at 07:00 AM.
+  * **Executive Digest / Export:** A report may be exported or delivered through an approved channel once format, permissions, cadence and delivery policy are specified; a fixed 07:00 AM digest is not selected.
 * **Failure Paths:**
   * **Settlement Discrepancy (Unmatched Transaction):** Gateway records a payment with no matching internal confirmed order (e.g., late payment dropped in network); system flags exception in `DISCREPANCY_QUEUE` for finance investigation (`BR-PAY-003`).
 * **Business Rules Applied:** `BR-PAY-003`, `BR-RPT-001`, `BR-FIN-002`.
 * **Expected Final Business State:** Daily reconciliation ledger closed; Executive reports generated.
 * **Dependencies:** `FEAT-PAY-002`, `FEAT-FIN-001`, `FEAT-RPT-001`.
 * **Related Functional Requirements:** `FR-PAY-003`, `FR-RPT-001`.
-* **Unresolved Decisions:** None.
+* **Unresolved Decisions:** OQ-018 Option B scope is recorded; KPI formulas, refresh latency, cadence, permissions, exports, predictive methodology and validation criteria remain open.
 
 ```mermaid
 flowchart TD
-    A[Daily 02:00 AM Batch Trigger] --> B[Ingest Settlement Statement from Payment Gateway]
+    A[Configured Reconciliation or Report Trigger] --> B[Ingest Settlement Statement from Payment Gateway]
     B --> C[Automated Match: Gateway Transaction ID vs Internal Order ID]
     C --> D{Discrepancies Detected?}
     D -->|Unmatched Transaction or Fee Variance| E[Flag Item in Daily Financial Discrepancy Queue]
     E --> F[Alert Finance Officer for Manual Bank Investigation]
     D -->|100% Matched| G[Reconcile Net Revenue, Taxes, and Refund Deductions]
-    G --> H[Generate Daily Sales, GMV & Tax Liability Report]
-    H --> I[Dispatch Executive Commercial Summary to Business Owner]
+    G --> H[Generate Standard Reports and Selected Advanced Analytics]
+    H --> I[Present or Export Using Approved Reporting Policy]
 ```
 
 ---
@@ -811,3 +808,39 @@ sequenceDiagram
         Auth-->>Operator: ERROR: 403 Forbidden (Insufficient Privilege)
     end
 ```
+
+
+### WF-017: Verified-Buyer Review Submission and Moderation
+* **Workflow ID:** `WF-017`
+* **Workflow Name:** Verified-Buyer Product Review Submission and Administrative Moderation
+* **Business Objective:** `OBJ-007`
+* **Trigger:** A customer submits a product rating and written review for a purchased SKU.
+* **Participating Actors:** `ACT-009` (Customer), authorized Moderator / Catalog Manager, System.
+* **Preconditions:** Customer is authenticated; the order and SKU history are available for verification.
+* **Main Success Path:**
+  1. Customer submits a 1–5 star rating, title and review body for a product SKU.
+  2. System verifies the customer has a completed, delivered order containing that SKU.
+  3. If verification succeeds, the system marks the submission as verified and queues it as `PENDING_MODERATION`; otherwise, submission is rejected.
+  4. An authorized moderator reviews the submission and records approval or rejection with an auditable reason.
+  5. Only an approved review is published, and the system recalculates the product's aggregate rating.
+* **Alternative Paths:** A moderator may reject a review that violates the approved content policy; detailed criteria and appeal handling remain to be specified.
+* **Failure Paths:** If order/SKU verification cannot be completed, the review is not published and the system records a retryable or supportable verification error.
+* **Business Rules Applied:** `BR-REV-001`.
+* **Expected Final Business State:** Review is rejected, awaiting moderation, or published only after approval; aggregate rating reflects published reviews.
+* **Dependencies:** `FEAT-REV-001`, `FEAT-ORD-001`.
+* **Related Functional Requirements:** `FR-REV-001`.
+* **Unresolved Decisions:** Photo-review support, detailed moderation criteria, moderator permissions, appeal/rejection handling, retention, abuse escalation and review edit/delete rules remain open under the OQ-012 follow-up.
+
+```mermaid
+flowchart TD
+    A[Customer submits rating and review] --> B{Delivered purchase of this SKU verified?}
+    B -->|No| C[Reject submission and record reason]
+    B -->|Yes| D[Mark verified and queue for moderation]
+    D --> E[Authorized moderator reviews content]
+    E --> F{Approved?}
+    F -->|No| G[Record rejection and reason]
+    F -->|Yes| H[Publish review]
+    H --> I[Recalculate aggregate product rating]
+```
+
+---

@@ -30,7 +30,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 | <a id="asm-001"></a>**ASM-001** | Primary operational country is India. | Domestic retail electronics market context and legal framework. | Requires re-architecting cross-border customs, multi-tax calculations, and international shipping. | Formal confirmation by Enterprise Business Owner. | Business Owner | `PROPOSED` |
 | <a id="asm-002"></a>**ASM-002** | Transaction currency is Indian Rupee (INR - ₹) exclusively for Phase 1. | Eliminates currency conversion risk and multi-currency accounting complexity at launch. | Requires multi-currency pricing, exchange rate feeds, and foreign exchange bank reconciliation. | Commercial policy sign-off. | Business Owner / Finance | `PROPOSED` |
 | <a id="asm-003"></a>**ASM-003** | Retail display prices are tax-inclusive (MRP / Gross Selling Price). | Compliance with Indian Consumer Protection (E-Commerce) Rules and consumer price transparency. | Requires re-engineering cart calculations and checkout UI if taxes are added on top at checkout. | Legal / Tax Advisor review. | Finance Lead | `PROPOSED` |
-| <a id="asm-004"></a>**ASM-004** | The enterprise operates from a single primary central fulfillment warehouse at launch. | Simplifies initial inventory allocation and warehouse logistics for initial launch. | Multi-warehouse order routing, split shipments, and regional stock balancing must be engineered earlier. | Warehouse operations audit. | Operations Lead | `PROPOSED` |
+| <a id="asm-004"></a>**ASM-004** | Initial planning model uses four warehouse locations with regional inventory; the central architecture must remain location-agnostic and configuration-driven. Exact sites and serviceable areas are not yet validated. | Regional inventory is the selected planning model for the India-wide delivery target. | Site selection, GST registrations, stock transfers, regional allocation, split shipments, and operating cost may require changes if the actual sites or capacity differ. | Validate each actual warehouse address, state/GST implications, inventory plan, staffing/capacity and serviceability before launch. | Business Owner / Operations / Finance | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` |
 | <a id="asm-005"></a>**ASM-005** | Pre-orders and backorders are out of scope for the baseline release. | Prevents operational liability for out-of-stock electronics with unpredictable supply chain dates. | Requires engineering backorder queues, delayed capture, and customer cancellation waivers. | Commercial merchandising policy review. | Business Owner | `CONFIRMED` |
 | <a id="asm-006"></a>**ASM-006** | Digital customer identity is primarily tied to mobile phone numbers. | Reflects Indian consumer shopping patterns where mobile OTP is the primary authentication rail. | If email-first is mandated, registration funnels and communications channels must be redesigned. | Customer UX persona review. | Product Lead | `PROPOSED` |
 | <a id="asm-007"></a>**ASM-007** | A standard 7-calendar-day return window applies to consumer electronics. | Industry-standard duration balancing customer satisfaction with prevention of device wear and fraud. | Financial return rate projections and reverse logistics contracts will require renegotiation. | Business Owner policy sign-off (subject to [OQ-008](#oq-008)). | Business Owner | `PROPOSED` |
@@ -62,7 +62,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 - **Status:** `OWNER_DECISION_RECORDED` (owner selection received 2026-10-24); operational readiness remains `OPEN` under DEP-002.
 - **Implementation boundary:** Maintain an internally approved serviceability registry of the PIN codes actually covered at each rollout stage. Checkout must accept deliveries only for enabled PIN codes and must use the approved fee, delivery estimate, and COD-eligibility rules. Do not claim nationwide coverage for a PIN code until local delivery capacity and the end-to-end process are verified.
 - **Open operational details:** Complete serviceable PIN-code list and rollout sequence; regional/warehouse topology; delivery hours and service targets; staffing, shifts and backup capacity; fleet/vehicle model; delivery-fee policy; proof-of-delivery and retention policy; reverse-logistics capacity; and contingency arrangements for remote/low-density areas.
-- **Related assumption to revisit:** `ASM-004` proposes a single primary central fulfillment warehouse. India-wide hybrid delivery may be incompatible with that assumption for cost, speed, or capacity reasons. Do not automatically change to multiple warehouses; assess and explicitly decide the launch warehouse topology before architecture approval.
+- **Warehouse topology decision:** The owner’s planning input selects four initial warehouse locations and regional inventory. This is a planning decision, not evidence that any actual site is contracted, operational, GST-registered, or serviceable. The system design must be generic and configuration-driven; do not hard-code Chennai, Mumbai/Pune, Delhi NCR, Kolkata, or specific PIN codes. Validate actual sites, legal/tax implications, regional stock allocation and serviceability before launch.
 
 
 #### Decision record — phased PIN-code rollout
@@ -72,7 +72,7 @@ To maintain architectural integrity and prevent undocumented assumptions from si
 - **Minimum readiness gate per rollout area/provider lane:** approved serviceable PIN-code list; fulfillment/warehouse coverage; capacity and backup for the selected own-team/courier/aggregator lane; approved operating hours, delivery promise and customer-facing fee; signed/approved provider commercial terms and API credentials where applicable; tracking/booking/label and webhook tests; COD eligibility, collection/remittance and reconciliation procedure; customer communication and proof-of-delivery procedure; failed-delivery, cancellation and reverse-logistics handling; support/escalation and fallback; and documented end-to-end test results with an accountable Operations Lead decision.
 - **Checkout control:** Only PIN codes explicitly marked enabled in the internal serviceability registry may be accepted. Unenabled or unsupported PIN codes must be rejected clearly; COD eligibility is separately evaluated from delivery serviceability.
 - **Expansion control:** Review delivery success, on-time delivery, first-attempt success, failed/returned shipments, customer complaints, loss/damage and COD variance for enabled areas. Define numeric thresholds and review windows before treating these metrics as automatic expansion criteria; no thresholds are invented by this decision.
-- **Still open:** initial pilot states/areas and PIN codes, number/order of rollout waves, selected direct courier(s) and aggregator, provider contract/API credentials, provider-selection/routing and fallback rules, numeric go/no-go thresholds and review period, service hours/SLAs, delivery fees and surcharge rules, COD remittance timelines/charges, regional warehouse topology, headcount/fleet and backup arrangements, and reverse-logistics provider paths.
+- **Still open:** initial pilot areas and exact PIN codes; actual warehouse addresses, contracts, readiness and capacity; number/order of rollout waves; selected direct couriers and aggregator; provider contracts/API credentials; provider routing/fallback rules; numeric go/no-go thresholds and review period; service hours/SLAs; delivery fees/surcharges; COD remittance timelines/charges; staffing/fleet/backup arrangements; and reverse-logistics provider paths. The planning count of four warehouses and regional inventory is recorded; site validation remains open.
 
 #### A. Proposed internal roles
 
@@ -122,7 +122,7 @@ DEP-002 remains OPEN until the Operations Lead records evidence for all applicab
 - [ ] Any direct carrier integration is either explicitly out of launch scope or separately approved with named partner, commercial/legal review, API/security validation, and failure handling.
 - [ ] Operations Lead confirms readiness with links to SOPs, test evidence, staffing/coverage plan, and unresolved risks.
 
-**Not yet decided:** initial pilot PIN codes, exact serviceable PIN codes and rollout-wave sequence across India, numeric area activation/expansion thresholds and review period, delivery hours/service targets, delivery-fee schedule, staffing/headcount and regional capacity, warehouse topology (revisit `ASM-004`), vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, reverse-logistics capacity, and whether/when to integrate directly with any carrier. These must not be invented in implementation.
+**Not yet validated/decided:** exact warehouse addresses and site contracts, initial pilot PIN codes and serviceability, rollout-wave sequence across India, numeric area activation/expansion thresholds and review period, delivery hours/service targets, delivery-fee schedule, staffing/headcount and regional capacity, vehicle ownership, proof-of-delivery media/retention, staff employment/contracting model, reverse-logistics capacity, and selected direct courier/aggregator providers. The planning model of four warehouses with regional inventory is recorded; do not hard-code candidate cities or PIN codes into the system design.
 
 ---
 
@@ -251,18 +251,16 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 
 <a id="oq-007"></a>
 ### OQ-007: Warehouse Topology at Launch
-* **Question:** Will the enterprise operate from a single central warehouse or multiple regional warehouses at launch?
-* **Why the Decision Matters:** Multiple warehouses require stock allocation algorithms, regional inventory partitioning, split shipments, and complex tax invoicing across multiple state GSTINs.
-* **Affected Domains:** Inventory Management, Order Routing, Tax Invoicing.
-* **Affected Requirement IDs:** `FEAT-INV-001`, `FEAT-FIN-001`, `FR-INV-001`.
-* **Possible Options:**
-  * *Option A:* Single central fulfillment warehouse at launch; multi-warehouse capable data model.
-  * *Option B:* Multi-warehouse operations from Day 1 (e.g., North and South hubs).
-* **Recommended Option:** **Option A (Single Central Warehouse at launch).** Keeps physical inventory operations lean while ensuring software schemas support adding warehouse locations later without schema rewrites.
-* **Impact of Delaying:** Affects order routing logic and inventory reservation scopes.
+* **Question:** What warehouse topology and inventory model should the launch architecture support?
+* **Why the Decision Matters:** Multiple regional warehouses require warehouse-scoped inventory, allocation/routing, transfer controls, shipment sourcing, and tax/legal validation for the actual sites.
+* **Affected Domains:** Inventory Management, Order Routing, Fulfilment, Tax Invoicing.
+* **Affected Requirement IDs:** `FEAT-INV-001`, `FEAT-FIN-001`, `FR-INV-001`, `FR-SHP-001`.
+* **Recorded Business Owner Planning Decision:** Four initial warehouse locations with regional inventory. Candidate cities previously discussed are illustrative planning options only; exact sites and PIN codes are pending validation. The architecture must be location-agnostic and must not hard-code city or PIN-code values.
+* **Implementation Boundary:** Model warehouses, inventory, serviceability and fulfilment lanes as configurable data. Do not enable any location/lane until actual address, capacity, legal/tax requirements and provider serviceability have been validated.
+* **Impact:** Requires warehouse-scoped inventory, configurable allocation and routing, and a site-readiness gate.
 * **Priority:** `P1`
-* **Decision Owner:** Operations Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Operations Lead.
+* **Status:** `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` (Phase 1 baseline approval remains pending).
 
 ---
 
@@ -354,11 +352,14 @@ The following 22 strategic commercial decisions must be formally reviewed and re
   * *Option A:* Out of scope for Phase 1 baseline; deferred to Phase 2.
   * *Option B:* In scope for Phase 1: Verified buyers only, with mandatory admin moderation before publication.
   * *Option C:* Open unmoderated reviews.
-* **Recommended Option:** **Option A (Deferred to Phase 2).** Focus initial baseline on core transaction reliability; integrate reviews in the frontend release.
-* **Impact of Delaying:** Removes review service scope from Phase 1.
+* **Selected Option:** **Option B — in scope for Phase 1: verified buyers only, with mandatory admin moderation before publication.**
+* **Decision Boundary:** A reviewer must have a completed, verified delivered order containing the reviewed SKU. Reviews enter an administrative moderation queue and are not published until approved.
+* **Still Open:** Detailed moderation criteria, moderator roles/permissions, appeal/rejection handling, photo-review policy, retention, abuse escalation, and review-edit/delete rules require product/security review. This selection does not approve the overall Phase 1 baseline.
+* **Impact:** Review submission, verified-purchase checks, moderation and rating aggregation are included in the proposed Phase 1 scope.
 * **Priority:** `P2`
-* **Decision Owner:** Product Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Product Lead.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option B selected; detailed policy and baseline approval remain open).
 
 ---
 
@@ -407,11 +408,13 @@ The following 22 strategic commercial decisions must be formally reviewed and re
   * *Option A:* SMS (for OTPs) and Email (for Invoices and Orders) only.
   * *Option B:* SMS, Email, and WhatsApp Business API for all order lifecycle events.
   * *Option C:* In-app push notifications only.
-* **Recommended Option:** **Option B (SMS for security OTPs; Email for legal tax invoices; WhatsApp for customer order tracking updates).** WhatsApp delivers the highest engagement and read rates for Indian consumers.
-* **Impact of Delaying:** Determines notification provider selection during Architecture Phase.
+* **Selected Option:** **Option B — SMS, Email, and WhatsApp Business API for all order lifecycle events.**
+* **Decision Boundary:** The selected channel scope applies to order lifecycle events. OTP/security messaging, tax invoices and other event-specific legal requirements must still use the channel(s) appropriate to their purpose; this selection does not by itself define a complete event-to-channel matrix.
+* **Still Open:** Per-event mandatory-channel matrix, preference/consent rules where applicable, retry and fallback behavior, delivery-time targets, template ownership, channel outage handling and channel-specific provider configuration. `DEP-003` remains `OPEN`; no provider registration or delivery tests are claimed.
 * **Priority:** `P1`
-* **Decision Owner:** Marketing Lead / Operations Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Decision Owner:** Business Owner / Operations / Marketing.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option B selected; delivery policy details and DEP-003 remain open).
 
 ---
 
@@ -463,28 +466,32 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 * **Possible Options:**
   * *Option A:* Standard daily operational reports: Daily Sales (GMV/Net), Product Velocity, Inventory Low-Stock, and GST Tax Liability.
   * *Option B:* Option A plus real-time BI dashboards with predictive replenishment and customer cohort retention analysis.
-* **Recommended Option:** **Option A (Standard core operational and financial reports).** Advanced machine-learning BI can be layered on in subsequent phases.
-* **Impact of Delaying:** Defines reporting schema requirements.
+* **Selected Option:** **Option B — Option A standard daily operational reports plus real-time BI dashboards, predictive replenishment and customer cohort retention analysis.**
+* **Decision Boundary:** Advanced BI and predictive/retention analysis are included in the selected reporting scope. This is a business-scope selection, not proof that dashboards, models, data pipelines or reports have been implemented or validated.
+* **Still Open:** Exact KPI definitions, calculation/reconciliation rules, refresh latency, report cadence, role permissions, exports, retention, data sources, forecast methodology, acceptance thresholds and rollout sequencing require Finance/Product/Data review.
 * **Priority:** `P1`
-* **Decision Owner:** Business Owner / Finance Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Finance / Product / Data.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option B selected; detailed report specifications and baseline approval remain open).
 
 ---
 
 <a id="oq-019"></a>
 ### OQ-019: Legacy Historical Data Migration Scope
-* **Question:** Does historical customer, product, or order data exist in legacy spreadsheets or prior systems that must be migrated into the new platform?
-* **Why the Decision Matters:** Legacy data migration requires writing ETL mapping scripts, cleansing duplicate records, and reconciling historical financial balances.
-* **Affected Domains:** Data Migration, Catalog, Customer Accounts.
-* **Affected Requirement IDs:** `FEAT-DAT-001`.
+* **Question:** Does Chellaa have historical customer, product or order data in existing systems that must be migrated, beyond the new-platform bulk catalog and inventory import capability?
+* **Why the Decision Matters:** Historical migration may require source-system discovery, data cleansing, identity matching, financial reconciliation, retention/legal review and a controlled cutover.
+* **Affected Domains:** Data Migration, Customer Accounts, Orders, Finance.
+* **Affected Requirement IDs:** A separate historical-migration capability is not yet baselined. `FEAT-DAT-001` / `FR-DAT-001` define ongoing bulk catalog/inventory import and are not, by themselves, proof that legacy order/customer migration is in scope.
 * **Possible Options:**
-  * *Option A:* Clean greenfield launch (only master product catalog and active warehouse stock imported via bulk spreadsheet).
-  * *Option B:* Full historical order and customer account migration from legacy systems.
-* **Recommended Option:** **Option A (Greenfield launch with master catalog and inventory import).** Avoids contaminating the new architecture with incomplete or non-compliant legacy order data.
-* **Impact of Delaying:** Determines whether historical migration pipelines are in baseline scope.
+  * *Option A:* Greenfield launch with no historical customer/order migration. New master catalog and opening stock are loaded through the standard bulk import capability.
+  * *Option B:* Migrate specified historical data sets after source inventory, mapping, cleansing, privacy review and reconciliation are approved.
+* **Selected Option:** **Option A — greenfield launch with no historical customer/order migration.** Load the new master catalog and opening stock using the standard bulk catalog/inventory import capability.
+* **Decision Boundary:** This excludes migration of legacy customer and order history from the current baseline. It does not remove or defer the separate bulk catalog/inventory import capability.
+* **Still Open:** The source of new catalog data, import template ownership, opening-stock reconciliation and import acceptance evidence remain operational tasks under `DEP-005` and related catalog/inventory requirements. Reopen historical migration only through change control if a concrete legacy dataset is identified and approved.
 * **Priority:** `P1`
-* **Decision Owner:** Enterprise Business Owner.
-* **Status:** `UNDER_REVIEW` (Proposed: Option A).
+* **Decision Owner:** Business Owner / Data Owner / Merchandising.
+* **Decision Date:** `2026-10-24` (selection recorded).
+* **Status:** `OWNER_DECISION_RECORDED` (Option A selected; bulk-import readiness remains separate).
 
 ---
 
@@ -547,21 +554,21 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | **OQ-002** | Currencies & Languages | `P1` | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
 | **OQ-003** | Mandatory Payment Methods | `P0` | `CONFIRMED` | Owner-selected Option C: UPI, cards, net banking, plus COD under OQ-006 policy |
 | **OQ-004** | Payment Gateway Selection | `P1` | `CONFIRMED` | Owner-selected single gateway: Razorpay only |
-| **OQ-005** | Shipping Management Approach | `P1` | `CONFIRMED` | Owner-selected Option A: build own Shipping Management System; own delivery team or separately decided direct-carrier integrations; no aggregator or courier partner selected |
+| **OQ-005** | Shipping Management Approach | `P1` | `CONFIRMED` | Owner-selected Option C: own delivery team, direct courier partners and shipping aggregator permitted; Chellaa owns canonical Shipping Management System; provider/lane readiness remains open |
 | **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
-| **OQ-007** | Warehouse Launch Topology | `P1` | `UNDER_REVIEW` | Single central warehouse at launch |
+| **OQ-007** | Warehouse Launch Topology | `P1` | `OWNER_DECISION_RECORDED; SITE_VALIDATION_OPEN` | Four initial warehouse locations with regional inventory; exact sites/PIN codes pending validation; generic configurable design |
 | **OQ-008** | Returns & Inspection Policy | `P0` | `CONFIRMED` | Owner-selected Option B: 7-day return/refund with diagnostic gate |
 | **OQ-009** | Tax Structure & Display Prices | `P0` | `CONFIRMED` | Owner-selected Option A: GST-inclusive display |
 | **OQ-010** | Customer Verification Method | `P0` | `CONFIRMED` | Owner-selected Option A: mobile SMS OTP; email optional |
 | **OQ-011** | Guest Checkout Support | `P1` | `CONFIRMED` | Owner-selected Option B: guest checkout with phone-OTP auto-account |
-| **OQ-012** | Customer Reviews & Ratings | `P2` | `UNDER_REVIEW` | Deferred to Phase 2 (Frontend) |
+| **OQ-012** | Customer Reviews & Ratings | `P2` | `OWNER_DECISION_RECORDED` | Option B: verified buyers only; admin moderation required before publication |
 | **OQ-013** | Loyalty & Store Credit | `P2` | `CONFIRMED` | Out of scope for Phase 1 baseline |
 | **OQ-014** | Pre-orders & Backorders | `P1` | `CONFIRMED` | Out of scope (Strict non-negative stock) |
-| **OQ-015** | Notification Channels | `P1` | `UNDER_REVIEW` | SMS (OTP), Email (Invoice), WhatsApp (Order) |
+| **OQ-015** | Notification Channels | `P1` | `OWNER_DECISION_RECORDED` | Option B: SMS, Email and WhatsApp Business API for order lifecycle events; fallback/event matrix open |
 | **OQ-016** | Peak Traffic & Order Capacity | `P0` | `CONFIRMED` | Owner-selected Option B: 100 OPM sustained; 1,000 OPM peak |
 | **OQ-017** | Availability, RTO & RPO Targets | `P0` | `CONFIRMED` | Owner-selected Option A: 99.9% uptime; RPO ≤ 5m; RTO ≤ 2h |
-| **OQ-018** | Required Business Reports | `P1` | `UNDER_REVIEW` | Standard daily sales, velocity, GST reports |
-| **OQ-019** | Legacy Data Migration Scope | `P1` | `UNDER_REVIEW` | Greenfield launch with catalog import |
+| **OQ-018** | Required Business Reports | `P1` | `OWNER_DECISION_RECORDED` | Option B: standard reports + real-time BI, predictive replenishment and customer cohort retention |
+| **OQ-019** | Legacy Data Migration Scope | `P1` | `OWNER_DECISION_RECORDED` | Option A: no legacy customer/order history migration; bulk catalog/opening-stock import remains in scope |
 | **OQ-020** | Data Retention & Privacy (DPDPA)| `P0` | `CONFIRMED` | 8-year tax retention; anonymize profile PII |
 | **OQ-021** | Release Approval Governance | `P1` | `CONFIRMED` | Automated CI with manual release gate |
 | **OQ-022** | Operational Incident Protocols | `P1` | `CONFIRMED` | Automated Slack/SMS alerts for $> 2\%$ error |

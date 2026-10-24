@@ -31,7 +31,7 @@ The Chellaa technical architecture governance framework enforces a strict six-st
 | Lifecycle Stage | Stage Status | Evaluation Criteria & Operational Verification |
 | :--- | :---: | :--- |
 | **1. Draft Completion** | **`COMPLETED`** | Circuit breaking thresholds, late webhook recovery state machines, retry policies, DLQ topologies, and FMEA tables are fully articulated. |
-| **2. Requirements Traceability** | **`VALIDATED`** | 100% bidirectional traceability established to availability NFRs ([`NFR-AVL-001`](../07-non-functional-requirements.md#nfr-avl-001), [`002`](../07-non-functional-requirements.md#nfr-avl-002)) and resilience rules ([`BR-INT-001`](../05-business-rules.md#br-int-001), [`BR-PAY-002`](../05-business-rules.md#br-pay-002)). |
+| **2. Requirements Traceability** | **`PENDING_RECONCILIATION`** — Previous completeness claims are withdrawn until source IDs and bidirectional mappings are verified against the current baseline (17 workflows). |
 | **3. Technical Architecture Review** | **`PENDING_REVIEW`** | Subject to peer review by CTO, SRE Lead, and Principal Distributed Systems Architect. |
 | **4. Business Owner Policy Review** | **`PENDING_REVIEW`** | Subject to review of late payment refund workflows ([`ADQ-003`](./executive-decision-register.md#adq-003)) and carrier dispute SLAs ([`ADQ-004`](./executive-decision-register.md#adq-004)). |
 | **5. Formal Baseline Approval** | **`NOT_APPROVED`** | Maintained strictly per Document 11 governance gate ([`11-review-and-approval.md`](../11-review-and-approval.md)). |
@@ -88,8 +88,8 @@ All outbound integration calls through Cluster 19 (*External Integrations*) use 
 
 | Integration Partner | Target Endpoint | Sliding Window Size | Failure Rate Threshold | Slow Call Threshold ($\ge 3\text{s}$) | Wait Duration in Open State | Permitted Half-Open Calls |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Razorpay / Cashfree** ([`DEP-001`](../08-assumptions-dependencies-open-questions.md#dep-001)) | Payment Intent Session API | 30 calls | **50%** | **40%** | 15 seconds | 5 calls |
-| **Shiprocket / Delhivery** ([`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002)) | Consignment Booking / AWB API | 20 calls | **50%** | **50%** | 30 seconds | 3 calls |
+| **Razorpay only** ([`DEP-001`](../08-assumptions-dependencies-open-questions.md#dep-001); merchant onboarding and production readiness remain open) | Payment Intent Session API | 30 calls | **50%** | **40%** | 15 seconds | 5 calls |
+| **Shipping provider adapter (only if later authorized)** ([`DEP-002`](../08-assumptions-dependencies-open-questions.md#dep-002)) | Booking / tracking API | **TBD** | **TBD** | **TBD** | **TBD** | **TBD** | OQ-005 provider-model conflict; no named external lane approved |
 | **Telecom SMS / WhatsApp** ([`DEP-003`](../08-assumptions-dependencies-open-questions.md#dep-003)) | OTP & Alert Dispatch API | 50 calls | **40%** | **30%** | 20 seconds | 10 calls |
 
 ---
@@ -166,8 +166,8 @@ The FMEA matrix below analyzes critical failure modes across the Chellaa platfor
 | :--- | :--- | :--- | :--- | :--- |
 | **1. Flash Sale Hold Contention** (*Cluster 3: Inventory*) | 1,000 OPM contending on single high-demand SKU. | Potential DB connection pool exhaustion and lock wait timeouts. | PostgreSQL `lock_wait_time > 500ms` | Redis atomic Lua hold scripts; conditional SQL decrements; fail-fast when $\text{ATS} = 0$ ([`AD-002`](./architecture-decision-analysis.md#ad-002)). |
 | **2. Razorpay API Outage** (*Cluster 4: Finance*) | Third-party payment gateway network partition. | Customers cannot complete online card/UPI payments. | Gateway `HTTP 5xx > 50%` over 30 calls | Circuit breaker opens; Storefront prompts customer to try alternate payment gateway or retry in 60s. |
-| **3. Courier Aggregator Down** (*Cluster 3: Fulfillment*) | Shiprocket API timeout during shipping manifest. | Picked parcels cannot generate thermal labels or AWBs. | Shiprocket `Timeout > 5s` | Async consignment retry queue; failover to secondary direct courier adapter (Delhivery direct API). |
-| **4. Telecom SMS Gateway Down** (*Cluster 5: Platform*) | Telecom DLT SMS gateway provider failure. | Customers do not receive login OTPs or order confirmation texts. | SMS delivery receipt `failure_rate > 30%` | Fallback routing to WhatsApp Business API or transactional email channel. |
+| **External shipping lane unavailable** (*Fulfillment*) | Approved external lane, if any, is unavailable. | Shipment booking or tracking may be delayed. | Provider-specific threshold is TBD until lane selection. | Persist eligible work, expose an incident and reconcile status; no automatic secondary-carrier failover is assumed. |
+| **4. Telecom SMS Gateway Down** (*Cluster 5: Platform*) | Telecom DLT SMS gateway provider failure. | Customers do not receive login OTPs or order confirmation texts. | SMS delivery receipt `failure_rate > 30%` | Cross-channel fallback is not specified by the recorded decision. Keep retry/fallback behavior and channel order unconfigured until the event matrix and policy are approved (OQ-015 / DEP-003). |
 | **5. PDF Invoice Generation Crash** (*Cluster 4: Finance*) | Memory spike during complex invoice PDF rendering. | Worker pod OOM crashes during batch dispatch. | Pod memory $> 90\%$ | Isolated worker process; sequential invoice number already locked in DB; pod restarts and retries PDF render. |
 | **6. Elasticsearch Node Failure** (*Search Engine*) | Hardware crash on search read replica node. | Catalog search queries degraded or timing out. | OpenSearch cluster status `RED` | Gateway circuit-breaks search to direct PostgreSQL read replica with basic text matching ([`AD-010`](./architecture-decision-analysis.md#ad-010)). |
 
@@ -195,5 +195,15 @@ The checklist below governs the quality gate audit for `ARCH-08`:
 - [x] 4. **Dead-Letter Queue Topology:** Kafka retry topics, DLQ routing, and replay administration defined.
 - [x] 5. **Comprehensive FMEA Matrix:** Analysis of 6 critical failure scenarios with automated mitigation mechanisms documented.
 - [x] 6. **Single-Retailer Anti-Scope Preserved:** Zero multi-tenant or third-party seller recovery workflows present.
-- [x] 7. **100% Traceability:** Mapped to declared BRD requirement identifiers.
+- [ ] 7. **Traceability verification pending:** Mapped to declared BRD requirement identifiers.
 - [x] 8. **Non-Binding Labeling:** Prominently marked as a non-binding draft pending formal Phase 1 sign-off.
+
+
+---
+
+## Cross-document reconciliation note (2026-10-24)
+
+- Canonical workflow identifiers and titles are defined by `docs/00-requirements/06-business-workflows.md` (WF-001–WF-017). Stale mappings must not be treated as valid merely because a document previously claimed coverage.
+- **Recorded decision alignment (2026-10-24):** Owner-selected inputs are India domestic launch, INR/English, Razorpay-only online payments; restricted COD up to ₹10,000 with eligible/verified PIN codes, delivery OTP and ₹50 non-refundable fee; four planned regional warehouses with configurable/location-agnostic records; hybrid shipping lanes (own team, direct couriers, aggregator) with canonical internal Shipment ID; SMS, Email and WhatsApp Business API for order lifecycle events; verified-buyer reviews with mandatory pre-publication admin moderation; standard reports plus real-time BI, predictive replenishment and customer cohort retention; no legacy customer/order history migration while catalog/opening-stock import remains in scope; eight-financial-year statutory financial retention while supporting appropriate profile/marketing-data anonymization. 100 orders/minute sustained, 1,000 peak, 99.9% uptime, RPO ≤ 5 minutes and RTO ≤ 2 hours are recorded targets. **Readiness boundary:** site/PIN validation and shipping readiness (DEP-002), payment onboarding (DEP-001), notification provider readiness (DEP-003), detailed review/notification/reporting policies, Legal/Security retention details, capacity tests and recovery drills remain open. These decisions do not authorize implementation or document promotion.
+- **Shipping decision alignment (ADQ-014 supersedes ADQ-011 provider-exclusion clauses):** Chellaa owns its Shipping Management System and canonical internal Shipment ID. The recorded provider model permits Chellaa's own delivery team, directly integrated courier partners, and a shipping aggregator. This does not select a named provider, establish a contract, validate a PIN code, or authorize an untested lane. `DEP-002` remains `OPEN`; each lane requires documented operational readiness and end-to-end evidence before activation.
+- This draft remains non-binding. Phase 1 review is `PENDING_APPROVAL`, requirements baseline is `NOT_APPROVED`, and architecture implementation authorization is `NOT_GRANTED`. No promotion to `docs/01-architecture/` is authorized by this note.

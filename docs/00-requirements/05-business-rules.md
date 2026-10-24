@@ -500,28 +500,28 @@ $$\text{Line Discount}_i = \text{Total Discount} \times \left( \frac{\text{Line 
 
 ### 2.11 Shipping, Logistics & Delivery
 
-#### BR-SHP-001: Mandatory Internal Shipment ID and Custody Record for Dispatch
-* **Rule Statement:** An order cannot transition to `DISPATCHED` unless it is linked to a unique internal Shipment ID, a completed packing check, a delivery run/associate assignment, and an auditable warehouse-to-delivery-team custody handover. An external AWB or carrier code is not required for the in-house model.
-* **Business Rationale:** Ensures every dispatched parcel is traceable inside Chellaa's system and prevents unassigned or unaccounted parcel movement.
+#### BR-SHP-001: Mandatory Internal Shipment Identity and Auditable Dispatch Handover
+* **Rule Statement:** An order cannot transition to `DISPATCHED` unless it is linked to a unique internal Shipment ID, completed packing/serial checks, and recorded dispatch assignment and handover evidence. For own-team delivery, record the assigned associate/run and custody acknowledgement. For a direct courier or aggregator lane, record the approved provider lane, booking/pickup reference and required handover evidence; an external AWB is mandatory only when that provider lane requires one. The internal Shipment ID remains canonical.
+* **Business Rationale:** Ensures every dispatched parcel is traceable across own-team, direct-courier and aggregator delivery without making an external carrier identifier mandatory for every lane.
 * **Applicable Domain:** Shipping & Logistics
-* **Trigger / Condition:** Warehouse operator marks a packed order ready for dispatch or confirms handover.
-* **Expected Outcome:** System validates shipment identity, packing/serial checks, assignment, and handover acknowledgements. If any required record is absent, dispatch transition is blocked.
+* **Trigger / Condition:** A packed order is assigned and marked ready for dispatch or provider/associate handover.
+* **Expected Outcome:** System validates shipment identity, packing/serial checks, lane-specific assignment and required custody/handover evidence. If any required record is absent, dispatch transition is blocked.
 * **Exceptions:** An authorized supervisor may resolve a documented operational exception; all overrides require a reason and audit event. No silent bypass is permitted.
 * **Related Requirements:** [FR-SHP-001](./04-functional-requirements.md#fr-shp-001).
 * **Severity / Strictness:** High.
-* **Status:** `PROPOSED` (aligned to the in-house shipping decision; requires domain-owner confirmation).
+* **Status:** `PROPOSED` (provider-neutral policy drafted; operational owner review remains required).
 * **Decision Owner:** Logistics Operations Lead.
 
-#### BR-SHP-002: Multi-Attempt In-House Delivery and Return-to-Warehouse Protocol
-* **Rule Statement:** Chellaa's delivery team may attempt delivery on up to three consecutive calendar days. If all three attempts fail, the system creates a return-to-warehouse task and the associate must hand the parcel back into recorded warehouse custody. The system must not imply a courier-initiated RTO event.
-* **Business Rationale:** Provides bounded retry opportunities while preserving parcel custody and preventing shipments from remaining unowned after repeated failure.
+#### BR-SHP-002: Provider-Neutral Failed-Delivery, Retry and Return Handling
+* **Rule Statement:** Every failed delivery attempt must be recorded against the internal Shipment ID with source, timestamp and reason code. Own-team retry limits and schedules must follow the approved internal operating policy; direct-courier and aggregator retry/RTO behavior must be mapped from the approved provider contract into the common shipment lifecycle. After the applicable retry/return threshold, the system must create and track the return-to-warehouse or provider RTO path and preserve custody/return evidence.
+* **Business Rationale:** Provides consistent exception visibility across delivery channels while preserving provider-specific rules and avoiding false assumptions that every lane follows the same retry process.
 * **Applicable Domain:** Shipping & Delivery
-* **Trigger / Condition:** An authenticated Delivery Associate records a failed delivery attempt with a standardized reason code.
-* **Expected Outcome:** Customer is notified after each failed attempt and Support may coordinate an approved retry. After the third failed attempt, further delivery attempts are blocked unless an authorized supervisor records an exception; return-to-warehouse is assigned and audited.
-* **Exceptions:** Supervisor-authorized exception with reason and expiry; it must not silently reset attempt history.
+* **Trigger / Condition:** Own-team staff or a validated provider event records a failed delivery attempt, reschedule, or return/RTO milestone.
+* **Expected Outcome:** Customer notifications, retry eligibility, escalation, and return handling follow the approved lane-specific policy. Attempt history is append-only; authorized exceptions require a reason and audit event.
+* **Exceptions:** Provider outage, invalid/unmapped event, or conflicting status must be quarantined for reconciliation rather than silently forcing a shipment state.
 * **Related Requirements:** [FR-SHP-001](./04-functional-requirements.md#fr-shp-001), [FR-SHP-002](./04-functional-requirements.md#fr-shp-002).
 * **Severity / Strictness:** Medium.
-* **Status:** `PROPOSED` (aligned to the in-house shipping decision; requires domain-owner confirmation).
+* **Status:** `PROPOSED` (provider-neutral policy drafted; retry limits and provider-specific rules require Operations review).
 * **Decision Owner:** Logistics Operations Lead.
 
 ---
@@ -631,7 +631,7 @@ $$\text{Line Discount}_i = \text{Total Discount} \times \left( \frac{\text{Line 
 * **Exceptions:** None.
 * **Related Requirements:** [FR-REV-001](./04-functional-requirements.md#fr-rev-001).
 * **Severity / Strictness:** Medium.
-* **Status:** `PROPOSED` (Subject to [OQ-012](./08-assumptions-dependencies-open-questions.md#oq-012))
+* **Status:** `CONFIRMED` (OQ-012 Option B selected; detailed moderation, appeals and photo-review policy remain open).
 * **Decision Owner:** Product Lead.
 
 #### BR-SUP-001: Support Ticket Response SLA (2 Hours for Critical Complaints)
@@ -831,7 +831,7 @@ $$\text{ATS}_{\text{bundle}} = \min(\text{ATS}_{\text{item}_1}, \text{ATS}_{\tex
 | **BR-FIN-002** | Monotonic Sequential Invoice Numbering | Statutory Invoicing | Critical | `CONFIRMED` |
 | **BR-FIN-003** | Invoice Immutability & Credit Note Mandate | Statutory Invoicing | Critical | `CONFIRMED` |
 | **BR-NTF-001** | Transactional Message Precedence over Opt-outs | Notifications | High | `CONFIRMED` |
-| **BR-REV-001** | Verified-Buyer Gate for Customer Reviews | Reviews & Ratings | Medium | `PROPOSED` (OQ-012) |
+| **BR-REV-001** | Verified-Buyer Gate for Customer Reviews | Reviews & Ratings | Medium | `CONFIRMED` (OQ-012 Option B; detail policies open) |
 | **BR-SUP-001** | Support Ticket Response SLA (2 Hours Critical) | Customer Support | Medium | `CONFIRMED` |
 | **BR-RPT-001** | Reconciled Sales Reporting Constraint | Reporting & Analytics| High | `CONFIRMED` |
 | **BR-SEC-001** | Zero Raw Cardholder Data Storage (PCI-DSS) | Security & Privacy | Critical | `CONFIRMED` |
