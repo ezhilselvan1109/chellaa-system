@@ -53,6 +53,7 @@ The Open Questions summary in Document 08 now reflects the explicit owner select
 - `OQ-017`: Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours.
 - `OQ-004`: Razorpay only; single-gateway approach.
 - `OQ-005`: Option A — build Chellaa's own Shipping Management System; own delivery team or optional direct-carrier integrations by separate decision. No shipping aggregator or courier partner selected.
+- `ADQ-012`: India-wide initial delivery scope using Chellaa's own team. This defines intended geographic scope only; actual serviceable PIN codes, phased rollout, staffing/fleet, warehouse topology, hours/fees/SLAs, and reverse-logistics capacity remain unresolved. Reassess `ASM-004` (single central warehouse) without presuming a multi-warehouse decision.
 
 These selections resolve the associated business choices; they do **not** approve the entire BRD baseline.
 
@@ -71,7 +72,7 @@ The document lists confirmed questions including `OQ-011`, `OQ-013`, `OQ-014`, `
 Document 08 lists these six dependencies as `OPEN`:
 
 1. `DEP-001` — Razorpay merchant agreement, production credentials, settlement/refund configuration, and webhook setup.
-2. `DEP-002` — In-house shipping operations readiness. Proposed role model, workflows, shipment lifecycle, proof of delivery, three-attempt retry/return-to-warehouse, COD custody/reconciliation, exception handling, readiness checklist, and test evidence are now defined in Document 08 and aligned to WF-008 / FR-SHP-001 / FR-SHP-002. This dependency remains `OPEN` until the Operations Lead supplies launch coverage, staffing/capacity decisions, SOPs, and test evidence. No external courier partner or aggregator is selected; direct carrier integration requires a separate decision.
+2. `DEP-002` — In-house shipping operations readiness. Proposed role model, workflows, shipment lifecycle, proof of delivery, three-attempt retry/return-to-warehouse, COD custody/reconciliation, exception handling, readiness checklist, and test evidence are defined in Document 08 and aligned to WF-008 / FR-SHP-001 / FR-SHP-002. The owner has now selected India-wide intended delivery scope through Chellaa's own team (`ADQ-012`); this does not prove every PIN code is serviceable. DEP-002 remains `OPEN` until serviceable PIN codes and rollout, warehouse topology, staffing/capacity, fleet, hours/fees/SLAs, SOPs, reverse logistics, and test evidence are confirmed. Reassess `ASM-004` (single central warehouse) explicitly. No external courier partner or aggregator is selected; direct carrier integration requires a separate decision.
 3. `DEP-003` — SMS DLT / WhatsApp Business registration.
 4. `DEP-004` — Enterprise GSTIN and invoice-numbering/legal-tax validation.
 5. `DEP-005` — Approved electronics catalog and brand specifications.
