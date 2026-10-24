@@ -110,10 +110,12 @@ The following 22 strategic commercial decisions must be formally reviewed and re
   * *Option B:* Option A plus Buy-Now-Pay-Later (BNPL) and Card EMI options.
   * *Option C:* Option A plus Cash on Delivery (COD).
 * **Recommended Option:** **Option B (UPI, Cards, Net Banking, and Bank EMI).** High-value electronics heavily rely on EMI and UPI in the Indian consumer retail landscape.
+* **Business Owner Decision:** **Option C — Option A payment methods plus Cash on Delivery (COD).** Recorded from the explicit Business Owner selection on `2026-10-24`.
+* **COD Policy Dependency:** COD must follow the already recorded `OQ-006` / `ADQ-003` policy: restricted COD up to ₹10,000, delivery OTP, and ₹50 non-refundable convenience fee.
 * **Impact of Delaying:** Influences payment gateway evaluation and checkout orchestration design.
 * **Priority:** `P0`
-* **Decision Owner:** Business Owner / Finance Lead.
-* **Status:** `UNDER_REVIEW` (Proposed: Option B).
+* **Decision Owner:** EZHIL SELVAN P. — Founder; Finance Lead review remains required for implementation/payment-provider implications.
+* **Status:** `CONFIRMED` (Business Owner selection recorded; Phase 1 baseline approval remains pending).
 
 ---
 
@@ -468,7 +470,7 @@ The following 22 strategic commercial decisions must be formally reviewed and re
 | :---: | :--- | :---: | :---: | :--- |
 | **OQ-001** | Operating Country Scope | `P0` | `CONFIRMED` | Owner-selected Option A: Domestic India only at launch |
 | **OQ-002** | Currencies & Languages | `P1` | `CONFIRMED` | Owner-selected Option A: INR (₹) and English only |
-| **OQ-003** | Mandatory Payment Methods | `P0` | `UNDER_REVIEW` | UPI, Cards, Net Banking, EMI |
+| **OQ-003** | Mandatory Payment Methods | `P0` | `CONFIRMED` | Owner-selected Option C: UPI, cards, net banking, plus COD under OQ-006 policy |
 | **OQ-004** | Payment Gateway Selection | `P1` | `OPEN` | Dual Gateway (Primary + Failover) |
 | **OQ-005** | Courier Logistics Selection | `P1` | `OPEN` | Multi-carrier aggregator (Shiprocket/similar) |
 | **OQ-006** | Cash on Delivery (COD) Policy | `P0` | `CONFIRMED` | Owner-selected Option B: ₹10,000 cap, delivery OTP, ₹50 fee |
