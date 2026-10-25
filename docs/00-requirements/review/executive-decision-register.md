@@ -18,7 +18,7 @@
 
 ## 1. Purpose and Governance Instructions
 
-This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the eleven recorded commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
+This decision register is prepared specifically for the **Enterprise Business Owner**. It consolidates the fourteen recorded commercial, regulatory, and operational decisions that govern the Phase 1 Business Requirements Document (BRD) baseline and define mandatory boundaries for subsequent Phase 2 Technical Architecture design.
 
 ### Mandatory Governance Rules Observed:
 1. **Non-Binding Proposals:** All proposals presented by the engineering team are explicitly designated as **`NON-BINDING RECOMMENDATIONS`**. Engineering has provided technical analysis and operational recommendations, but engineering **cannot** decide commercial policy on behalf of the business.
@@ -40,8 +40,8 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | **`ADQ-007`** | [`OQ-016`](../08-assumptions-dependencies-open-questions.md#oq-016) | Peak Festive Surge Capacity Target | Option B: 100 OPM Sustained / 1,000 OPM Peak | **Option B — 100 orders/min sustained; 1,000 orders/min peak** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-008`** | [`OQ-017`](../08-assumptions-dependencies-open-questions.md#oq-017) | Platform Availability SLA & DR Targets | Option A: 99.9% Uptime, RPO $\le 5\text{m}$, RTO $\le 2\text{h}$ | **Option A — 99.9% uptime, RPO ≤ 5 minutes, RTO ≤ 2 hours** | **`OWNER_DECISION_RECORDED`** |
 | **`ADQ-009`** | [`OQ-003`](../08-assumptions-dependencies-open-questions.md#oq-003) | Mandatory Customer Payment Methods | Option B: UPI, cards, net banking, and EMI/BNPL | **Option C — Option A payment methods plus COD under OQ-006 policy** | **`OWNER_DECISION_RECORDED`** |
-| **`ADQ-010`** | [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) | Payment Gateway Provider | Option B: Dual gateway | **Single gateway — Razorpay only (single-gateway approach / Option A)** | **`OWNER_DECISION_RECORDED`** |
-| **`ADQ-011`** | [`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005) | Shipping Management Approach | Option B: Multi-carrier aggregator | **Option A — build Chellaa's own Shipping Management System; own delivery team or separately decided direct-carrier integrations; no aggregator/courier partner selected** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-010`** | [`OQ-004`](../08-assumptions-dependencies-open-questions.md#oq-004) | Payment Gateway Provider | Option B: Dual gateway | **Option B — Razorpay primary; Cashfree Payments secondary/failover** | **`OWNER_DECISION_RECORDED`** |
+| **`ADQ-011`** | [`OQ-005`](../08-assumptions-dependencies-open-questions.md#oq-005) | Shipping Management Approach | Option B: Multi-carrier aggregator | **Chellaa-owned Shipping Management System; Shiprocket selected as multi-carrier aggregator by the explicit 2026-10-25 owner decision** | **`OWNER_DECISION_RECORDED`** |
 ---
 
 ## 3. Detailed Decision Sheets (ADQ-001 through ADQ-011)
@@ -315,28 +315,29 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 * **Decision ID:** `ADQ-010`
 * **Linked BRD Open Question:** [`OQ-004: Payment Gateway Partner Selection`](../08-assumptions-dependencies-open-questions.md#oq-004)
 * **Affected Business Domains:** Checkout, Payments, Refunds, Settlement Reconciliation, External Integrations.
-* **Business Owner Decision:** **Razorpay only at launch.** No secondary/failover payment gateway is selected for the initial release.
-* **Option Mapping Note:** The BRD's Option A is the single-gateway approach. The owner's phrase “Option B but Razorpay only” has been interpreted by its explicit provider constraint (Razorpay only), so the recorded architecture is single-gateway rather than dual-gateway. This does not authorize a second provider.
-* **Implementation Conditions:** Merchant onboarding and production credentials; hosted/checkout integration; webhook signature verification; idempotent payment processing; payment status reconciliation; source refunds; settlement reconciliation; no raw card PAN/CVV storage.
-* **Business Owner Rationale & Conditions:** None supplied beyond “Razorpay only.”
-* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-24).
-* **Decision Date:** `2026-10-24`
-* **Status:** **`OWNER_DECISION_RECORDED`**. Razorpay merchant agreement and technical validation remain open dependencies; this is not Phase 1 or architecture approval.
+* **Superseding owner decision:** The earlier Razorpay-only selection is superseded by the explicit 2026-10-25 selection recorded below.
+* **Business Owner Decision:** **Option B — Razorpay primary; Cashfree Payments secondary/failover.**
+* **Provider boundary:** Both provider roles are selected, but merchant agreements, production credentials, provider capability/fee review, settlement/refund configuration, webhook setup, and tested failover remain open under `DEP-001`.
+* **Implementation Conditions:** Use approved hosted checkout; verify webhook signatures; make payment processing idempotent; reconcile payment status and settlements; support source refunds; do not store raw card PAN/CVV. Never create a second charge while the primary attempt is ambiguous/pending; reconcile status before considering failover.
+* **Business Owner Rationale & Conditions:** No additional rationale supplied.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-25).
+* **Decision Date:** `2026-10-25`
+* **Status:** **`OWNER_DECISION_RECORDED`**. Provider contracts and technical validation remain open dependencies; this is not Phase 1 or architecture approval.
 
 ---
 
-### ADQ-011: Shipping Management Approach (Historical — Provider Mix Superseded by ADQ-014)
+### ADQ-011: Shipping Management System Ownership and Provider-Neutral Lifecycle
 
 * **Decision ID:** `ADQ-011`
-* **Linked BRD Open Question:** [`OQ-005: Shipping Management Approach`](../08-assumptions-dependencies-open-questions.md#oq-005)
+* **Linked BRD Open Question:** [`OQ-005: Courier and Shipping Logistics Partner Selection`](../08-assumptions-dependencies-open-questions.md#oq-005)
 * **Affected Business Domains:** Shipping & Delivery, Returns, Reverse Logistics, COD Reconciliation.
-* **Business Owner Decision:** **Option A — build Chellaa's own Shipping Management System.** The business may use its own delivery team. No shipping aggregator will be used; direct carrier integrations are optional and require a separate decision. No courier partner has been selected.
-* **Implementation Conditions:** Define shipment lifecycle, internal tracking events, delivery assignment and attempts, proof of delivery, cancellations, reverse logistics, COD collection/reconciliation, and exception handling. Treat carrier-specific API, serviceability, and SLA work as out of scope until a separate carrier decision is recorded.
-* **Business Owner Rationale & Conditions:** The owner explicitly requested to develop the shipping feature in-house and not use Shiprocket or any shipping aggregator.
-* **Decision Owner:** EZHIL SELVAN P. — Founder (selection recorded 2026-10-24).
+* **Business Owner Decision:** Chellaa builds and owns its Shipping Management System and canonical internal shipment lifecycle. This ownership decision remains in effect alongside the later hybrid provider model and Shiprocket selection.
+* **Implementation Conditions:** Maintain internal Shipment IDs, shipment lifecycle/events, assignment and attempts, proof of delivery, cancellations, reverse logistics, COD collection/reconciliation, and exception handling. External provider adapters must not become the source of truth for Chellaa's internal shipment state.
+* **Business Owner Rationale & Conditions:** The owner requires an in-house shipping feature; this does not prohibit the subsequently selected aggregator.
+* **Decision Owner:** EZHIL SELVAN P. — Founder (original ownership decision recorded 2026-10-24).
 * **Decision Date:** `2026-10-24`
-* **Status:** **`OWNER_DECISION_RECORDED`**. Partner agreement, API credentials, commercial terms, and integration validation remain open dependencies; this is not Phase 1 or architecture approval.
-* **Supersession note:** The earlier exclusion of a shipping aggregator and the earlier limitation of direct-carrier integrations are superseded for the delivery-provider mix by `ADQ-014`. Chellaa's own Shipping Management System remains in scope; provider selection and readiness remain open.
+* **Status:** **`OWNER_DECISION_RECORDED`**. Shipping provider contracts, credentials, commercial terms, and integration validation remain open under `DEP-002`; this is not Phase 1 or architecture approval.
+* **Provider selection update:** On 2026-10-25, the owner selected Option B for OQ-005: Shiprocket multi-carrier aggregator. See the confirmed OQ-005 record and `ADQ-014` for the hybrid provider model.
 
 ---
 
@@ -380,10 +381,10 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 * **Supersedes / clarifies:** The provider-exclusion clauses in `ADQ-011`; retains Chellaa ownership of its Shipping Management System and canonical internal shipment lifecycle. `ADQ-012` (India-wide target) and `ADQ-013` (phased activation) remain in effect, with this decision adding a multi-state pilot and a hybrid provider model.
 * **Affected Business Domains:** Shipping & Delivery, Checkout Serviceability, Fulfillment, Customer Experience, Returns / Reverse Logistics, COD and Provider Settlement Reconciliation.
 * **Business Owner Decision:** **Option C — allow all three delivery channels: (1) Chellaa's own delivery team, (2) directly integrated courier partners, and (3) a shipping aggregator.** The target is India-wide delivery, with the initial pilot in selected areas across multiple states. COD and online payment must continue to follow the existing approved payment policies.
-* **Provider and rollout boundary:** This is permission to use all three channels, not selection of a named courier or aggregator, a signed contract, proof of PIN-code coverage, or authorization to enable an untested integration. Activate only validated PIN codes and provider lanes after operational readiness checks. Chellaa's internal Shipment ID remains canonical; provider AWB/booking references are additional identifiers.
-* **Payment-policy boundary:** Online payments remain Razorpay-only for UPI, cards and net banking under the existing decision. COD remains restricted to eligible orders up to ₹10,000, verified/eligible PIN codes, delivery OTP, and the ₹50 non-refundable convenience fee. Delivery provider choice does not change checkout payment eligibility or silently relax these rules.
+* **Provider and rollout boundary:** This permits all three channels. Shiprocket was subsequently selected as the multi-carrier aggregator for OQ-005 on 2026-10-25; that selection is not a signed contract, proof of PIN-code coverage, or authorization to enable an untested integration. No direct courier is selected by that decision. Activate only validated PIN codes and provider lanes after operational readiness checks. Chellaa's internal Shipment ID remains canonical; provider AWB/booking references are additional identifiers.
+* **Payment-policy boundary:** Online payments use Razorpay as primary and Cashfree Payments as secondary/failover per the OQ-004 owner selection recorded 2026-10-25, once each production lane is contracted and validated. Do not create a duplicate charge or fail over while a primary attempt is ambiguous. COD remains restricted to eligible orders up to ₹10,000, verified/eligible PIN codes, delivery OTP, and the ₹50 non-refundable convenience fee. Delivery provider choice does not change checkout payment eligibility or silently relax these rules.
 * **Implementation / readiness conditions:** Define provider-neutral shipment states/events; routing and fallback rules; direct courier and aggregator selection; contracts, rates, serviceability, SLAs, API credentials, booking/label/tracking/webhook behavior; idempotency and duplicate-event handling; pickup/failed-delivery/RTO/returns; COD collection, remittance, deductions and reconciliation; customer tracking and notifications; privacy/evidence retention; provider outage handling; and end-to-end tests for every enabled pilot lane.
-* **Business Owner Rationale & Conditions:** The owner selected the hybrid delivery model and multi-state pilot. No specific pilot states/PIN codes, courier/aggregator brand, contract, provider ranking/routing policy, fees, SLAs, or rollout dates were supplied.
+* **Business Owner Rationale & Conditions:** The owner selected the hybrid delivery model and multi-state pilot. No specific pilot states/PIN codes, provider contract, provider ranking/routing policy, fees, SLAs, or rollout dates were supplied. Shiprocket was selected as the aggregator on 2026-10-25; direct courier brand selection remains open.
 * **Decision Owner:** EZHIL SELVAN P. — Founder (explicit selection recorded 2026-10-24).
 * **Decision Date:** `2026-10-24`
 * **Status:** **`OWNER_DECISION_RECORDED`**. `DEP-002` remains `OPEN`; this decision does not approve the BRD baseline or architecture.
@@ -398,7 +399,7 @@ This decision register is prepared specifically for the **Enterprise Business Ow
 | :--- | :--- |
 | **Enterprise Business Owner Name** | EZHIL SELVAN P. |
 | **Corporate Title** | Founder |
-| **Owner Decision Date** | `2026-10-24` |
+| **Owner Decision Date** | `2026-10-24` for the original decisions; updated OQ-004/OQ-005 selections recorded `2026-10-25` |
 | **Owner Selections Recorded** | `[x] ADQ-001` &nbsp; `[x] ADQ-002` &nbsp; `[x] ADQ-003` &nbsp; `[x] ADQ-004`<br>`[x] ADQ-005` &nbsp; `[x] ADQ-006` &nbsp; `[x] ADQ-007` &nbsp; `[x] ADQ-008`<br>`[x] ADQ-009` &nbsp; `[x] ADQ-010` &nbsp; `[x] ADQ-011` &nbsp; `[x] ADQ-012` &nbsp; `[x] ADQ-013` &nbsp; `[x] ADQ-014` |
 | **Executive Comments & Provisos** | None supplied. |
 | **Formal Signature / Authorization Hash** | Not provided — no signature or authorization hash supplied. |
