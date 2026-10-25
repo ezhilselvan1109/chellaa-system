@@ -74,14 +74,20 @@ A rigorous compliance audit was performed against the mandatory constraints esta
 
 ## 5. Executive Open Decision Summary
 
-Before approving the BRD baseline for architectural implementation, the Enterprise Business Owner must review and resolve the following high-priority commercial decisions documented in [Document 08](./08-assumptions-dependencies-open-questions.md):
+The following business-owner selections have been recorded in [Document 08](./08-assumptions-dependencies-open-questions.md) and the Executive Decision Register:
 
-1. **[OQ-001] Operating Country Scope:** Confirm Domestic India as primary launch territory (`PROPOSED: Domestic India`).
-2. **[OQ-006] Cash on Delivery (COD) Policy:** Confirm whether to offer COD under a restricted ₹10,000 ceiling or launch 100% prepaid (`PROPOSED: Restricted COD`).
-3. **[OQ-008] Electronics Return Policy:** Confirm the 7-day return policy window and mandatory defect/seal verification criteria (`PROPOSED: 7-day window, inspection mandatory`).
-4. **[OQ-010] Customer Signup Verification:** Confirm mobile-first registration with SMS OTP as primary authentication (`PROPOSED: Mobile OTP`).
-5. **[OQ-016] Peak Order Throughput Target:** Confirm capacity sizing for 100 orders/min baseline and 1,000 orders/min festive peak (`PROPOSED: 1,000 OPM Peak`).
-6. **[OQ-017] Availability & Recovery SLA:** Confirm platform uptime target ($\ge 99.90\%$) and disaster recovery targets ($\text{RPO} \le 5\text{m}$, $\text{RTO} \le 2\text{h}$) (`PROPOSED: 99.9% Uptime`).
+- **[OQ-004] Payment Gateway Selection:** Option B — Razorpay primary; Cashfree Payments secondary/failover. `DEP-001` remains `OPEN` for merchant agreements, production credentials, settlement/refund configuration, webhook validation, and safe failover testing.
+- **[OQ-005] Shipping Logistics Partner:** Option B — Shiprocket multi-carrier aggregator. Chellaa retains ownership of its Shipping Management System and canonical shipment lifecycle. `DEP-002` remains `OPEN` for provider agreement, API credentials, serviceability, pricing/SLAs, COD remittance, operational readiness, and end-to-end validation.
+
+The remaining questions requiring further business review are:
+
+1. **[OQ-007] Warehouse Launch Topology** — proposed single central warehouse at launch; final owner review remains pending.
+2. **[OQ-012] Customer Reviews & Ratings** — requirements and phase scope remain under review.
+3. **[OQ-015] Notification Channels** — final channel scope remains under review.
+4. **[OQ-018] Required Business Reports** — required report set remains under review.
+5. **[OQ-019] Legacy Data Migration Scope** — migration scope remains under review.
+
+Recording OQ-004 and OQ-005 resolves those provider-selection questions only. It does not close their external/operational dependencies, constitute acceptance of the complete BRD, or authorize architecture. Phase Review Status remains `PENDING_APPROVAL`; Requirements Baseline Status remains `NOT_APPROVED`; Architecture Design Approval remains `NOT_GRANTED`. All ten formal approval checkpoints below remain unchecked until genuine review evidence and authorized sign-off are recorded.
 
 ---
 
